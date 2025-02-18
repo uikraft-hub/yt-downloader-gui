@@ -1,7 +1,7 @@
 # SSTube
 
 <p align="center">
-    <img src="Favicon.png" alt="Icon" />
+    <img src="Favion.png" width="300" height="300" alt="Icon" />
 </p>
 
 **SSTube** is an application that lets you download videos from YouTube.
