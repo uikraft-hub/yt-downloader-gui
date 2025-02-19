@@ -39,8 +39,8 @@ class SSTubeGUI:
         self.downloading = False  # Sequential download flag
 
         # Modes: Single Video, MP3 Only, Playlist Video, Playlist MP3,
-        # Channel Videos, Channel Videos MP3, Channel Shorts,
-        # Channel Shorts MP3
+        # Channel Videos, Channel Videos MP3, Channel Shorts, Channel 
+        # Shorts MP3
         self.mode_var = tk.StringVar(value="Single Video")
         self.audio_quality_var = tk.StringVar(value="320")
         self.video_quality_var = tk.StringVar(value="Best Available")
@@ -305,7 +305,8 @@ class SSTubeGUI:
                 "audio_quality": (self.audio_quality_var.get()
                                   if "MP3" in mode else None),
                 "video_quality": (self.video_quality_var.get()
-                                  if mode == "Single Video" else "Best Available")
+                                  if mode == "Single Video" else 
+                                  "Best Available")
             }
             self.download_queue.append(task)
             self.log_message("Task added to queue")
@@ -339,7 +340,9 @@ class SSTubeGUI:
         scrollable_frame = ttk.Frame(canvas)
         scrollable_frame.bind(
             "<Configure>",
-            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+            lambda e: canvas.configure(
+                scrollregion=canvas.bbox("all")
+            )
         )
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
@@ -352,9 +355,8 @@ class SSTubeGUI:
                 continue
             video_url = entry.get("url")
             if video_url and not video_url.startswith("http"):
-                video_url = (
-                    playlist_info.get("webpage_url", "") + video_url
-                )
+                video_url = (playlist_info.get("webpage_url", "") + 
+                             video_url)
             title = entry.get("title", "Unknown Title")
             var = tk.BooleanVar(value=True)
             chk = ttk.Checkbutton(
@@ -371,8 +373,10 @@ class SSTubeGUI:
                         "url": video_url,
                         "save_path": save_path,
                         "mode": mode,
-                        "audio_quality": (self.audio_quality_var.get()
-                                          if "MP3" in mode else None),
+                        "audio_quality": (
+                            self.audio_quality_var.get()
+                            if "MP3" in mode else None
+                        ),
                         "video_quality": (
                             self.video_quality_var.get()
                             if mode == "Playlist Video" else "Best Available"
@@ -412,12 +416,14 @@ class SSTubeGUI:
             if mode in ["Channel Videos", "Channel Videos MP3"]:
                 filtered = [
                     entry for entry in entries
-                    if entry and ("shorts" not in entry.get("url", "").lower())
+                    if entry and ("shorts" not in 
+                        entry.get("url", "").lower())
                 ]
             else:
                 filtered = [
                     entry for entry in entries
-                    if entry and ("shorts" in entry.get("url", "").lower())
+                    if entry and ("shorts" in 
+                        entry.get("url", "").lower())
                 ]
         except Exception as e:
             messagebox.showerror(
@@ -438,7 +444,9 @@ class SSTubeGUI:
         scrollable_frame = ttk.Frame(canvas)
         scrollable_frame.bind(
             "<Configure>",
-            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+            lambda e: canvas.configure(
+                scrollregion=canvas.bbox("all")
+            )
         )
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
@@ -468,12 +476,15 @@ class SSTubeGUI:
                         "url": video_url,
                         "save_path": save_path,
                         "mode": mode,
-                        "audio_quality": (self.audio_quality_var.get()
-                                          if "MP3" in mode else None),
-                        "video_quality": (self.video_quality_var.get()
-                                          if mode in ["Channel Videos",
-                                                      "Channel Shorts"]
-                                          else "Best Available")
+                        "audio_quality": (
+                            self.audio_quality_var.get()
+                            if "MP3" in mode else None
+                        ),
+                        "video_quality": (
+                            self.video_quality_var.get()
+                            if mode in ["Channel Videos", "Channel Shorts"]
+                            else "Best Available"
+                        )
                     }
                     self.download_queue.append(task)
                     count += 1
@@ -518,7 +529,9 @@ class SSTubeGUI:
                     "Channel Shorts"]:
             ydl_opts = {
                 "outtmpl": os.path.join(save_path, "%(title)s.%(ext)s"),
-                "ffmpeg_location": os.path.join(os.getcwd(), "bin", "ffmpeg.exe"),
+                "ffmpeg_location": os.path.join(
+                    os.getcwd(), "bin", "ffmpeg.exe"
+                ),
                 "noplaylist": True,
                 "progress_hooks": [self.update_progress],
                 "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4",
@@ -534,7 +547,9 @@ class SSTubeGUI:
                       "Channel Shorts MP3"]:
             ydl_opts = {
                 "outtmpl": os.path.join(save_path, "%(title)s.%(ext)s"),
-                "ffmpeg_location": os.path.join(os.getcwd(), "bin", "ffmpeg.exe"),
+                "ffmpeg_location": os.path.join(
+                    os.getcwd(), "bin", "ffmpeg.exe"
+                ),
                 "noplaylist": True,
                 "progress_hooks": [self.update_progress],
                 "format": "bestaudio/best",
@@ -580,8 +595,7 @@ class SSTubeGUI:
             )
         elif d["status"] == "finished":
             self.log_message(
-                f"{d['info_dict'].get('title','Unknown')} - "
-                "Download finished."
+                f"{d['info_dict'].get('title','Unknown')} - Download finished."
             )
 
     def create_settings_frame(self):
@@ -626,8 +640,8 @@ class SSTubeGUI:
     def update_ffmpeg(self):
         confirm = messagebox.askyesno(
             "Update ffmpeg",
-            "This will download the latest ffmpeg build and replace the "
-            "current executable. Continue?"
+            "This will download the latest ffmpeg build and replace the current "
+            "executable. Continue?"
         )
         if not confirm:
             return
@@ -640,7 +654,9 @@ class SSTubeGUI:
         )
         progress_label.pack(padx=10, pady=10)
         progress_bar = ttk.Progressbar(
-            progress_win, orient="horizontal", mode="determinate",
+            progress_win,
+            orient="horizontal",
+            mode="determinate",
             length=300
         )
         progress_bar.pack(padx=10, pady=10)
