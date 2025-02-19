@@ -588,6 +588,7 @@ class SSTubeGUI:
                 self.history_text.insert(tk.END, f"{entry['timestamp']} - {entry['title']} ({entry.get('mode', 'N/A')})\n")
             self.history_text.config(state='disabled')
 
+
 if __name__ == "__main__":
     root = tk.Tk()
     app = SSTubeGUI(root)
