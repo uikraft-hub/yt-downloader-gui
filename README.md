@@ -1,6 +1,5 @@
 # SSTube
-
-- ![Active](https://img.shields.io/badge/status-active-47c219.svg)
+![Active](https://img.shields.io/badge/status-active-47c219.svg)
 
 <p align="center">
     <img src="Favicon.png" width="300" height="300" alt="Icon" />
