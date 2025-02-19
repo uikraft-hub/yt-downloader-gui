@@ -1,4 +1,0 @@
-yt-dlp
-ttkthemes
-Pillow
-tqdm
