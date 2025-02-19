@@ -88,7 +88,6 @@
   <h2>Deleting History</h2>
   <p>If you want to clear your download history, click the <strong>Delete History</strong> button in the Settings panel.</p>
   
-  <h2>Reporting a Bug</h2>
 
   <h1>Frequently Asked Questions</h1>
   
