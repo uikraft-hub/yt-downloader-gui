@@ -8,7 +8,71 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>How to Use SSTube</title>
+  <title>SSTube - YouTube Downloader</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.6;
+      color: #333;
+    }
+    h1, h2, h3 {
+      color: #2C3E50;
+    }
+    ul {
+      margin-left: 20px;
+    }
+    li {
+      margin-bottom: 5px;
+    }
+    strong {
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <h1>SSTube</h1>
+  <p>
+    SSTube is a powerful, open-source YouTube downloader application that supports multiple download modes—including single videos, playlists, channels (videos and shorts), and even MP3 extractions.
+  </p>
+  
+  <h2>Features</h2>
+  <ul>
+    <li>
+      <strong>Multiple download modes:</strong>
+      <ul>
+        <li>Single Video / MP3 Only</li>
+        <li>Playlist Video / Playlist MP3</li>
+        <li>Channel Videos / Channel Videos MP3</li>
+        <li>Channel Shorts / Channel Shorts MP3</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Integrated ffmpeg updater:</strong> Automatically downloads and installs the latest ffmpeg build.
+    </li>
+    <li>
+      <strong>Activity log:</strong> Displays real-time progress and status messages.
+    </li>
+    <li>
+      <strong>History management:</strong> Options to delete download history.
+    </li>
+    <li>
+      <strong>Bug reporting:</strong> A built-in "Report a Bug" button to help improve the software.
+    </li>
+  </ul>
+  
+  <p>
+    This project is designed with a clean, modern GUI using Tkinter with ttkthemes and is intended for personal use with potential for further development and contributions from the community.
+  </p>
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+# How to Use SSTube
   <style>
     body {
       font-family: Arial, sans-serif;
