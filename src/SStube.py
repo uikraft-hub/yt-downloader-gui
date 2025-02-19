@@ -39,8 +39,7 @@ class SSTubeGUI:
         self.downloading = False  # Sequential download flag
 
         # Modes: Single Video, MP3 Only, Playlist Video, Playlist MP3,
-        # Channel Videos, Channel Videos MP3, Channel Shorts, 
-        # Channel Shorts MP3
+        # Channel Videos, Channel Videos MP3, Channel Shorts, Channel Shorts MP3
         self.mode_var = tk.StringVar(value="Single Video")
         self.audio_quality_var = tk.StringVar(value="320")
         self.video_quality_var = tk.StringVar(value="Best Available")
@@ -98,7 +97,9 @@ class SSTubeGUI:
         file_menu.add_command(label="Exit", command=self.root.quit)
         menubar.add_cascade(label="File", menu=file_menu)
         help_menu = tk.Menu(menubar, tearoff=0)
-        help_menu.add_command(label="About", command=self.show_about)
+        help_menu.add_command(
+            label="About", command=self.show_about
+        )
         menubar.add_cascade(label="Help", menu=help_menu)
 
     def show_about(self):
@@ -158,7 +159,9 @@ class SSTubeGUI:
         )
         url_label.grid(row=0, column=0, sticky=tk.W, pady=5)
         self.url_entry = ttk.Entry(frame, width=70, font=("Helvetica", 11))
-        self.url_entry.grid(row=1, column=0, columnspan=2, sticky=tk.W, pady=5)
+        self.url_entry.grid(
+            row=1, column=0, columnspan=2, sticky=tk.W, pady=5
+        )
         path_label = ttk.Label(
             frame, text="Save Location:", font=("Helvetica", 12)
         )
@@ -262,16 +265,16 @@ class SSTubeGUI:
                     "/channel/" in url):
                 messagebox.showerror(
                     "Error",
-                    "The URL appears to be a playlist or channel. "
-                    "Please select the appropriate mode."
+                    "The URL appears to be a playlist or channel. Please select the "
+                    "appropriate mode."
                 )
                 return
         elif mode in ["Playlist Video", "Playlist MP3"]:
             if "list=" not in url:
                 messagebox.showerror(
                     "Error",
-                    "The URL does not appear to be a playlist. "
-                    "Please select the appropriate mode."
+                    "The URL does not appear to be a playlist. Please select the "
+                    "appropriate mode."
                 )
                 return
         elif mode in [
@@ -281,8 +284,8 @@ class SSTubeGUI:
             if (("youtube.com/@" not in url) and ("/channel/" not in url)):
                 messagebox.showerror(
                     "Error",
-                    "The URL does not appear to be a channel. "
-                    "Please select the appropriate mode."
+                    "The URL does not appear to be a channel. Please select the "
+                    "appropriate mode."
                 )
                 return
 
@@ -298,7 +301,7 @@ class SSTubeGUI:
                 "url": url,
                 "save_path": save_path,
                 "mode": mode,
-                "audio_quality": (self.audio_quality_var.get()
+                "audio_quality": (self.audio_quality_var.get() 
                                   if "MP3" in mode else None),
                 "video_quality": (self.video_quality_var.get()
                                   if mode == "Single Video" else "Best Available")
@@ -348,8 +351,9 @@ class SSTubeGUI:
                 continue
             video_url = entry.get("url")
             if video_url and not video_url.startswith("http"):
-                video_url = (playlist_info.get("webpage_url", "") + 
-                             video_url)
+                video_url = (
+                    playlist_info.get("webpage_url", "") + video_url
+                )
             title = entry.get("title", "Unknown Title")
             var = tk.BooleanVar(value=True)
             chk = ttk.Checkbutton(
@@ -368,9 +372,10 @@ class SSTubeGUI:
                         "mode": mode,
                         "audio_quality": (self.audio_quality_var.get()
                                           if "MP3" in mode else None),
-                        "video_quality": (self.video_quality_var.get()
-                                          if mode == "Playlist Video"
-                                          else "Best Available")
+                        "video_quality": (
+                            self.video_quality_var.get()
+                            if mode == "Playlist Video" else "Best Available"
+                        )
                     }
                     self.download_queue.append(task)
                     count += 1
@@ -405,13 +410,13 @@ class SSTubeGUI:
             entries = channel_info["entries"]
             if mode in ["Channel Videos", "Channel Videos MP3"]:
                 filtered = [
-                    entry for entry in entries if entry and 
-                    ("shorts" not in entry.get("url", "").lower())
+                    entry for entry in entries
+                    if entry and ("shorts" not in entry.get("url", "").lower())
                 ]
             else:
                 filtered = [
-                    entry for entry in entries if entry and 
-                    ("shorts" in entry.get("url", "").lower())
+                    entry for entry in entries
+                    if entry and ("shorts" in entry.get("url", "").lower())
                 ]
         except Exception as e:
             messagebox.showerror(
@@ -443,8 +448,9 @@ class SSTubeGUI:
         for entry in filtered:
             video_url = entry.get("url")
             if video_url and not video_url.startswith("http"):
-                video_url = (channel_info.get("webpage_url", "") + 
-                             video_url)
+                video_url = (
+                    channel_info.get("webpage_url", "") + video_url
+                )
             title = entry.get("title", "Unknown Title")
             var = tk.BooleanVar(value=True)
             chk = ttk.Checkbutton(
@@ -619,8 +625,8 @@ class SSTubeGUI:
     def update_ffmpeg(self):
         confirm = messagebox.askyesno(
             "Update ffmpeg",
-            "This will download the latest ffmpeg build and replace the "
-            "current executable. Continue?"
+            "This will download the latest ffmpeg build and replace the current "
+            "executable. Continue?"
         )
         if not confirm:
             return
@@ -633,7 +639,7 @@ class SSTubeGUI:
         )
         progress_label.pack(padx=10, pady=10)
         progress_bar = ttk.Progressbar(
-            progress_win, orient="horizontal", mode="determinate",
+            progress_win, orient="horizontal", mode="determinate", 
             length=300
         )
         progress_bar.pack(padx=10, pady=10)
