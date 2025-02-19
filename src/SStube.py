@@ -39,7 +39,8 @@ class SSTubeGUI:
         self.downloading = False  # Sequential download flag
 
         # Modes: Single Video, MP3 Only, Playlist Video, Playlist MP3,
-        # Channel Videos, Channel Videos MP3, Channel Shorts, Channel Shorts MP3
+        # Channel Videos, Channel Videos MP3, Channel Shorts,
+        # Channel Shorts MP3
         self.mode_var = tk.StringVar(value="Single Video")
         self.audio_quality_var = tk.StringVar(value="320")
         self.video_quality_var = tk.StringVar(value="Best Available")
@@ -265,8 +266,8 @@ class SSTubeGUI:
                     "/channel/" in url):
                 messagebox.showerror(
                     "Error",
-                    "The URL appears to be a playlist or channel. Please select the "
-                    "appropriate mode."
+                    "The URL appears to be a playlist or channel. Please select "
+                    "the appropriate mode."
                 )
                 return
         elif mode in ["Playlist Video", "Playlist MP3"]:
@@ -301,7 +302,7 @@ class SSTubeGUI:
                 "url": url,
                 "save_path": save_path,
                 "mode": mode,
-                "audio_quality": (self.audio_quality_var.get() 
+                "audio_quality": (self.audio_quality_var.get()
                                   if "MP3" in mode else None),
                 "video_quality": (self.video_quality_var.get()
                                   if mode == "Single Video" else "Best Available")
@@ -470,7 +471,7 @@ class SSTubeGUI:
                         "audio_quality": (self.audio_quality_var.get()
                                           if "MP3" in mode else None),
                         "video_quality": (self.video_quality_var.get()
-                                          if mode in ["Channel Videos", 
+                                          if mode in ["Channel Videos",
                                                       "Channel Shorts"]
                                           else "Best Available")
                     }
@@ -625,8 +626,8 @@ class SSTubeGUI:
     def update_ffmpeg(self):
         confirm = messagebox.askyesno(
             "Update ffmpeg",
-            "This will download the latest ffmpeg build and replace the current "
-            "executable. Continue?"
+            "This will download the latest ffmpeg build and replace the "
+            "current executable. Continue?"
         )
         if not confirm:
             return
@@ -639,7 +640,7 @@ class SSTubeGUI:
         )
         progress_label.pack(padx=10, pady=10)
         progress_bar = ttk.Progressbar(
-            progress_win, orient="horizontal", mode="determinate", 
+            progress_win, orient="horizontal", mode="determinate",
             length=300
         )
         progress_bar.pack(padx=10, pady=10)
@@ -654,7 +655,8 @@ class SSTubeGUI:
 
         try:
             update_url = (
-                "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"
+                "https://www.gyan.dev/ffmpeg/builds/"
+                "ffmpeg-release-essentials.zip"
             )
             temp_zip_path, _ = urllib.request.urlretrieve(
                 update_url, reporthook=reporthook
