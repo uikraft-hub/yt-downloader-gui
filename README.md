@@ -4,34 +4,6 @@
     <img src="Favicon.png" width="300" height="300" alt="Icon" />
 </p>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-#SSTube - YouTube Downloader#
-    
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      line-height: 1.6;
-      color: #333;
-    }
-    h1, h2, h3 {
-      color: #2C3E50;
-    }
-    ul {
-      margin-left: 20px;
-    }
-    li {
-      margin-bottom: 5px;
-    }
-    strong {
-      color: #000;
-    }
-  </style>
-</head>
-<body>
   <h1>SSTube</h1>
   <p>
     SSTube is a powerful, open-source YouTube downloader application that supports multiple download modes—including single videos, playlists, channels (videos and shorts), and even MP3 extractions.
