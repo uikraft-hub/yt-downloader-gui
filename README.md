@@ -39,36 +39,6 @@
 </html>
 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-# How to Use SSTube
-    
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      line-height: 1.6;
-      color: #333;
-    }
-    h1, h2, h3 {
-      color: #222;
-    }
-    code {
-      background-color: #f4f4f4;
-      padding: 2px 4px;
-      border-radius: 4px;
-    }
-    ul {
-      margin-left: 20px;
-    }
-    li {
-      margin-bottom: 5px;
-    }
-  </style>
-</head>
-<body>
   <h1>How to Use SSTube</h1>
   
   <h2>Launching the App</h2>
