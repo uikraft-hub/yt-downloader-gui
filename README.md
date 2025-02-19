@@ -3,8 +3,6 @@
 <p align="center">
     <img src="Favicon.png" width="300" height="300" alt="Icon" />
 </p>
-
-  <h1>SSTube</h1>
   <p>
     SSTube is a powerful, open-source YouTube downloader application that supports multiple download modes—including single videos, playlists, channels (videos and shorts), and even MP3 extractions.
   </p>
