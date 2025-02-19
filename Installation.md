@@ -24,7 +24,7 @@
   <h2>Running as a Script</h2>
   <ol>
     <li>Clone the repository:
-      <pre><code>git clone https://github.com/UKRProjects/SSTube.git
+      <pre><code>git clone https://github.com/UKR-Projects/SSTube.git
 cd SSTube</code></pre>
     </li>
     <li>Ensure all assets are in place:
