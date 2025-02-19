@@ -134,7 +134,7 @@ git checkout -b feature/YourFeature
   <hr>
   
   <h1>License</h1>
-  <p>SSTube is released under the <strong>MIT License</strong> (or your chosen license). You can view the full license text in the <code>LICENSE</code> file in this repository.</p>
+  <p>SSTube is released under the <strong>MIT License</strong>. You can view the full license text in the <code>LICENSE</code> file in this repository.</p>
   <p>This license allows you to use, modify, and distribute the software with minimal restrictions.</p>
   
 </body>
