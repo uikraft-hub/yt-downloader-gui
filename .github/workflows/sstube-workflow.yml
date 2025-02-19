@@ -30,13 +30,14 @@ jobs:
           flake8 --max-line-length=100 .
 
       - name: Run tests
+        shell: cmd
         run: |
-          pip install pytest
-          if exist tests (
-            pytest tests
-          ) else (
-            echo "No tests directory found, skipping tests."
-          )
+         pip install pytest
+         if exist tests (
+         pytest tests
+         ) else (
+         echo "No tests directory found, skipping tests."
+         )
 
       - name: Build executable with PyInstaller
         run: |
