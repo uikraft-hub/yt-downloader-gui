@@ -82,25 +82,25 @@
     <li><strong>Quality:</strong> Choose the desired quality.</li>
   </ul>
   
-  <h2>ffmpeg Updater</h2>
+  <h3>ffmpeg Updater</h3>
   <p>In the Settings panel, click <strong>Update ffmpeg</strong>. A dialog will appear with a progress bar showing the download and extraction progress. This will automatically replace the existing <code>ffmpeg.exe</code> in the <code>bin</code> folder with the latest version.</p>
   
-  <h2>Deleting History</h2>
+  <h3>Deleting History</h3>
   <p>If you want to clear your download history, click the <strong>Delete History</strong> button in the Settings panel.</p>
   
 
   <h1>Frequently Asked Questions</h1>
   
-  <h2>Q: What is ffmpeg and why is it needed?</h2>
+  <h3>Q: What is ffmpeg and why is it needed?</h3>
   <p><strong>A:</strong> ffmpeg is a tool used to merge video and audio streams. SSTube uses it to produce a single output file.</p>
   
-  <h2>Q: How do I update ffmpeg?</h2>
+  <h3>Q: How do I update ffmpeg?</h3>
   <p><strong>A:</strong> Use the <em>Update ffmpeg</em> button in the Settings panel. This downloads the latest build automatically.</p>
   
-  <h2>Q: My URL is not working. What should I do?</h2>
+  <h3>Q: My URL is not working. What should I do?</h3>
   <p><strong>A:</strong> Ensure you are using the correct download mode. For example, use <code>Playlist Video</code> for a playlist URL, or <code>Channel Videos</code> for a channel URL.</p>
   
-  <h2>Q: Can I contribute to SSTube?</h2>
+  <h3>Q: Can I contribute to SSTube?</h3>
   <p><strong>A:</strong> Yes! Please see the Contributing section below for details.</p>
   
   <hr>
@@ -113,7 +113,7 @@
   
   <h3>Clone Your Fork</h3>
   <pre>
-git clone https://github.com/UKRProjects/SSTube.git
+git clone https://github.com/UKR-Projects/SSTube.git
 cd SSTube
   </pre>
   
