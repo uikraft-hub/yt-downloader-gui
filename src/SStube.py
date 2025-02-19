@@ -4,7 +4,9 @@ import time
 import json
 import webbrowser
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox, scrolledtext
+from tkinter import (
+    ttk, filedialog, messagebox, scrolledtext
+)
 import yt_dlp
 from ttkthemes import ThemedStyle
 from PIL import Image, ImageTk
@@ -30,13 +32,15 @@ class SSTubeGUI:
         self.style = ThemedStyle(self.root)
         self.style.set_theme("arc")
 
+        # Download queue and history
         self.download_queue = []  # Each task is a dict
         self.history = []
         self.download_thread = None
-        self.downloading = False  # Flag for sequential downloads
+        self.downloading = False  # Sequential download flag
 
         # Modes: Single Video, MP3 Only, Playlist Video, Playlist MP3,
-        # Channel Videos, Channel Videos MP3, Channel Shorts, Channel Shorts MP3
+        # Channel Videos, Channel Videos MP3, Channel Shorts, 
+        # Channel Shorts MP3
         self.mode_var = tk.StringVar(value="Single Video")
         self.audio_quality_var = tk.StringVar(value="320")
         self.video_quality_var = tk.StringVar(value="Best Available")
@@ -48,10 +52,12 @@ class SSTubeGUI:
         }
 
         try:
-            light_img = Image.open("assets/light.png").resize((100, 100),
-                                                               Image.LANCZOS)
-            dark_img = Image.open("assets/dark.png").resize((100, 100),
-                                                             Image.LANCZOS)
+            light_img = Image.open("assets/light.png").resize(
+                (100, 100), Image.LANCZOS
+            )
+            dark_img = Image.open("assets/dark.png").resize(
+                (100, 100), Image.LANCZOS
+            )
             self.light_img = ImageTk.PhotoImage(light_img)
             self.dark_img = ImageTk.PhotoImage(dark_img)
         except Exception as e:
@@ -69,8 +75,9 @@ class SSTubeGUI:
             "Activity": self.create_activity_frame(),
             "Settings": self.create_settings_frame()
         }
-        self.status_bar = ttk.Label(self.root, text="Ready",
-                                    relief=tk.SUNKEN, anchor=tk.W)
+        self.status_bar = ttk.Label(
+            self.root, text="Ready", relief=tk.SUNKEN, anchor=tk.W
+        )
         self.status_bar.pack(side=tk.BOTTOM, fill=tk.X)
         self.show_frame("Download")
 
@@ -91,10 +98,7 @@ class SSTubeGUI:
         file_menu.add_command(label="Exit", command=self.root.quit)
         menubar.add_cascade(label="File", menu=file_menu)
         help_menu = tk.Menu(menubar, tearoff=0)
-        help_menu.add_command(
-            label="About", 
-            command=self.show_about
-        )
+        help_menu.add_command(label="About", command=self.show_about)
         menubar.add_cascade(label="Help", menu=help_menu)
 
     def show_about(self):
@@ -258,35 +262,35 @@ class SSTubeGUI:
                     "/channel/" in url):
                 messagebox.showerror(
                     "Error",
-                    "The URL appears to be a playlist or channel. Please select the "
-                    "appropriate mode."
+                    "The URL appears to be a playlist or channel. "
+                    "Please select the appropriate mode."
                 )
                 return
         elif mode in ["Playlist Video", "Playlist MP3"]:
             if "list=" not in url:
                 messagebox.showerror(
                     "Error",
-                    "The URL does not appear to be a playlist. Please select the "
-                    "appropriate mode."
+                    "The URL does not appear to be a playlist. "
+                    "Please select the appropriate mode."
                 )
                 return
         elif mode in [
-            "Channel Videos", "Channel Videos MP3",
-            "Channel Shorts", "Channel Shorts MP3"
+            "Channel Videos", "Channel Videos MP3", "Channel Shorts",
+            "Channel Shorts MP3"
         ]:
             if (("youtube.com/@" not in url) and ("/channel/" not in url)):
                 messagebox.showerror(
                     "Error",
-                    "The URL does not appear to be a channel. Please select the "
-                    "appropriate mode."
+                    "The URL does not appear to be a channel. "
+                    "Please select the appropriate mode."
                 )
                 return
 
         if mode in ["Playlist Video", "Playlist MP3"]:
             self.process_playlist(url, save_path, mode)
         elif mode in [
-            "Channel Videos", "Channel Videos MP3",
-            "Channel Shorts", "Channel Shorts MP3"
+            "Channel Videos", "Channel Videos MP3", "Channel Shorts",
+            "Channel Shorts MP3"
         ]:
             self.process_channel(url, save_path, mode)
         else:
@@ -313,8 +317,9 @@ class SSTubeGUI:
                 return
             entries = playlist_info["entries"]
         except Exception as e:
-            messagebox.showerror("Error",
-                                 f"Failed to extract playlist info: {e}")
+            messagebox.showerror(
+                "Error", f"Failed to extract playlist info: {e}"
+            )
             return
 
         sel_win = tk.Toplevel(self.root)
@@ -343,7 +348,8 @@ class SSTubeGUI:
                 continue
             video_url = entry.get("url")
             if video_url and not video_url.startswith("http"):
-                video_url = playlist_info.get("webpage_url", "") + video_url
+                video_url = (playlist_info.get("webpage_url", "") + 
+                             video_url)
             title = entry.get("title", "Unknown Title")
             var = tk.BooleanVar(value=True)
             chk = ttk.Checkbutton(
@@ -408,8 +414,9 @@ class SSTubeGUI:
                     ("shorts" in entry.get("url", "").lower())
                 ]
         except Exception as e:
-            messagebox.showerror("Error",
-                                 f"Failed to extract channel info: {e}")
+            messagebox.showerror(
+                "Error", f"Failed to extract channel info: {e}"
+            )
             return
 
         sel_win = tk.Toplevel(self.root)
@@ -436,7 +443,8 @@ class SSTubeGUI:
         for entry in filtered:
             video_url = entry.get("url")
             if video_url and not video_url.startswith("http"):
-                video_url = channel_info.get("webpage_url", "") + video_url
+                video_url = (channel_info.get("webpage_url", "") + 
+                             video_url)
             title = entry.get("title", "Unknown Title")
             var = tk.BooleanVar(value=True)
             chk = ttk.Checkbutton(
@@ -499,7 +507,7 @@ class SSTubeGUI:
         mode = task["mode"]
         video_quality = task.get("video_quality", "Best Available")
         self.update_status(f"Starting download: {url}")
-        if mode in ["Single Video", "Playlist Video", "Channel Videos", 
+        if mode in ["Single Video", "Playlist Video", "Channel Videos",
                     "Channel Shorts"]:
             ydl_opts = {
                 "outtmpl": os.path.join(save_path, "%(title)s.%(ext)s"),
@@ -611,8 +619,8 @@ class SSTubeGUI:
     def update_ffmpeg(self):
         confirm = messagebox.askyesno(
             "Update ffmpeg",
-            "This will download the latest ffmpeg build and replace the current "
-            "executable. Continue?"
+            "This will download the latest ffmpeg build and replace the "
+            "current executable. Continue?"
         )
         if not confirm:
             return
@@ -625,7 +633,8 @@ class SSTubeGUI:
         )
         progress_label.pack(padx=10, pady=10)
         progress_bar = ttk.Progressbar(
-            progress_win, orient="horizontal", mode="determinate", length=300
+            progress_win, orient="horizontal", mode="determinate",
+            length=300
         )
         progress_bar.pack(padx=10, pady=10)
         self.root.update()
@@ -666,7 +675,9 @@ class SSTubeGUI:
                 )
                 shutil.rmtree(temp_extract_dir)
         except Exception as e:
-            messagebox.showerror("Update Failed", f"ffmpeg update failed: {e}")
+            messagebox.showerror(
+                "Update Failed", f"ffmpeg update failed: {e}"
+            )
             self.log_message(f"ffmpeg update failed: {e}")
         finally:
             progress_win.destroy()
