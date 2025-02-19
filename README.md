@@ -8,7 +8,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SSTube - YouTube Downloader</title>
+#SSTube - YouTube Downloader#
+    
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -73,6 +74,7 @@
 <head>
   <meta charset="UTF-8">
 # How to Use SSTube
+    
   <style>
     body {
       font-family: Arial, sans-serif;
