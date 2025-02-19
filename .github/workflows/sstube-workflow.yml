@@ -37,10 +37,10 @@ jobs:
       - name: Build executable with PyInstaller
         run: |
           pip install pyinstaller
-          pyinstaller --onefile --windowed src/sstube.py
+          pyinstaller --onefile --windowed src/SSTube.py
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: SSTube-executable
-          path: dist/sstube.exe
+          path: dist/SSTube.exe
