@@ -88,6 +88,58 @@
   <p>If you want to clear your download history, click the <strong>Delete History</strong> button in the Settings panel.</p>
   
   <h2>Reporting a Bug</h2>
+
+  <h1>Frequently Asked Questions</h1>
+  
+  <h2>Q: What is ffmpeg and why is it needed?</h2>
+  <p><strong>A:</strong> ffmpeg is a tool used to merge video and audio streams. SSTube uses it to produce a single output file.</p>
+  
+  <h2>Q: How do I update ffmpeg?</h2>
+  <p><strong>A:</strong> Use the <em>Update ffmpeg</em> button in the Settings panel. This downloads the latest build automatically.</p>
+  
+  <h2>Q: My URL is not working. What should I do?</h2>
+  <p><strong>A:</strong> Ensure you are using the correct download mode. For example, use <code>Playlist Video</code> for a playlist URL, or <code>Channel Videos</code> for a channel URL.</p>
+  
+  <h2>Q: Can I contribute to SSTube?</h2>
+  <p><strong>A:</strong> Yes! Please see the Contributing section below for details.</p>
+  
+  <hr>
+  
+  <h1>Contributing to SSTube</h1>
+  <p>We welcome contributions to SSTube! To get started:</p>
+  
+  <h3>Fork the Repository</h3>
+  <p>Click the <strong>Fork</strong> button on GitHub to create your own copy.</p>
+  
+  <h3>Clone Your Fork</h3>
+  <pre>
+git clone https://github.com/yourusername/SSTube.git
+cd SSTube
+  </pre>
+  
+  <h3>Create a Branch</h3>
+  <pre>
+git checkout -b feature/YourFeature
+  </pre>
+  
+  <h3>Make Your Changes</h3>
+  <p>Follow best practices and ensure your code is well-documented.</p>
+  
+  <h3>Submit a Pull Request</h3>
+  <p>Push your branch and open a pull request. Please include a detailed description of your changes and any related issues.</p>
+  
+  <h3>Issues</h3>
+  <p>Use GitHub Issues to report bugs or suggest features.</p>
+  
+  <hr>
+  
+  <h1>License</h1>
+  <p>SSTube is released under the <strong>MIT License</strong> (or your chosen license). You can view the full license text in the <code>LICENSE</code> file in this repository.</p>
+  <p>This license allows you to use, modify, and distribute the software with minimal restrictions.</p>
+  
+</body>
+</html>
+
   <p>If you encounter an issue, click <strong>Report a Bug</strong> in the Settings panel. This will open your default email client, pre-addressed to the support email (or bug reporting URL), so you can describe the issue.</p>
 </body>
 </html>
