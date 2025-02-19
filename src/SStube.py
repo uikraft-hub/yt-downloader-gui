@@ -573,13 +573,15 @@ class SSTubeGUI:
                 print("Error loading history:", e)
                 self.history = []
 
+    
     def save_history(self):
         try:
             with open("history.json", "w") as f:
-                json.dump(self.history, f, indent=4)
+               json.dump(self.history, f, indent=4)
         except Exception as e:
             print("Error saving history:", e)
 
+    
     def update_history_display(self):
         if hasattr(self, "history_text"):
             self.history_text.config(state='normal')
