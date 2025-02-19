@@ -113,7 +113,7 @@
   
   <h3>Clone Your Fork</h3>
   <pre>
-git clone https://github.com/UKR-Projects/SSTube.git
+git clone https://github.com/UKR-PROJETCS/SSTube.git
 cd SSTube
   </pre>
   
