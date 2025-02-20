@@ -144,5 +144,14 @@ git checkout -b feature/YourFeature
 </body>
 </html>
 
-<h1>License</h1>
+<h1>Screenshots</h1>
+![Single-Video](screenshots/Single-Video.png)
+![Mp3-Only](screenshots/Mp3-Only.png)
+![Playlist-Videos](screenshots/Playlist-Videos.png)
+![Playlist-Mp3](screenshots/Playlist-Mp3.png)
+![Channel-Videos](screenshots/Channel-Videos.png)
+![Channel-Videos-Mp3](screenshots/Channel-Videos-Mp3.png)
+![Channel-Shorts](screenshots/Channel-Shorts.png)
+![Channel-Shorts-Mp3](screenshots/Channel-Shorts-Mp3.png)
+
 
