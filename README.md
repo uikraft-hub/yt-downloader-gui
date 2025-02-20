@@ -145,6 +145,7 @@ git checkout -b feature/YourFeature
 </html>
 
 <h1>Screenshots</h1>
+
 ![Single-Video](screenshots/Single-Video.png)
 ![Mp3-Only](screenshots/Mp3-Only.png)
 ![Playlist-Videos](screenshots/Playlist-Videos.png)
