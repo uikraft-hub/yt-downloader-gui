@@ -3,8 +3,6 @@ import sys
 import threading
 import time
 import json
-import subprocess
-import signal
 import webbrowser
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox, scrolledtext
