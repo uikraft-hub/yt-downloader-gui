@@ -1,6 +1,6 @@
 Below is a full example of an updated README.md in GitHub Markdown format for your project:
 
-```markdown
+
 # SSTube
 
 [![Status](https://img.shields.io/badge/status-active-47c219.svg)](https://github.com/yourusername/SSTube)
@@ -28,7 +28,7 @@ SSTube is a powerful, open-source YouTube downloader application built with **Py
 
 ## Folder Structure
 
-```
+
 SSTube/
 ├── README.md
 ├── LICENSE
@@ -44,7 +44,7 @@ SSTube/
 │   └── ffmpeg.exe
 └── tests/
     └── test_SSTube.py
-```
+
 
 - **README.md:** Project overview, instructions, and documentation.
 - **LICENSE:** The project's license (MIT License).
