@@ -27,25 +27,6 @@ SSTube is a powerful, open-source YouTube downloader application built with **Py
   Uses an external ffmpeg binary (included in the `bin/` folder) to merge audio and video streams.
 
 ## Folder Structure
-
-
-SSTube/
-├── README.md
-├── LICENSE
-├── requirements.txt
-├── .gitignore
-├── SSTube.py
-├── assets/
-│   ├── Favicon.png
-│   ├── download.png
-│   ├── activity.png
-│   └── video-favicon.png
-├── bin/
-│   └── ffmpeg.exe
-└── tests/
-    └── test_SSTube.py
-
-
 - **README.md:** Project overview, instructions, and documentation.
 - **LICENSE:** The project's license (MIT License).
 - **requirements.txt:** List of Python dependencies.
