@@ -1,158 +1,153 @@
+Below is a full example of an updated README.md in GitHub Markdown format for your project:
+
+```markdown
 # SSTube
-![Active](https://img.shields.io/badge/status-active-47c219.svg)
+
+[![Status](https://img.shields.io/badge/status-active-47c219.svg)](https://github.com/yourusername/SSTube)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 <p align="center">
-    <img src="Favicon.png" width="300" height="300" alt="Icon" />
+  <img src="assets/Favicon.png" width="300" height="300" alt="SSTube Icon" />
 </p>
-  <p>
-    SSTube is a powerful, open-source YouTube downloader application that supports multiple download modes—including single videos, playlists, channels (videos and shorts), and even MP3 extractions.
-  </p>
-  
-  <h2>Features</h2>
-  <ul>
-    <li>
-      <strong>Multiple download modes:</strong>
-      <ul>
-        <li>Single Video / MP3 Only</li>
-        <li>Playlist Video / Playlist MP3</li>
-        <li>Channel Videos / Channel Videos MP3</li>
-        <li>Channel Shorts / Channel Shorts MP3</li>
-      </ul>
-    </li>
-    <li>
-      <strong>Integrated ffmpeg updater:</strong> Automatically downloads and installs the latest ffmpeg build.
-    </li>
-    <li>
-      <strong>Activity log:</strong> Displays real-time progress and status messages.
-    </li>
-    <li>
-      <strong>History management:</strong> Options to delete download history.
-    </li>
-    <li>
-      <strong>Bug reporting:</strong> A built-in "Report a Bug" button to help improve the software.
-    </li>
-  </ul>
-  
-  <p>
-    This project is designed with a clean, modern GUI using Tkinter with ttkthemes and is intended for personal use with potential for further development and contributions from the community.
-  </p>
-</body>
-</html>
 
+SSTube is a powerful, open-source YouTube downloader application built with **PyQt6**. It supports multiple download modes—including single videos, playlists, channels (both videos and shorts), and MP3 extractions—making it easy to save your favorite content in the format you want.
 
-  <h1>How to Use SSTube</h1>
-  
-  <h2>Launching the App</h2>
-  <p>Simply run the SSTube executable (or run the script with Python). The main window has three sections:</p>
-  <ul>
-    <li><strong>Download:</strong> For entering URLs and selecting download modes.</li>
-    <li><strong>Activity:</strong> Displays a log of download progress and status messages.</li>
-    <li><strong>Settings:</strong> For updating ffmpeg, deleting history, and reporting bugs.</li>
-  </ul>
+## Features
 
-  <h2>Download Modes</h2>
-  
-  <h3>Single Video / MP3 Only</h3>
-  <ul>
-    <li><strong>Input:</strong> Paste the URL of a single YouTube video.</li>
-    <li><strong>Note:</strong> If the URL looks like a playlist or channel, you will be prompted to select the appropriate mode.</li>
-    <li><strong>Quality:</strong> Choose video quality (for video) or audio quality (for MP3).</li>
-  </ul>
-  
-  <h3>Playlist Video / Playlist MP3</h3>
-  <ul>
-    <li><strong>Input:</strong> Paste the URL of a YouTube playlist.</li>
-    <li><strong>Selection:</strong> A new window will list all videos from the playlist. Check the ones you wish to download.</li>
-    <li><strong>Quality:</strong> Select video or audio quality accordingly.</li>
-  </ul>
-  
-  <h3>Channel Videos / Channel Videos MP3</h3>
-  <ul>
-    <li><strong>Input:</strong> Paste the URL of a YouTube channel.</li>
-    <li><strong>Note:</strong> If the URL does not include <code>/videos</code>, it will be automatically appended.</li>
-    <li><strong>Selection:</strong> A window will list all videos (excluding shorts) for selection.</li>
-    <li><strong>Quality:</strong> Choose the desired quality.</li>
-  </ul>
-  
-  <h3>Channel Shorts / Channel Shorts MP3</h3>
-  <ul>
-    <li><strong>Input:</strong> Paste the URL of a YouTube channel.</li>
-    <li><strong>Note:</strong> If the URL does not include <code>/shorts</code>, it will be automatically appended.</li>
-    <li><strong>Selection:</strong> A window will list only the shorts for selection.</li>
-    <li><strong>Quality:</strong> Choose the desired quality.</li>
-  </ul>
-  
-  <h3>ffmpeg Updater</h3>
-  <p>In the Settings panel, click <strong>Update ffmpeg</strong>. A dialog will appear with a progress bar showing the download and extraction progress. This will automatically replace the existing <code>ffmpeg.exe</code> in the <code>bin</code> folder with the latest version.</p>
-  
-  <h3>Deleting History</h3>
-  <p>If you want to clear your download history, click the <strong>Delete History</strong> button in the Settings panel.</p>
-  
+- **Multiple Download Modes:**
+  - **Single Video / MP3 Only:** Download a single YouTube video or extract audio as MP3.
+  - **Playlist Video / Playlist MP3:** Download an entire playlist, with an option to select specific videos.
+  - **Channel Videos / Channel Videos MP3:** Download videos from a YouTube channel.
+  - **Channel Shorts / Channel Shorts MP3:** Download only the shorts from a channel.
+- **Modern, Professional GUI:**  
+  Built with PyQt6 for a responsive and user-friendly interface.
+- **Real-Time Activity Log:**  
+  Monitor download progress and view status messages.
+- **Integrated ffmpeg:**  
+  Uses an external ffmpeg binary (included in the `bin/` folder) to merge audio and video streams.
 
-  <h1>Frequently Asked Questions</h1>
-  
-  <h3>Q: What is ffmpeg and why is it needed?</h3>
-  <p><strong>A:</strong> ffmpeg is a tool used to merge video and audio streams. SSTube uses it to produce a single output file.</p>
-  
-  <h3>Q: How do I update ffmpeg?</h3>
-  <p><strong>A:</strong> Use the <em>Update ffmpeg</em> button in the Settings panel. This downloads the latest build automatically.</p>
-  
-  <h3>Q: My URL is not working. What should I do?</h3>
-  <p><strong>A:</strong> Ensure you are using the correct download mode. For example, use <code>Playlist Video</code> for a playlist URL, or <code>Channel Videos</code> for a channel URL.</p>
-  
-  <h3>Q: Can I contribute to SSTube?</h3>
-  <p><strong>A:</strong> Yes! Please see the Contributing section below for details.</p>
-  
-  <hr>
-  
-  <h1>Contributing to SSTube</h1>
-  <p>We welcome contributions to SSTube! To get started:</p>
-  
-  <h3>Fork the Repository</h3>
-  <p>Click the <strong>Fork</strong> button on GitHub to create your own copy.</p>
-  
-  <h3>Clone Your Fork</h3>
-  <pre>
-git clone https://github.com/UKR-PROJETCS/SSTube.git
-cd SSTube
-  </pre>
-  
-  <h3>Create a Branch</h3>
-  <pre>
-git checkout -b feature/YourFeature
-  </pre>
-  
-  <h3>Make Your Changes</h3>
-  <p>Follow best practices and ensure your code is well-documented.</p>
-  
-  <h3>Submit a Pull Request</h3>
-  <p>Push your branch and open a pull request. Please include a detailed description of your changes and any related issues.</p>
-  
-  <h3>Issues</h3>
-  <p>Use GitHub Issues to report bugs or suggest features.</p>
-  
-  <hr>
-  
-  <h1>License</h1>
-  <p>SSTube is released under the <strong>MIT License</strong>. You can view the full license text in the <code>LICENSE</code> file in this repository.</p>
-  <p>This license allows you to use, modify, and distribute the software with minimal restrictions.</p>
-  
-</body>
-</html>
+## Folder Structure
 
-  <p>If you encounter an issue, click <strong>Report a Bug</strong> in the Settings panel. This will open your default email client, pre-addressed to the support email (or bug reporting URL), so you can describe the issue.</p>
-</body>
-</html>
+```
+SSTube/
+├── README.md
+├── LICENSE
+├── requirements.txt
+├── .gitignore
+├── SSTube.py
+├── assets/
+│   ├── Favicon.png
+│   ├── download.png
+│   ├── activity.png
+│   └── video-favicon.png
+├── bin/
+│   └── ffmpeg.exe
+└── tests/
+    └── test_SSTube.py
+```
 
-<h1>Screenshots</h1>
+- **README.md:** Project overview, instructions, and documentation.
+- **LICENSE:** The project's license (MIT License).
+- **requirements.txt:** List of Python dependencies.
+- **.gitignore:** Files and folders to be excluded from Git version control.
+- **SSTube.py:** The single source file containing the entire application.
+- **assets/:** Contains images and icons used by the application.
+- **bin/:** Contains external binaries (e.g., `ffmpeg.exe`).
+- **tests/:** Contains test scripts for automated testing.
 
-![Single-Video](screenshots/Single-Video.png)
-![Mp3-Only](screenshots/Mp3-Only.png)
-![Playlist-Videos](screenshots/Playlist-Videos.png)
-![Playlist-Mp3](screenshots/Playlist-Mp3.png)
-![Channel-Videos](screenshots/Channel-Videos.png)
-![Channel-Videos-Mp3](screenshots/Channel-Videos-Mp3.png)
-![Channel-Shorts](screenshots/Channel-Shorts.png)
-![Channel-Shorts-Mp3](screenshots/Channel-Shorts-Mp3.png)
+## Getting Started
 
+### Prerequisites
 
+- [Python 3.8+](https://www.python.org/downloads/)
+- [Git](https://git-scm.com/)
+
+### Installation
+
+1. **Clone the Repository:**
+
+   ```bash
+   git clone https://github.com/yourusername/SSTube.git
+   cd SSTube
+   ```
+
+2. **Set Up a Virtual Environment (Recommended):**
+
+   ```bash
+   python -m venv venv
+   source venv/bin/activate      # On Windows use: venv\Scripts\activate
+   ```
+
+3. **Install Dependencies:**
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+### Running SSTube
+
+Simply run the main script:
+
+```bash
+python SSTube.py
+```
+
+The application window will open, allowing you to enter a YouTube URL (or Playlist/Channel URL) and select the desired download mode. For video modes, you can select the video quality; for MP3 modes, the best available audio is automatically used.
+
+## Usage
+
+1. **Download Page:**  
+   - Enter the URL of the video, playlist, or channel.
+   - Select the download mode from the dropdown menu.
+   - For video downloads, choose your desired quality.
+   - Click the **Download** button to add the task to the queue.
+
+2. **Activity Page:**  
+   - Monitor real-time progress and status messages as downloads are processed.
+  
+3. **Assets & Binaries:**  
+   - Make sure that the `assets/` folder contains the necessary icons.
+   - The `bin/` folder must include `ffmpeg.exe` for proper video/audio merging.
+
+## Contributing
+
+Contributions are welcome! Follow these steps to contribute:
+
+1. **Fork the Repository:**  
+   Click the **Fork** button on the GitHub page.
+
+2. **Clone Your Fork:**
+
+   ```bash
+   git clone https://github.com/yourusername/SSTube.git
+   cd SSTube
+   ```
+
+3. **Create a New Branch:**
+
+   ```bash
+   git checkout -b feature/YourFeatureName
+   ```
+
+4. **Make Your Changes:**  
+   Ensure your code is well-documented and tested.
+
+5. **Submit a Pull Request:**  
+   Push your branch and open a pull request with a detailed description of your changes.
+
+## License
+
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for more details.
+
+## Acknowledgements
+
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp) for video downloading.
+- [PyQt6](https://www.riverbankcomputing.com/software/pyqt/intro) for the GUI framework.
+- Community contributions and support.
+
+---
+
+If you encounter any issues, please use GitHub Issues to report them. Enjoy using SSTube!
+```
+
+This README.md is written in full GitHub Markdown format and covers all key aspects of your project, including features, folder structure, installation, usage, contributing, and licensing. Adjust any URLs or contributor details as needed before publishing to your repository.
