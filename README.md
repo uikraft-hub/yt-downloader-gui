@@ -31,7 +31,6 @@ SSTube is a powerful, open-source YouTube downloader application built with **Py
 - **SSTube.py:** The single source file containing the entire application.
 - **assets/:** Contains images and icons used by the application.
 - **bin/:** Contains external binaries (e.g., `ffmpeg.exe`).
-- **tests/:** Contains test scripts for automated testing.
 
 ## Getting Started
 
