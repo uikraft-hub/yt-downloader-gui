@@ -124,6 +124,7 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 
 ---
 
-If you encounter any issues, please use GitHub Issues to report them. Enjoy using SSTube!
+
 ```
+If you encounter any issues, please use GitHub Issues to report them. Enjoy using SSTube!
 
