@@ -1,6 +1,3 @@
-Below is a full example of an updated README.md in GitHub Markdown format for your project:
-
-
 # SSTube
 
 [![Status](https://img.shields.io/badge/status-active-47c219.svg)](https://github.com/yourusername/SSTube)
@@ -131,4 +128,3 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 If you encounter any issues, please use GitHub Issues to report them. Enjoy using SSTube!
 ```
 
-This README.md is written in full GitHub Markdown format and covers all key aspects of your project, including features, folder structure, installation, usage, contributing, and licensing. Adjust any URLs or contributor details as needed before publishing to your repository.
