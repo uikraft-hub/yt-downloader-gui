@@ -44,7 +44,7 @@ SSTube is a powerful, open-source YouTube downloader application built with **Py
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/yourusername/SSTube.git
+   git clone https://github.com/UKR-PROJECT/SSTube.git
    cd SSTube
    ```
 
@@ -96,7 +96,7 @@ Contributions are welcome! Follow these steps to contribute:
 2. **Clone Your Fork:**
 
    ```bash
-   git clone https://github.com/yourusername/SSTube.git
+   git clone https://github.com/UKR-PROJECTS/SSTube.git
    cd SSTube
    ```
 
