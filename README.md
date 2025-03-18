@@ -1,6 +1,6 @@
 # SSTube
 
-[![Status](https://img.shields.io/badge/status-active-47c219.svg)](https://github.com/yourusername/SSTube)
+[![Status](https://img.shields.io/badge/status-active-47c219.svg)](https://github.com/UKR-PROJECTS/SSTube)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 <p align="center">
