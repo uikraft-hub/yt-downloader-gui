@@ -6,7 +6,7 @@
   <img src="assets/Favicon.png" width="120" height="120" alt="SSTube Icon" />
 </p>
 
-**SSTube** is a powerful, open-source YouTube downloader application built with **PyQt6** and **yt-dlp**. This release (v2.0) introduces enhanced cookie handling through a browser extension, multiple download modes (videos, playlists, channels, shorts, and MP3 extraction), and a refined user interface.
+**SSTube** is a powerful, open-source YouTube downloader application built with **PyQt6** and **yt-dlp**. This release (v2.1.0) introduces enhanced cookie handling through a browser extension, multiple download modes (videos, playlists, channels, shorts, and MP3 extraction), and a refined user interface.
 
 ---
 
