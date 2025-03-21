@@ -49,6 +49,8 @@ class SSTubeGUI(QMainWindow):
         self.use_cookies = False
         # Default browser for cookie extraction (will be set by the user)
         self.cookie_browser = "chrome"
+        # Cookie file (if user exports using the extension)
+        self.cookie_file = None
 
         # Load sidebar icons from assets folder (settings icon removed)
         self.icons = {
@@ -164,6 +166,8 @@ class SSTubeGUI(QMainWindow):
             return "edge"
         elif "opera" in name:
             return "opera"
+        elif "brave" in name:
+            return "brave"
         else:
             return browser_name.lower()
 
@@ -172,51 +176,149 @@ class SSTubeGUI(QMainWindow):
             QMessageBox.information(
                 self,
                 "Login",
-                "You are already logged in. Your browser's cookies are being used.",
+                "You are already logged in. Your cookie file is being used.",
             )
-        else:
-            installed = self.get_installed_browsers()
-            # Show the list of installed browsers to the user
-            browser_choice, ok = QInputDialog.getItem(
-                self,
-                "Select Browser",
-                "Select the browser you use for YouTube login:",
-                installed,
-                0,
-                False,
+            return
+
+        installed = self.get_installed_browsers()
+        # Show the list of installed browsers to the user.
+        browser_choice, ok = QInputDialog.getItem(
+            self,
+            "Select Browser",
+            "Select the browser you use for YouTube login:",
+            installed,
+            0,
+            False,
+        )
+        if not ok:
+            QMessageBox.information(self, "Login", "Login canceled.")
+            return
+        self.cookie_browser = self.map_browser(browser_choice)
+
+        # Ask if the user has installed the cookie extension.
+        reply = QMessageBox.question(
+            self,
+            "Cookie Extension",
+            "Have you installed the 'Get cookies.txt Locally' extension?\n\n"
+            "If not, click No and you will be prompted to open the extension page in your browser.\n"
+            "If you have installed the extension, click Yes and then select the exported cookie file for YouTube.\n\n"
+            "Install it from:\nhttps://chromewebstore.google.com/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+        )
+        # Dictionary mapping browser identifiers to common executable paths.
+        browser_paths = {
+            "chrome": r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+            "firefox": r"C:\Program Files\Mozilla Firefox\firefox.exe",
+            "edge": r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+            "opera": r"C:\Program Files\Opera\launcher.exe",
+            "brave": r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe",
+        }
+        exe_path = browser_paths.get(self.cookie_browser, None)
+        if reply == QMessageBox.StandardButton.Yes:
+            # Ask user to select the exported cookie file.
+            cookie_file, _ = QFileDialog.getOpenFileName(
+                self, "Select Cookie File", "", "Text Files (*.txt);;All Files (*)"
             )
-            if ok and browser_choice:
-                self.cookie_browser = self.map_browser(browser_choice)
+            if cookie_file:
+                # Validate the cookie file by checking for "youtube.com" in its content.
+                try:
+                    with open(cookie_file, "r", encoding="utf-8", errors="ignore") as f:
+                        data = f.read()
+                    if "youtube.com" not in data.lower():
+                        QMessageBox.warning(
+                            self,
+                            "Invalid Cookie File",
+                            "The selected cookie file does not contain YouTube cookies.\n"
+                            "Please select a correct cookie file. Go to YouTube.com, log in, click the extension icon, and export the cookies.",
+                        )
+                        self.use_cookies = False
+                        return
+                except Exception as e:
+                    QMessageBox.warning(
+                        self, "Cookie File Error", f"Error reading cookie file: {e}"
+                    )
+                    self.use_cookies = False
+                    return
+                self.cookie_file = cookie_file
+                self.use_cookies = True
             else:
-                self.cookie_browser = "chrome"
-            login_url = "https://accounts.google.com/ServiceLogin?service=youtube"
-            # Dictionary mapping browser identifiers to common executable paths
-            browser_paths = {
-                "chrome": r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
-                "firefox": r"C:\Program Files\Mozilla Firefox\firefox.exe",
-                "edge": r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
-                "opera": r"C:\Program Files\Opera\launcher.exe",
-                "brave": r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe",
-            }
-            exe_path = browser_paths.get(self.cookie_browser, None)
+                QMessageBox.warning(
+                    self,
+                    "Cookie File",
+                    "No cookie file selected. Cookie feature will be disabled.",
+                )
+                self.use_cookies = False
+                return
+        else:
+            # Open the extension URL in the selected browser.
+            extension_url = "https://chromewebstore.google.com/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc"
             if exe_path and os.path.exists(exe_path):
                 controller = webbrowser.BackgroundBrowser(exe_path)
-                controller.open(login_url)
+                controller.open(extension_url)
             else:
-                # Fallback to default if path not found
-                webbrowser.open(login_url)
-            # Ask user to confirm after successful login
+                webbrowser.open(extension_url)
             QMessageBox.information(
                 self,
-                "Login",
-                f"Your selected browser ({self.cookie_browser}) has been opened.\n"
-                "Please log in to your YouTube account.\n"
-                "After logging in, click OK to continue.",
+                "Cookie Extension",
+                "The 'Get cookies.txt Locally' extension page has been opened in your selected browser.\n"
+                "Please install the extension and go to YouTube.com to log in to your account.\n"
+                "After logging in, click the extension icon, export your cookies, and then select the exported cookie file.",
             )
-            self.use_cookies = True
-            QMessageBox.information(
-                self, "Login", "Cookie is now being used for downloads."
+            # Now, prompt the user to select the exported cookie file.
+            cookie_file, _ = QFileDialog.getOpenFileName(
+                self, "Select Cookie File", "", "Text Files (*.txt);;All Files (*)"
             )
+            if cookie_file:
+                try:
+                    with open(cookie_file, "r", encoding="utf-8", errors="ignore") as f:
+                        data = f.read()
+                    if "youtube.com" not in data.lower():
+                        QMessageBox.warning(
+                            self,
+                            "Invalid Cookie File",
+                            "The selected cookie file does not contain YouTube cookies.\n"
+                            "Please select a correct cookie file.",
+                        )
+                        self.use_cookies = False
+                        return
+                except Exception as e:
+                    QMessageBox.warning(
+                        self, "Cookie File Error", f"Error reading cookie file: {e}"
+                    )
+                    self.use_cookies = False
+                    return
+                self.cookie_file = cookie_file
+                self.use_cookies = True
+            else:
+                QMessageBox.warning(
+                    self,
+                    "Cookie File",
+                    "No cookie file selected. Cookie feature will be disabled.",
+                )
+                self.use_cookies = False
+                return
+
+        # If cookie feature is not enabled, abort.
+        if not self.use_cookies:
+            return
+
+        # Open YouTube login page in the selected browser for confirmation.
+        login_url = "https://accounts.google.com/ServiceLogin?service=youtube"
+        if exe_path and os.path.exists(exe_path):
+            controller = webbrowser.BackgroundBrowser(exe_path)
+            controller.open(login_url)
+        else:
+            webbrowser.open(login_url)
+        QMessageBox.information(
+            self,
+            "Login",
+            f"Your selected browser ({self.cookie_browser}) has been opened.\n"
+            "Please log in to your YouTube account.\n"
+            "After logging in, click OK to continue.",
+        )
+        QMessageBox.information(
+            self, "Login", "Cookie file is now being used for downloads."
+        )
 
     def show_about(self):
         QMessageBox.information(
@@ -344,7 +446,6 @@ class SSTubeGUI(QMainWindow):
     def mode_changed(self, text):
         self.mode_var = text
         if "MP3" in text:
-            # For MP3 modes, do not show any quality selection
             self.video_quality_label.hide()
             self.video_quality_combo.hide()
         else:
@@ -367,7 +468,6 @@ class SSTubeGUI(QMainWindow):
             )
             return
 
-        # Validate URL based on mode:
         if mode in ["Single Video", "MP3 Only"]:
             if "list=" in url or "youtube.com/@" in url or "/channel/" in url:
                 QMessageBox.critical(
@@ -658,14 +758,18 @@ class SSTubeGUI(QMainWindow):
                 ],
             }
         else:
-            QMessageBox.critical(self, "Error", "Invalid download mode.")
+            QTimer.singleShot(
+                0, lambda: QMessageBox.critical(self, "Error", "Invalid download mode.")
+            )
             self.downloading = False
             return
 
-        # If login was used, add cookiesfrombrowser option using the chosen browser
-        if self.use_cookies:
-            ydl_opts["cookiesfrombrowser"] = (self.cookie_browser,)
-            self.log_message("Login successful, using cookies from browser.")
+        # Use cookie file only if provided; do not attempt automatic extraction
+        if self.use_cookies and self.cookie_file:
+            ydl_opts["cookiefile"] = self.cookie_file
+            self.log_message("Using cookie file for downloads.")
+        elif self.use_cookies and not self.cookie_file:
+            self.log_message("Cookie feature enabled but no cookie file provided.")
 
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -675,7 +779,19 @@ class SSTubeGUI(QMainWindow):
                 ydl.download([url])
                 self.log_message(f"Download completed: {title}")
         except Exception as e:
-            QMessageBox.critical(self, "Error", f"Download failed: {e}")
+
+            def show_error():
+                QMessageBox.critical(
+                    self,
+                    "Error",
+                    f"Download failed: {e}\n\n"
+                    "If you see 'Failed to decrypt with DPAPI', please ensure:\n"
+                    "- You are running SSTube under the same user as Chrome.\n"
+                    "- Chrome is closed before downloading.\n"
+                    "- Alternatively, export cookies manually using the extension.",
+                )
+
+            QTimer.singleShot(0, show_error)
             self.log_message("Download failed")
         finally:
             self.downloading = False
