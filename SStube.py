@@ -11,10 +11,11 @@ from PyQt6.QtCore import *
 # Define current version of SSTube (for reference)
 CURRENT_VERSION = "2.0"
 
+
 class SSTubeGUI(QMainWindow):
     updateStatusSignal = pyqtSignal(str)
     logMessageSignal = pyqtSignal(str)
-    
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("SSTube")
@@ -51,8 +52,12 @@ class SSTubeGUI(QMainWindow):
 
         # Load sidebar icons from assets folder (settings icon removed)
         self.icons = {
-            "download": self.load_icon(os.path.join(self.base_dir, "assets", "download.png")),
-            "activity": self.load_icon(os.path.join(self.base_dir, "assets", "activity.png"))
+            "download": self.load_icon(
+                os.path.join(self.base_dir, "assets", "download.png")
+            ),
+            "activity": self.load_icon(
+                os.path.join(self.base_dir, "assets", "activity.png")
+            ),
         }
 
         # Load video favicon for selection dialogs
@@ -60,7 +65,10 @@ class SSTubeGUI(QMainWindow):
             vf_path = os.path.join(self.base_dir, "assets", "video-favicon.png")
             self.video_favicon = QIcon(vf_path)
             self.video_favicon_pixmap = QPixmap(vf_path).scaled(
-                16, 16, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation
+                16,
+                16,
+                Qt.AspectRatioMode.KeepAspectRatio,
+                Qt.TransformationMode.SmoothTransformation,
             )
         except Exception as e:
             print("Error loading video favicon:", e)
@@ -127,7 +135,10 @@ class SSTubeGUI(QMainWindow):
         browsers = []
         try:
             import winreg
-            key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Clients\StartMenuInternet")
+
+            key = winreg.OpenKey(
+                winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Clients\StartMenuInternet"
+            )
             i = 0
             while True:
                 try:
@@ -158,14 +169,21 @@ class SSTubeGUI(QMainWindow):
 
     def open_login(self):
         if self.use_cookies:
-            QMessageBox.information(self, "Login", "You are already logged in. Your browser's cookies are being used.")
+            QMessageBox.information(
+                self,
+                "Login",
+                "You are already logged in. Your browser's cookies are being used.",
+            )
         else:
             installed = self.get_installed_browsers()
             # Show the list of installed browsers to the user
             browser_choice, ok = QInputDialog.getItem(
-                self, "Select Browser",
+                self,
+                "Select Browser",
                 "Select the browser you use for YouTube login:",
-                installed, 0, False
+                installed,
+                0,
+                False,
             )
             if ok and browser_choice:
                 self.cookie_browser = self.map_browser(browser_choice)
@@ -188,17 +206,25 @@ class SSTubeGUI(QMainWindow):
                 # Fallback to default if path not found
                 webbrowser.open(login_url)
             # Ask user to confirm after successful login
-            QMessageBox.information(self, "Login",
-                                    f"Your selected browser ({self.cookie_browser}) has been opened.\n"
-                                    "Please log in to your YouTube account.\n"
-                                    "After logging in, click OK to continue.")
+            QMessageBox.information(
+                self,
+                "Login",
+                f"Your selected browser ({self.cookie_browser}) has been opened.\n"
+                "Please log in to your YouTube account.\n"
+                "After logging in, click OK to continue.",
+            )
             self.use_cookies = True
-            QMessageBox.information(self, "Login", "Cookie is now being used for downloads.")
+            QMessageBox.information(
+                self, "Login", "Cookie is now being used for downloads."
+            )
 
     def show_about(self):
-        QMessageBox.information(self, "About SSTube",
-                                "SSTube Video Downloader\nVersion 2.0\nDeveloped by UKR\n\n"
-                                "Report bugs via our support channel.")
+        QMessageBox.information(
+            self,
+            "About SSTube",
+            "SSTube Video Downloader\nVersion 2.0\nDeveloped by UKR\n\n"
+            "Report bugs via our support channel.",
+        )
 
     def update_status(self, message):
         self.updateStatusSignal.emit(message)
@@ -282,7 +308,7 @@ class SSTubeGUI(QMainWindow):
             "Channel Videos",
             "Channel Videos MP3",
             "Channel Shorts",
-            "Channel Shorts MP3"
+            "Channel Shorts MP3",
         ]
         self.mode_combo.addItems(modes)
         self.mode_combo.currentTextChanged.connect(self.mode_changed)
@@ -291,16 +317,18 @@ class SSTubeGUI(QMainWindow):
         # Quality selection widgets (only for video modes)
         self.video_quality_label = QLabel("Video Quality:")
         self.video_quality_combo = QComboBox()
-        self.video_quality_combo.addItems([
-            "Best Available",
-            "4320p 8K",
-            "2160p 4K",
-            "1440p 2K",
-            "1080p Full HD",
-            "720p HD",
-            "480p Standard",
-            "360p Medium"
-        ])
+        self.video_quality_combo.addItems(
+            [
+                "Best Available",
+                "4320p 8K",
+                "2160p 4K",
+                "1440p 2K",
+                "1080p Full HD",
+                "720p HD",
+                "480p Standard",
+                "360p Medium",
+            ]
+        )
         layout.addWidget(self.video_quality_label)
         layout.addWidget(self.video_quality_combo)
         # When an MP3 mode is selected, hide video quality options.
@@ -334,33 +362,57 @@ class SSTubeGUI(QMainWindow):
         save_path = self.path_entry.text().strip()
         mode = self.mode_combo.currentText()
         if not url or not save_path:
-            QMessageBox.critical(self, "Error", "Please enter a URL and select a save path.")
+            QMessageBox.critical(
+                self, "Error", "Please enter a URL and select a save path."
+            )
             return
 
         # Validate URL based on mode:
         if mode in ["Single Video", "MP3 Only"]:
             if "list=" in url or "youtube.com/@" in url or "/channel/" in url:
-                QMessageBox.critical(self, "Error",
-                                     "The URL appears to be a playlist or channel. Please select the appropriate mode.")
+                QMessageBox.critical(
+                    self,
+                    "Error",
+                    "The URL appears to be a playlist or channel. Please select the appropriate mode.",
+                )
                 return
         elif mode in ["Playlist Video", "Playlist MP3"]:
             if "list=" not in url:
-                QMessageBox.critical(self, "Error",
-                                     "The URL does not appear to be a playlist. Please select the appropriate mode.")
+                QMessageBox.critical(
+                    self,
+                    "Error",
+                    "The URL does not appear to be a playlist. Please select the appropriate mode.",
+                )
                 return
-        elif mode in ["Channel Videos", "Channel Videos MP3", "Channel Shorts", "Channel Shorts MP3"]:
+        elif mode in [
+            "Channel Videos",
+            "Channel Videos MP3",
+            "Channel Shorts",
+            "Channel Shorts MP3",
+        ]:
             if ("youtube.com/@" not in url) and ("/channel/" not in url):
-                QMessageBox.critical(self, "Error",
-                                     "The URL does not appear to be a channel. Please select the appropriate mode.")
+                QMessageBox.critical(
+                    self,
+                    "Error",
+                    "The URL does not appear to be a channel. Please select the appropriate mode.",
+                )
                 return
             if "?" in url:
-                QMessageBox.critical(self, "Error",
-                                     "Please use a clean channel URL (e.g. https://youtube.com/@username) without query parameters.")
+                QMessageBox.critical(
+                    self,
+                    "Error",
+                    "Please use a clean channel URL (e.g. https://youtube.com/@username) without query parameters.",
+                )
                 return
 
         if mode in ["Playlist Video", "Playlist MP3"]:
             self.process_playlist(url, save_path, mode)
-        elif mode in ["Channel Videos", "Channel Videos MP3", "Channel Shorts", "Channel Shorts MP3"]:
+        elif mode in [
+            "Channel Videos",
+            "Channel Videos MP3",
+            "Channel Shorts",
+            "Channel Shorts MP3",
+        ]:
             self.process_channel(url, save_path, mode)
         else:
             task = {
@@ -368,7 +420,11 @@ class SSTubeGUI(QMainWindow):
                 "save_path": save_path,
                 "mode": mode,
                 "audio_quality": self.audio_quality_default if "MP3" in mode else None,
-                "video_quality": self.video_quality_combo.currentText() if mode not in ["MP3 Only"] else "Best Available"
+                "video_quality": (
+                    self.video_quality_combo.currentText()
+                    if mode not in ["MP3 Only"]
+                    else "Best Available"
+                ),
             }
             self.download_queue.append(task)
             self.log_message("Task added to queue")
@@ -427,8 +483,14 @@ class SSTubeGUI(QMainWindow):
                         "url": video_url,
                         "save_path": save_path,
                         "mode": mode,
-                        "audio_quality": self.audio_quality_default if "MP3" in mode else None,
-                        "video_quality": self.video_quality_combo.currentText() if mode == "Playlist Video" else "Best Available"
+                        "audio_quality": (
+                            self.audio_quality_default if "MP3" in mode else None
+                        ),
+                        "video_quality": (
+                            self.video_quality_combo.currentText()
+                            if mode == "Playlist Video"
+                            else "Best Available"
+                        ),
                     }
                     self.download_queue.append(task)
                     count += 1
@@ -458,9 +520,17 @@ class SSTubeGUI(QMainWindow):
                 return
             entries = channel_info["entries"]
             if mode in ["Channel Videos", "Channel Videos MP3"]:
-                filtered = [entry for entry in entries if entry and ("shorts" not in entry.get("url", "").lower())]
+                filtered = [
+                    entry
+                    for entry in entries
+                    if entry and ("shorts" not in entry.get("url", "").lower())
+                ]
             else:
-                filtered = [entry for entry in entries if entry and ("shorts" in entry.get("url", "").lower())]
+                filtered = [
+                    entry
+                    for entry in entries
+                    if entry and ("shorts" in entry.get("url", "").lower())
+                ]
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to extract channel info: {e}")
             return
@@ -503,8 +573,14 @@ class SSTubeGUI(QMainWindow):
                         "url": video_url,
                         "save_path": save_path,
                         "mode": mode,
-                        "audio_quality": self.audio_quality_default if "MP3" in mode else None,
-                        "video_quality": self.video_quality_combo.currentText() if mode in ["Channel Videos", "Channel Shorts"] else "Best Available"
+                        "audio_quality": (
+                            self.audio_quality_default if "MP3" in mode else None
+                        ),
+                        "video_quality": (
+                            self.video_quality_combo.currentText()
+                            if mode in ["Channel Videos", "Channel Shorts"]
+                            else "Best Available"
+                        ),
                     }
                     self.download_queue.append(task)
                     count += 1
@@ -542,7 +618,12 @@ class SSTubeGUI(QMainWindow):
         mode = task["mode"]
         video_quality = task.get("video_quality", "Best Available")
         self.update_status(f"Starting download: {url}")
-        if mode in ["Single Video", "Playlist Video", "Channel Videos", "Channel Shorts"]:
+        if mode in [
+            "Single Video",
+            "Playlist Video",
+            "Channel Videos",
+            "Channel Shorts",
+        ]:
             ydl_opts = {
                 "outtmpl": os.path.join(save_path, "%(title)s.%(ext)s"),
                 "ffmpeg_location": os.path.join(self.base_dir, "bin", "ffmpeg.exe"),
@@ -553,19 +634,28 @@ class SSTubeGUI(QMainWindow):
             }
             if video_quality != "Best Available":
                 height = video_quality.split("p")[0]
-                ydl_opts["format"] = f"bestvideo[ext=mp4][height<={height}]+bestaudio[ext=m4a]/mp4"
-        elif mode in ["MP3 Only", "Playlist MP3", "Channel Videos MP3", "Channel Shorts MP3"]:
+                ydl_opts["format"] = (
+                    f"bestvideo[ext=mp4][height<={height}]+bestaudio[ext=m4a]/mp4"
+                )
+        elif mode in [
+            "MP3 Only",
+            "Playlist MP3",
+            "Channel Videos MP3",
+            "Channel Shorts MP3",
+        ]:
             ydl_opts = {
                 "outtmpl": os.path.join(save_path, "%(title)s.%(ext)s"),
                 "ffmpeg_location": os.path.join(self.base_dir, "bin", "ffmpeg.exe"),
                 "noplaylist": True,
                 "progress_hooks": [self.update_progress],
                 "format": "bestaudio/best",
-                "postprocessors": [{
-                    "key": "FFmpegExtractAudio",
-                    "preferredcodec": "mp3",
-                    "preferredquality": self.audio_quality_default,
-                }],
+                "postprocessors": [
+                    {
+                        "key": "FFmpegExtractAudio",
+                        "preferredcodec": "mp3",
+                        "preferredquality": self.audio_quality_default,
+                    }
+                ],
             }
         else:
             QMessageBox.critical(self, "Error", "Invalid download mode.")
@@ -595,9 +685,13 @@ class SSTubeGUI(QMainWindow):
         if d["status"] == "downloading":
             percent_str = d.get("_percent_str", "0%").strip()
             speed = d.get("_speed_str", "0 KB/s").strip()
-            self.log_message(f"{d['info_dict'].get('title','Unknown')} - {percent_str} at {speed}")
+            self.log_message(
+                f"{d['info_dict'].get('title','Unknown')} - {percent_str} at {speed}"
+            )
         elif d["status"] == "finished":
-            self.log_message(f"{d['info_dict'].get('title','Unknown')} - Download finished.")
+            self.log_message(
+                f"{d['info_dict'].get('title','Unknown')} - Download finished."
+            )
 
 
 if __name__ == "__main__":
