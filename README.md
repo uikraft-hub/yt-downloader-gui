@@ -87,7 +87,7 @@ SSTube/
 
 1. **Clone or Download** this repository:
    ```bash
-   git clone https://github.com/yourusername/SSTube.git
+   git clone https://github.com/UKR-PROJECTS/SSTube.git
    cd SSTube
    ```
 
