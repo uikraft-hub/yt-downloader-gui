@@ -1,6 +1,7 @@
 import os
 import sys
 import threading
+import webbrowser
 import yt_dlp
 
 from PyQt6.QtWidgets import *
@@ -8,7 +9,7 @@ from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 
 # Define current version of SSTube (for reference)
-CURRENT_VERSION = "1.0"
+CURRENT_VERSION = "2.0"
 
 class SSTubeGUI(QMainWindow):
     updateStatusSignal = pyqtSignal(str)
@@ -17,7 +18,7 @@ class SSTubeGUI(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("SSTube")
-        self.resize(1100, 750)
+        self.resize(400, 300)
 
         # Determine base directory (works for both script and frozen exe)
         if getattr(sys, "frozen", False):
@@ -42,6 +43,11 @@ class SSTubeGUI(QMainWindow):
         # For MP3 modes we now always download best available (hardcoded as "320")
         self.audio_quality_default = "320"
         self.video_quality = "Best Available"  # For video modes
+
+        # Use cookies from browser if user logs in
+        self.use_cookies = False
+        # Default browser for cookie extraction (will be set by the user)
+        self.cookie_browser = "chrome"
 
         # Load sidebar icons from assets folder (settings icon removed)
         self.icons = {
@@ -108,14 +114,90 @@ class SSTubeGUI(QMainWindow):
         exit_action = QAction("Exit", self)
         exit_action.triggered.connect(self.close)
         file_menu.addAction(exit_action)
+        # New Login action added
+        login_action = QAction("Login", self)
+        login_action.triggered.connect(self.open_login)
+        file_menu.addAction(login_action)
         help_menu = menubar.addMenu("Help")
         about_action = QAction("About", self)
         about_action.triggered.connect(self.show_about)
         help_menu.addAction(about_action)
 
+    def get_installed_browsers(self):
+        browsers = []
+        try:
+            import winreg
+            key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Clients\StartMenuInternet")
+            i = 0
+            while True:
+                try:
+                    subkey_name = winreg.EnumKey(key, i)
+                    browsers.append(subkey_name)
+                    i += 1
+                except OSError:
+                    break
+        except Exception:
+            pass
+        if not browsers:
+            # Fallback default list
+            browsers = ["Google Chrome", "Mozilla Firefox", "Microsoft Edge"]
+        return browsers
+
+    def map_browser(self, browser_name):
+        name = browser_name.lower()
+        if "chrome" in name:
+            return "chrome"
+        elif "firefox" in name:
+            return "firefox"
+        elif "edge" in name:
+            return "edge"
+        elif "opera" in name:
+            return "opera"
+        else:
+            return browser_name.lower()
+
+    def open_login(self):
+        if self.use_cookies:
+            QMessageBox.information(self, "Login", "You are already logged in. Your browser's cookies are being used.")
+        else:
+            installed = self.get_installed_browsers()
+            # Show the list of installed browsers to the user
+            browser_choice, ok = QInputDialog.getItem(
+                self, "Select Browser",
+                "Select the browser you use for YouTube login:",
+                installed, 0, False
+            )
+            if ok and browser_choice:
+                self.cookie_browser = self.map_browser(browser_choice)
+            else:
+                self.cookie_browser = "chrome"
+            login_url = "https://accounts.google.com/ServiceLogin?service=youtube"
+            # Dictionary mapping browser identifiers to common executable paths
+            browser_paths = {
+                "chrome": r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+                "firefox": r"C:\Program Files\Mozilla Firefox\firefox.exe",
+                "edge": r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+                "opera": r"C:\Program Files\Opera\launcher.exe",
+                "brave": r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe",
+            }
+            exe_path = browser_paths.get(self.cookie_browser, None)
+            if exe_path and os.path.exists(exe_path):
+                controller = webbrowser.BackgroundBrowser(exe_path)
+                controller.open(login_url)
+            else:
+                # Fallback to default if path not found
+                webbrowser.open(login_url)
+            # Ask user to confirm after successful login
+            QMessageBox.information(self, "Login",
+                                    f"Your selected browser ({self.cookie_browser}) has been opened.\n"
+                                    "Please log in to your YouTube account.\n"
+                                    "After logging in, click OK to continue.")
+            self.use_cookies = True
+            QMessageBox.information(self, "Login", "Cookie is now being used for downloads.")
+
     def show_about(self):
         QMessageBox.information(self, "About SSTube",
-                                "SSTube Video Downloader\nVersion 2.0\nDeveloped by Your Name\n\n"
+                                "SSTube Video Downloader\nVersion 2.0\nDeveloped by UKR\n\n"
                                 "Report bugs via our support channel.")
 
     def update_status(self, message):
@@ -489,6 +571,11 @@ class SSTubeGUI(QMainWindow):
             QMessageBox.critical(self, "Error", "Invalid download mode.")
             self.downloading = False
             return
+
+        # If login was used, add cookiesfrombrowser option using the chosen browser
+        if self.use_cookies:
+            ydl_opts["cookiesfrombrowser"] = (self.cookie_browser,)
+            self.log_message("Login successful, using cookies from browser.")
 
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
