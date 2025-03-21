@@ -139,7 +139,7 @@ SSTube/
 
 ## Screenshots
 
-![Screenshot](https://github.com/user-attachments/screenshots/GUI.png)
+![Screenshot](https://github.com/UKR-PROJECTS/SSTube/screenshots/GUI.png)
 
 ---
 
