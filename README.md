@@ -139,7 +139,9 @@ SSTube/
 
 ## Screenshots
 
-![Screenshot](https://github.com/UKR-PROJECTS/SSTube/tree/main/screenshots/GUI.png)
+<p align="center">
+  <img src="screenshots/GUI.png"/>
+</p>
 
 ---
 
