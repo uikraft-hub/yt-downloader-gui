@@ -141,11 +141,10 @@ SSTube/
 
 *(Optional – include images from the `screenshots/` folder if desired.)*
 
-```html
 <p align="center">
   <img src="screenshots/GUI.png" width="600" height="400" alt="SSTube GUI" />
 </p>
-```
+
 
 ---
 
