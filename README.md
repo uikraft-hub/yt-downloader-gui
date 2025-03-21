@@ -191,4 +191,4 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 **Enjoy using SSTube!** If you encounter any issues or have suggestions, please open an issue or submit a pull request.
 ```
 
-This README.md provides a complete overview of SSTube v2.0 with detailed instructions on using the cookie extension feature, installation, usage, building, and contribution guidelines.
+This README.md provides a complete overview of SSTube v2.1.0 with detailed instructions on using the cookie extension feature, installation, usage, building, and contribution guidelines.
