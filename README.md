@@ -132,7 +132,9 @@ SSTube/
 
 ## Screenshots
 
-*(Optional — include images from the `screenshots/` folder if desired.)*
+<p align="center">
+  <img src="screenshots/GUI.png" width="600" height="400" alt="Screenshots" />
+</p>
 
 ---
 
