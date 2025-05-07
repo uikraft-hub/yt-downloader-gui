@@ -1,4 +1,4 @@
-# SSTube v2.0
+# SSTube v2.2.0
 
 [![Status](https://img.shields.io/badge/status-active-47c219.svg)](#) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -6,47 +6,54 @@
   <img src="assets/Favicon.png" width="120" height="120" alt="SSTube Icon" />
 </p>
 
-**SSTube** is a powerful, open-source YouTube downloader application built with **PyQt6** and **yt-dlp**. This release (v2.0) introduces enhanced cookie handling through a browser extension, multiple download modes (videos, playlists, channels, shorts, and MP3 extraction), and a refined user interface.
+**SSTube** is a powerful, open-source YouTube downloader application built with **PyQt6** and **yt-dlp**. Version **2.2.0** brings you an **automatic updater** for yt-dlp, so you’re always running the latest downloader backend, plus all the familiar download modes and cookie-based authentication you love.
 
 ---
 
 ## Features
 
-- **Multiple Download Modes**
+- **Automatic yt-dlp Updater**  
+  - **GitHub Release Check**  
+    On startup, SSTube will ask if you’d like to check for a new yt-dlp release on GitHub.  
+  - **Seamless Download & Replace**  
+    Fetches the latest `yt-dlp.exe`, replaces your existing copy, and makes it executable—no manual steps required.
+
+- **Multiple Download Modes**  
   - **Single Video / MP3 Only**  
-    Download a single YouTube video or extract its audio as MP3.
+    Download a single YouTube video or extract its audio as MP3.  
   - **Playlist Video / Playlist MP3**  
-    Download an entire playlist with an option to select specific videos.
+    Download an entire playlist with the option to include only selected videos.  
   - **Channel Videos / Channel Videos MP3**  
-    Download all videos (or extract audio) from a YouTube channel.
+    Download all videos (or just their audio) from a YouTube channel.  
   - **Channel Shorts / Channel Shorts MP3**  
-    Focus on downloading YouTube Shorts.
+    Focus exclusively on downloading YouTube Shorts content.
 
-- **Cookie Extension Support**
-  - **Secure Cookie File Import:**  
-    Instead of automatic browser cookie extraction, SSTube now relies on a cookie file exported by the **"Get cookies.txt Locally"** extension.
-  - **Guided Workflow:**  
-    If the extension isn’t installed, SSTube will automatically open the extension’s page in your selected browser, then prompt you to export and select your YouTube cookie file.
-  - **Validation:**  
-    SSTube verifies that the selected cookie file contains YouTube cookies to ensure proper authentication.
+- **Cookie Extension Support**  
+  - **Secure Cookie File Import**  
+    SSTube uses a cookie file exported by the **“Get cookies.txt Locally”** extension for authentication.  
+  - **Guided Workflow**  
+    If the extension isn’t installed, SSTube opens its store page in your chosen browser and guides you through export and selection.  
+  - **Validation**  
+    Ensures the selected cookie file actually contains YouTube cookies before proceeding.
 
-- **Modern PyQt6 Interface**
-  - Intuitive sidebar navigation for quick access to Download and Activity pages.
-  - Real-time status updates and activity logs.
+- **Modern PyQt6 Interface**  
+  - Intuitive sidebar navigation between **Download** and **Activity** pages.  
+  - Real-time status updates and a scrolling activity log.
 
-- **Flexible Quality Options**
-  - Choose from “Best Available” or specific resolutions (8K, 4K, 1080p, etc.) for video downloads.
-  - MP3 extraction defaults to 320 kbps audio quality.
+- **Flexible Quality Options**  
+  - Choose **Best Available** or specific resolutions (8K, 4K, 1080p, etc.) for video.  
+  - MP3 extraction defaults to **320 kbps** audio quality.
 
-- **Lightweight & Easy to Use**
-  - Single-file application (`SSTube.py`) plus a few assets.
-  - Minimal external dependencies.
+- **Lightweight & Easy to Use**  
+  - Single-file application (`SSTube.py`) plus a small assets folder.  
+  - Minimal external dependencies; runs on Windows, macOS, and Linux (with locally installed `ffmpeg`).
 
 ---
 
 ## Folder Structure
 
 ```
+
 SSTube/
 ├── SSTube.py
 ├── LICENSE
@@ -59,87 +66,93 @@ SSTube/
 │   ├── activity.png
 │   └── video-favicon.png
 ├── bin/
-│   └── ffmpeg.exe
+│   ├── ffmpeg.exe
+│   └── yt-dlp.exe       # Automatically updated by the Updater
 └── screenshots/
-    └── (optional images or screenshots)
-```
 
-- **SSTube.py** — Main application code (PyQt6 & yt-dlp logic).
-- **requirements.txt** — Python dependencies.
-- **assets/** — Icons and images for the GUI.
-- **bin/** — Contains `ffmpeg.exe` (required for merging audio/video streams).
-- **screenshots/** — Optional folder for screenshots and additional images.
+
+````
+
+- **SSTube.py** — Main application logic (PyQt6 GUI, yt-dlp integration, updater).  
+- **requirements.txt** — Python dependencies list.  
+- **assets/** — GUI icons and images.  
+- **bin/** — Bundled `ffmpeg.exe` and `yt-dlp.exe`.  
+- **screenshots/** — Add your own screenshots for documentation.
 
 ---
 
 ## Requirements
 
-- [Python 3.8+](https://www.python.org/downloads/)
-- [ffmpeg](https://ffmpeg.org/) (already included in `bin/ffmpeg.exe` on Windows)
-- [yt-dlp](https://github.com/yt-dlp/yt-dlp)
-- [PyQt6](https://pypi.org/project/PyQt6/)
+- **Python 3.8+**  
+- **ffmpeg** (included in `bin/ffmpeg.exe` on Windows; install separately on other OS)  
+- **yt-dlp** (managed automatically by SSTube’s updater)  
+- **PyQt6**  
 
-*(Install all dependencies via `pip install -r requirements.txt`.)*
+```bash
+pip install -r requirements.txt
+````
 
 ---
 
 ## Installation
 
 1. **Clone or Download** this repository:
+
    ```bash
-   git clone https://github.com/yourusername/SSTube.git
+   git clone https://github.com/UKR-PROJECTS/SSTube.git
    cd SSTube
    ```
 
-2. **(Optional) Create a Virtual Environment**:
+2. **(Optional) Create & Activate a Virtual Environment**:
+
    ```bash
    python -m venv venv
-   source venv/bin/activate      # On Windows use: venv\Scripts\activate
+   source venv/bin/activate      # On Windows: venv\Scripts\activate
    ```
 
 3. **Install Dependencies**:
+
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Ensure ffmpeg is Accessible**:
-   - Confirm that `bin/ffmpeg.exe` exists. If you're on another platform, adjust the path or install ffmpeg separately.
+4. **Verify `ffmpeg` & `yt-dlp`** exist in `bin/`. SSTube will update `yt-dlp.exe` automatically.
 
 ---
 
 ## Usage
 
-1. **Run the Application**:
+1. **Run SSTube**:
+
    ```bash
    python SSTube.py
    ```
-   The SSTube GUI will open.
 
-2. **Cookie Login Feature**
-   - Click **File > Login** from the menu bar.
-   - A dialog will prompt you to select the browser you use for YouTube login.
-   - You will then be asked if you have installed the **"Get cookies.txt Locally"** extension.
-     - **If Yes:**  
-       You’ll be prompted to select the exported cookie file. SSTube validates the file to ensure it contains YouTube cookies.
-     - **If No:**  
-       The extension’s page will be opened in your selected browser so you can install it. After installing, export your cookies and then select the exported cookie file.
-   - Once a valid cookie file is selected, SSTube uses it for authentication and access to restricted YouTube content.
-   
+   * On first launch (and each subsequent startup), you’ll be prompted to **Check for Updates** to yt-dlp. Choosing **Yes** will download and install the latest `yt-dlp.exe`.
+
+2. **Login with Cookies**
+
+   * From **File > Login**, select your browser and indicate whether you’ve installed the **Get cookies.txt Locally** extension.
+   * If needed, SSTube opens the extension page, then prompts you to select the exported cookie file.
+   * After selecting a valid cookie file, SSTube opens YouTube’s login page in your browser—log in there, then return to SSTube.
+
 3. **Download Workflow**
-   - Go to the **Download** page via the sidebar.
-   - Enter the YouTube URL (video, playlist, channel, or shorts).
-   - Select a save location for the downloads.
-   - Choose the appropriate **Download Mode** and, if applicable, set the video quality.
-   - Click **Download** to add the task to the queue.
-   
-4. **Activity Log**
-   - Use the **Activity** page to monitor real-time logs and download progress.
+
+   * Navigate to the **Download** page.
+   * Enter a YouTube URL (video, playlist, channel or shorts).
+   * Choose a **Save Location**.
+   * Select a **Download Mode** and, if applicable, a **Video Quality**.
+   * Click **Download** to queue the task.
+
+4. **Monitor Progress**
+
+   * Switch to the **Activity** page to view real-time logs and download status.
 
 ---
 
 ## Screenshots
 
-*(Optional – include images from the `screenshots/` folder if desired.)*
+*(Add images under `screenshots/` and uncomment below as needed.)*
 
 ```html
 <p align="center">
@@ -149,47 +162,50 @@ SSTube/
 
 ---
 
-## Building the Executable
+## Building a Standalone Executable
 
-You can use [PyInstaller](https://www.pyinstaller.org/) to package SSTube as a standalone executable. For example:
+Use [PyInstaller](https://www.pyinstaller.org/):
 
 ```bash
-pyinstaller --onefile --windowed --icon "assets/Favicon.png" --add-data "assets;assets" --add-data "bin;bin" SSTube.py
+pyinstaller --onefile --windowed \
+  --icon "assets/Favicon.png" \
+  --add-data "assets;assets" \
+  --add-data "bin;bin" \
+  SSTube.py
 ```
 
-This command creates a single executable (`SSTube.exe`) in the `dist/` folder.
+This creates `dist/SSTube.exe` (or the equivalent on your platform).
 
 ---
 
 ## Contributing
 
-Contributions are welcome! Please follow these steps:
+We welcome all contributions!
 
-1. **Fork** the project on GitHub.
-2. **Create a new branch** (e.g., `feature/new-feature`).
-3. **Commit** your changes with clear messages.
-4. **Submit a Pull Request** with a detailed description of your changes.
+1. **Fork** the repository.
+2. **Create a feature branch** (`git checkout -b feature/awesome-feature`).
+3. **Commit** with clear, descriptive messages.
+4. **Push** to your fork and **open a Pull Request**.
 
-For major changes, please open an issue first to discuss what you would like to change.
+For major changes, please open an issue first to discuss.
 
 ---
 
 ## License
 
-This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for details.
 
 ---
 
 ## Acknowledgments
 
-- **yt-dlp** for the robust downloading backend.
-- **PyQt6** for the powerful GUI framework.
-- **ffmpeg** for multimedia processing.
-- Thanks to all the contributors and testers!
+* **yt-dlp** for the powerful download backend.
+* **PyQt6** for the modern GUI framework.
+* **ffmpeg** for multimedia processing.
+* **GitHub API** for seamless updater integration.
+* Thanks to all contributors and testers!
 
 ---
 
-**Enjoy using SSTube!** If you encounter any issues or have suggestions, please open an issue or submit a pull request.
-```
+**Enjoy SSTube v2.2.0!** If you encounter any issues or have suggestions, please open an issue or submit a pull request.
 
-This README.md provides a complete overview of SSTube v2.0 with detailed instructions on using the cookie extension feature, installation, usage, building, and contribution guidelines.
