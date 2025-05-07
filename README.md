@@ -152,8 +152,6 @@ pip install -r requirements.txt
 
 ## Screenshots
 
-*(Add images under `screenshots/` and uncomment below as needed.)*
-
 ```html
 <p align="center">
   <img src="screenshots/GUI.png" width="600" height="400" alt="SSTube GUI" />
