@@ -164,11 +164,7 @@ pip install -r requirements.txt
 Use [PyInstaller](https://www.pyinstaller.org/):
 
 ```bash
-pyinstaller --onefile --windowed \
-  --icon "assets/Favicon.png" \
-  --add-data "assets;assets" \
-  --add-data "bin;bin" \
-  SSTube.py
+pyinstaller --onefile --windowed --icon "assets/Favicon.png" --add-data "assets;assets" --add-data "bin;bin" SSTube.py
 ```
 
 This creates `dist/SSTube.exe` (or the equivalent on your platform).
