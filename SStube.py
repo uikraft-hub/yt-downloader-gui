@@ -279,7 +279,7 @@ class SSTubeGUI(QMainWindow):
         QMessageBox.information(
             self,
             "About SSTube",
-            "SSTube Video Downloader\nVersion 2.1.0\nDeveloped by UKR\nReport bugs via our support channel.",
+            "SSTube Video Downloader\nVersion 2.2.0\nDeveloped by UKR\nReport bugs via our support channel.",
         )
 
     def update_status(self, message):
