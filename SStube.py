@@ -2,14 +2,48 @@ import os
 import sys
 import threading
 import webbrowser
-import yt_dlp
+import json
+import urllib.request
+import shutil
+import stat
+import subprocess
 
+import yt_dlp
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 
-# Define current version of SSTube (for reference)
-CURRENT_VERSION = "2.0"
+class Updater:
+    YTDLP_RELEASES = "https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest"
+
+    def __init__(self, base_dir, parent=None):
+        self.base_dir = base_dir
+        self.parent = parent
+        self.yt_dlp_path = os.path.join(base_dir, "bin", "yt-dlp.exe")
+
+    def get_latest_yt_version(self):
+        with urllib.request.urlopen(self.YTDLP_RELEASES) as resp:
+            data = json.load(resp)
+        version = data.get("tag_name", "").lstrip("release/")
+        assets = data.get("assets", [])
+        return version, assets
+
+    def download_yt(self, progress_callback):
+        version, assets = self.get_latest_yt_version()
+        exe_asset = next((a for a in assets if a["name"].endswith(".exe")), None)
+        if not exe_asset:
+            progress_callback("No yt-dlp executable found in release assets.")
+            return
+        url = exe_asset["browser_download_url"]
+        target = self.yt_dlp_path
+        progress_callback(f"Downloading yt-dlp {version}...")
+        # download to temp then replace
+        temp_path = target + ".new"
+        with urllib.request.urlopen(url) as r, open(temp_path, "wb") as f:
+            shutil.copyfileobj(r, f)
+        os.replace(temp_path, target)
+        os.chmod(target, stat.S_IEXEC | stat.S_IREAD | stat.S_IWRITE)
+        progress_callback(f"yt-dlp updated to {version} at {target}")
 
 
 class SSTubeGUI(QMainWindow):
@@ -21,101 +55,77 @@ class SSTubeGUI(QMainWindow):
         self.setWindowTitle("SSTube")
         self.resize(400, 300)
 
-        # Determine base directory (works for both script and frozen exe)
+        # Determine base directory
         if getattr(sys, "frozen", False):
             self.base_dir = os.path.dirname(sys.executable)
         else:
             self.base_dir = os.path.dirname(os.path.abspath(__file__))
 
-        # Set window icon from Favicon.png
+        # Initialize updater
+        self.updater = Updater(self.base_dir, parent=self)
+
+        # Window icon
         try:
             icon_path = os.path.join(self.base_dir, "Favicon.png")
             self.setWindowIcon(QIcon(icon_path))
-        except Exception as e:
-            print("Error setting window icon:", e)
+        except Exception:
+            pass
 
-        # Download queue (history functions have been removed)
+        # Download queue and state
         self.download_queue = []
-        self.download_thread = None
-        self.downloading = False  # Flag for sequential downloads
-
-        # Mode selection variable and quality defaults
-        self.mode_var = "Single Video"
-        # For MP3 modes we now always download best available (hardcoded as "320")
+        self.downloading = False
         self.audio_quality_default = "320"
-        self.video_quality = "Best Available"  # For video modes
-
-        # Use cookies from browser if user logs in
         self.use_cookies = False
-        # Default browser for cookie extraction (will be set by the user)
         self.cookie_browser = "chrome"
-        # Cookie file (if user exports using the extension)
         self.cookie_file = None
 
-        # Load sidebar icons from assets folder (settings icon removed)
+        # Icons
         self.icons = {
-            "download": self.load_icon(
-                os.path.join(self.base_dir, "assets", "download.png")
-            ),
-            "activity": self.load_icon(
-                os.path.join(self.base_dir, "assets", "activity.png")
-            ),
+            "download": self.load_icon(os.path.join(self.base_dir, "assets", "download.png")),
+            "activity": self.load_icon(os.path.join(self.base_dir, "assets", "activity.png")),
         }
-
-        # Load video favicon for selection dialogs
+        # Video favicon
         try:
             vf_path = os.path.join(self.base_dir, "assets", "video-favicon.png")
-            self.video_favicon = QIcon(vf_path)
-            self.video_favicon_pixmap = QPixmap(vf_path).scaled(
-                16,
-                16,
-                Qt.AspectRatioMode.KeepAspectRatio,
-                Qt.TransformationMode.SmoothTransformation,
+            self.video_favicon_pixmap = (
+                QPixmap(vf_path)
+                .scaled(16, 16, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
             )
-        except Exception as e:
-            print("Error loading video favicon:", e)
-            self.video_favicon = None
+        except Exception:
             self.video_favicon_pixmap = None
 
-        # Create menubar
         self.create_menubar()
-
-        # Central widget with a horizontal layout: sidebar + stacked pages
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
-        main_layout = QHBoxLayout()
-        central_widget.setLayout(main_layout)
+        layout = QHBoxLayout(central_widget)
 
-        # Create sidebar
+        # Sidebar
         self.sidebar = self.create_sidebar()
-        main_layout.addWidget(self.sidebar)
+        layout.addWidget(self.sidebar)
 
-        # Create a QStackedWidget to hold the pages
-        self.stacked_widget = QStackedWidget()
-        main_layout.addWidget(self.stacked_widget, 1)
-
-        # Create pages: Download and Activity (Settings removed)
+        # Pages
+        from PyQt6.QtWidgets import QStackedWidget
+        self.stack = QStackedWidget()
         self.download_page = self.create_download_page()
         self.activity_page = self.create_activity_page()
+        self.stack.addWidget(self.download_page)
+        self.stack.addWidget(self.activity_page)
+        layout.addWidget(self.stack, 1)
 
-        self.stacked_widget.addWidget(self.download_page)
-        self.stacked_widget.addWidget(self.activity_page)
-
-        # Setup status bar
+        # Status bar
         self.status_bar = QStatusBar()
         self.setStatusBar(self.status_bar)
-        self.update_status("Ready")
-
-        # Connect signals for thread-safe UI updates
         self.updateStatusSignal.connect(self._update_status)
         self.logMessageSignal.connect(self._log_message)
+        self.update_status("Ready")
+
+        # Startup update check
+        QTimer.singleShot(100, self.check_for_updates)
 
     def load_icon(self, path):
         try:
-            pixmap = QPixmap(path)
-            return QIcon(pixmap)
-        except Exception as e:
-            print(f"Error loading icon {path}: {e}")
+            return QIcon(QPixmap(path))
+        except Exception:
             return QIcon()
 
     def create_menubar(self):
@@ -124,88 +134,91 @@ class SSTubeGUI(QMainWindow):
         exit_action = QAction("Exit", self)
         exit_action.triggered.connect(self.close)
         file_menu.addAction(exit_action)
-        # New Login action added
+
         login_action = QAction("Login", self)
         login_action.triggered.connect(self.open_login)
         file_menu.addAction(login_action)
+
         help_menu = menubar.addMenu("Help")
         about_action = QAction("About", self)
         about_action.triggered.connect(self.show_about)
         help_menu.addAction(about_action)
 
+    def check_for_updates(self):
+        reply = QMessageBox.question(
+            self, "Check for Updates",
+            "Do you want to check for a new version of yt-dlp?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        if reply == QMessageBox.StandardButton.Yes:
+            self.switch_page("Activity")
+            threading.Thread(target=self.run_updates, daemon=True).start()
+
+    def run_updates(self):
+        def progress_callback(msg):
+            self.log_message(msg)
+
+        self.log_message("Starting yt-dlp update...")
+        try:
+            self.updater.download_yt(progress_callback)
+            self.log_message("yt-dlp update completed.")
+        except Exception as e:
+            self.log_message(f"Update error: {e}")
+            QTimer.singleShot(0, lambda: QMessageBox.critical(self, "Updater", f"Error during yt-dlp update: {e}"))
+
     def get_installed_browsers(self):
-        browsers = []
         try:
             import winreg
 
             key = winreg.OpenKey(
                 winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Clients\StartMenuInternet"
             )
-            i = 0
+            i, browsers = 0, []
             while True:
                 try:
-                    subkey_name = winreg.EnumKey(key, i)
-                    browsers.append(subkey_name)
+                    browsers.append(winreg.EnumKey(key, i))
                     i += 1
                 except OSError:
                     break
+            return browsers or ["Google Chrome", "Mozilla Firefox", "Microsoft Edge"]
         except Exception:
-            pass
-        if not browsers:
-            # Fallback default list
-            browsers = ["Google Chrome", "Mozilla Firefox", "Microsoft Edge"]
-        return browsers
+            return ["Google Chrome", "Mozilla Firefox", "Microsoft Edge"]
 
     def map_browser(self, browser_name):
         name = browser_name.lower()
-        if "chrome" in name:
-            return "chrome"
-        elif "firefox" in name:
-            return "firefox"
-        elif "edge" in name:
-            return "edge"
-        elif "opera" in name:
-            return "opera"
-        elif "brave" in name:
-            return "brave"
-        else:
-            return browser_name.lower()
+        return (
+            "chrome"
+            if "chrome" in name
+            else "firefox"
+            if "firefox" in name
+            else "edge"
+            if "edge" in name
+            else "opera"
+            if "opera" in name
+            else "brave"
+            if "brave" in name
+            else name
+        )
 
     def open_login(self):
         if self.use_cookies:
-            QMessageBox.information(
-                self,
-                "Login",
-                "You are already logged in. Your cookie file is being used.",
-            )
+            QMessageBox.information(self, "Login", "Already logged in.")
             return
 
         installed = self.get_installed_browsers()
-        # Show the list of installed browsers to the user.
         browser_choice, ok = QInputDialog.getItem(
-            self,
-            "Select Browser",
-            "Select the browser you use for YouTube login:",
-            installed,
-            0,
-            False,
+            self, "Select Browser", "Select your browser:", installed, 0, False
         )
         if not ok:
-            QMessageBox.information(self, "Login", "Login canceled.")
             return
         self.cookie_browser = self.map_browser(browser_choice)
 
-        # Ask if the user has installed the cookie extension.
         reply = QMessageBox.question(
             self,
             "Cookie Extension",
-            "Have you installed the 'Get cookies.txt Locally' extension?\n\n"
-            "If not, click No and you will be prompted to open the extension page in your browser.\n"
-            "If you have installed the extension, click Yes and then select the exported cookie file for YouTube.\n\n"
-            "Install it from:\nhttps://chromewebstore.google.com/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc",
+            "Have you installed the 'Get cookies.txt Locally' extension?",
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
-        # Dictionary mapping browser identifiers to common executable paths.
         browser_paths = {
             "chrome": r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
             "firefox": r"C:\Program Files\Mozilla Firefox\firefox.exe",
@@ -213,119 +226,60 @@ class SSTubeGUI(QMainWindow):
             "opera": r"C:\Program Files\Opera\launcher.exe",
             "brave": r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe",
         }
-        exe_path = browser_paths.get(self.cookie_browser, None)
-        if reply == QMessageBox.StandardButton.Yes:
-            # Ask user to select the exported cookie file.
-            cookie_file, _ = QFileDialog.getOpenFileName(
-                self, "Select Cookie File", "", "Text Files (*.txt);;All Files (*)"
-            )
-            if cookie_file:
-                # Validate the cookie file by checking for "youtube.com" in its content.
-                try:
-                    with open(cookie_file, "r", encoding="utf-8", errors="ignore") as f:
-                        data = f.read()
-                    if "youtube.com" not in data.lower():
-                        QMessageBox.warning(
-                            self,
-                            "Invalid Cookie File",
-                            "The selected cookie file does not contain YouTube cookies.\n"
-                            "Please select a correct cookie file. Go to YouTube.com, log in, click the extension icon, and export the cookies.",
-                        )
-                        self.use_cookies = False
-                        return
-                except Exception as e:
-                    QMessageBox.warning(
-                        self, "Cookie File Error", f"Error reading cookie file: {e}"
-                    )
-                    self.use_cookies = False
-                    return
-                self.cookie_file = cookie_file
-                self.use_cookies = True
-            else:
-                QMessageBox.warning(
-                    self,
-                    "Cookie File",
-                    "No cookie file selected. Cookie feature will be disabled.",
-                )
-                self.use_cookies = False
-                return
-        else:
-            # Open the extension URL in the selected browser.
-            extension_url = "https://chromewebstore.google.com/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc"
-            if exe_path and os.path.exists(exe_path):
-                controller = webbrowser.BackgroundBrowser(exe_path)
-                controller.open(extension_url)
-            else:
-                webbrowser.open(extension_url)
-            QMessageBox.information(
-                self,
-                "Cookie Extension",
-                "The 'Get cookies.txt Locally' extension page has been opened in your selected browser.\n"
-                "Please install the extension and go to YouTube.com to log in to your account.\n"
-                "After logging in, click the extension icon, export your cookies, and then select the exported cookie file.",
-            )
-            # Now, prompt the user to select the exported cookie file.
-            cookie_file, _ = QFileDialog.getOpenFileName(
-                self, "Select Cookie File", "", "Text Files (*.txt);;All Files (*)"
-            )
-            if cookie_file:
-                try:
-                    with open(cookie_file, "r", encoding="utf-8", errors="ignore") as f:
-                        data = f.read()
-                    if "youtube.com" not in data.lower():
-                        QMessageBox.warning(
-                            self,
-                            "Invalid Cookie File",
-                            "The selected cookie file does not contain YouTube cookies.\n"
-                            "Please select a correct cookie file.",
-                        )
-                        self.use_cookies = False
-                        return
-                except Exception as e:
-                    QMessageBox.warning(
-                        self, "Cookie File Error", f"Error reading cookie file: {e}"
-                    )
-                    self.use_cookies = False
-                    return
-                self.cookie_file = cookie_file
-                self.use_cookies = True
-            else:
-                QMessageBox.warning(
-                    self,
-                    "Cookie File",
-                    "No cookie file selected. Cookie feature will be disabled.",
-                )
-                self.use_cookies = False
-                return
+        exe_path = browser_paths.get(self.cookie_browser)
 
-        # If cookie feature is not enabled, abort.
+        if reply == QMessageBox.StandardButton.Yes:
+            cookie_file, _ = QFileDialog.getOpenFileName(
+                self, "Select Cookie File", "", "Text Files (*.txt);;All Files (*)"
+            )
+            if cookie_file:
+                try:
+                    with open(cookie_file, "r", encoding="utf-8", errors="ignore") as f:
+                        data = f.read()
+                    if "youtube.com" in data.lower():
+                        self.cookie_file = cookie_file
+                        self.use_cookies = True
+                except Exception as e:
+                    QMessageBox.warning(self, "Error", f"Cannot read file: {e}")
+        else:
+            ext_url = (
+                "https://chromewebstore.google.com/detail/"
+                "get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc"
+            )
+            if exe_path and os.path.exists(exe_path):
+                webbrowser.BackgroundBrowser(exe_path).open(ext_url)
+            else:
+                webbrowser.open(ext_url)
+            QMessageBox.information(self, "Cookie Extension", "Please install it, then select the file.")
+            cookie_file, _ = QFileDialog.getOpenFileName(
+                self, "Select Cookie File", "", "Text Files (*.txt);;All Files (*)"
+            )
+            if cookie_file:
+                try:
+                    with open(cookie_file, "r", encoding="utf-8", errors="ignore") as f:
+                        data = f.read()
+                    if "youtube.com" in data.lower():
+                        self.cookie_file = cookie_file
+                        self.use_cookies = True
+                except Exception as e:
+                    QMessageBox.warning(self, "Error", f"Cannot read file: {e}")
+
         if not self.use_cookies:
             return
 
-        # Open YouTube login page in the selected browser for confirmation.
+        # Open YouTube login to confirm
         login_url = "https://accounts.google.com/ServiceLogin?service=youtube"
         if exe_path and os.path.exists(exe_path):
-            controller = webbrowser.BackgroundBrowser(exe_path)
-            controller.open(login_url)
+            webbrowser.BackgroundBrowser(exe_path).open(login_url)
         else:
             webbrowser.open(login_url)
-        QMessageBox.information(
-            self,
-            "Login",
-            f"Your selected browser ({self.cookie_browser}) has been opened.\n"
-            "Please log in to your YouTube account.\n"
-            "After logging in, click OK to continue.",
-        )
-        QMessageBox.information(
-            self, "Login", "Cookie file is now being used for downloads."
-        )
+        QMessageBox.information(self, "Login", "Log in in the browser, then click OK.")
 
     def show_about(self):
         QMessageBox.information(
             self,
             "About SSTube",
-            "SSTube Video Downloader\nVersion 2.0\nDeveloped by UKR\n\n"
-            "Report bugs via our support channel.",
+            "SSTube Video Downloader\nVersion 2.1.0\nDeveloped by UKR\nReport bugs via our support channel.",
         )
 
     def update_status(self, message):
@@ -343,103 +297,73 @@ class SSTubeGUI(QMainWindow):
             self.log_text.append(msg)
 
     def create_sidebar(self):
-        sidebar_widget = QWidget()
-        sidebar_layout = QVBoxLayout()
-        sidebar_widget.setLayout(sidebar_layout)
+        widget = QWidget()
+        layout = QVBoxLayout(widget)
         header = QLabel("SSTube")
         header.setStyleSheet("font-size: 16pt; font-weight: bold;")
         header.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        sidebar_layout.addWidget(header)
-        sidebar_layout.addSpacing(20)
-        # Only two options: Download and Activity
-        self.sidebar_buttons = {}
-        for option in ["Download", "Activity"]:
-            btn = QPushButton(option)
-            if option.lower() in self.icons:
-                btn.setIcon(self.icons[option.lower()])
-            btn.setIconSize(QSize(32, 32))
-            btn.clicked.connect(lambda checked, opt=option: self.show_page(opt))
-            sidebar_layout.addWidget(btn)
-            self.sidebar_buttons[option] = btn
-        sidebar_layout.addStretch()
-        return sidebar_widget
+        layout.addWidget(header)
+        layout.addSpacing(20)
+        for name in ("Download", "Activity"):
+            btn = QPushButton(name)
+            icon = self.icons.get(name.lower())
+            if icon:
+                btn.setIcon(icon)
+                btn.setIconSize(QSize(32, 32))
+            btn.clicked.connect(lambda _, n=name: self.switch_page(n))
+            layout.addWidget(btn)
+        layout.addStretch()
+        return widget
 
-    def show_page(self, name):
+    def switch_page(self, name):
         if name == "Download":
-            self.stacked_widget.setCurrentWidget(self.download_page)
-        elif name == "Activity":
-            self.stacked_widget.setCurrentWidget(self.activity_page)
+            self.stack.setCurrentWidget(self.download_page)
+        else:
+            self.stack.setCurrentWidget(self.activity_page)
         self.update_status(f"{name} section active")
 
     def create_download_page(self):
         page = QWidget()
-        layout = QVBoxLayout()
-        page.setLayout(layout)
-
-        url_label = QLabel("Enter YouTube URL (or Playlist/Channel URL):")
-        url_label.setStyleSheet("font-size: 12pt;")
-        layout.addWidget(url_label)
+        layout = QVBoxLayout(page)
+        layout.addWidget(QLabel("Enter YouTube URL (or Playlist/Channel URL):", styleSheet="font-size: 12pt;"))
 
         self.url_entry = QLineEdit()
         self.url_entry.setPlaceholderText("Enter URL here")
         layout.addWidget(self.url_entry)
 
-        path_label = QLabel("Save Location:")
-        path_label.setStyleSheet("font-size: 12pt;")
-        layout.addWidget(path_label)
-
+        layout.addWidget(QLabel("Save Location:", styleSheet="font-size: 12pt;"))
         path_layout = QHBoxLayout()
-        self.path_entry = QLineEdit()
-        self.path_entry.setReadOnly(True)
+        self.path_entry = QLineEdit(readOnly=True)
         path_layout.addWidget(self.path_entry)
         browse_btn = QPushButton("Browse Folder")
         browse_btn.clicked.connect(self.select_save_path)
         path_layout.addWidget(browse_btn)
         layout.addLayout(path_layout)
 
-        mode_label = QLabel("Download Mode:")
-        mode_label.setStyleSheet("font-size: 12pt;")
-        layout.addWidget(mode_label)
-
+        layout.addWidget(QLabel("Download Mode:", styleSheet="font-size: 12pt;"))
         self.mode_combo = QComboBox()
         modes = [
-            "Single Video",
-            "MP3 Only",
-            "Playlist Video",
-            "Playlist MP3",
-            "Channel Videos",
-            "Channel Videos MP3",
-            "Channel Shorts",
-            "Channel Shorts MP3",
+            "Single Video", "MP3 Only",
+            "Playlist Video", "Playlist MP3",
+            "Channel Videos", "Channel Videos MP3",
+            "Channel Shorts", "Channel Shorts MP3",
         ]
         self.mode_combo.addItems(modes)
         self.mode_combo.currentTextChanged.connect(self.mode_changed)
         layout.addWidget(self.mode_combo)
 
-        # Quality selection widgets (only for video modes)
         self.video_quality_label = QLabel("Video Quality:")
         self.video_quality_combo = QComboBox()
         self.video_quality_combo.addItems(
-            [
-                "Best Available",
-                "4320p 8K",
-                "2160p 4K",
-                "1440p 2K",
-                "1080p Full HD",
-                "720p HD",
-                "480p Standard",
-                "360p Medium",
-            ]
+            ["Best Available", "4320p 8K", "2160p 4K", "1440p 2K", "1080p Full HD", "720p HD", "480p Standard", "360p Medium"]
         )
         layout.addWidget(self.video_quality_label)
         layout.addWidget(self.video_quality_combo)
-        # When an MP3 mode is selected, hide video quality options.
         self.mode_changed(self.mode_combo.currentText())
 
         download_btn = QPushButton("Download")
         download_btn.clicked.connect(self.add_to_queue)
         layout.addWidget(download_btn)
-
         layout.addStretch()
         return page
 
@@ -463,243 +387,145 @@ class SSTubeGUI(QMainWindow):
         save_path = self.path_entry.text().strip()
         mode = self.mode_combo.currentText()
         if not url or not save_path:
-            QMessageBox.critical(
-                self, "Error", "Please enter a URL and select a save path."
-            )
+            QMessageBox.critical(self, "Error", "Please enter a URL and select a save path.")
             return
 
-        if mode in ["Single Video", "MP3 Only"]:
-            if "list=" in url or "youtube.com/@" in url or "/channel/" in url:
-                QMessageBox.critical(
-                    self,
-                    "Error",
-                    "The URL appears to be a playlist or channel. Please select the appropriate mode.",
-                )
-                return
-        elif mode in ["Playlist Video", "Playlist MP3"]:
+        # URL validation per mode...
+        if mode in ["Playlist Video", "Playlist MP3"]:
             if "list=" not in url:
-                QMessageBox.critical(
-                    self,
-                    "Error",
-                    "The URL does not appear to be a playlist. Please select the appropriate mode.",
-                )
+                QMessageBox.critical(self, "Error", "The URL does not appear to be a playlist.")
                 return
-        elif mode in [
-            "Channel Videos",
-            "Channel Videos MP3",
-            "Channel Shorts",
-            "Channel Shorts MP3",
-        ]:
-            if ("youtube.com/@" not in url) and ("/channel/" not in url):
-                QMessageBox.critical(
-                    self,
-                    "Error",
-                    "The URL does not appear to be a channel. Please select the appropriate mode.",
-                )
+            return self.process_playlist(url, save_path, mode)
+        if mode in ["Channel Videos", "Channel Videos MP3", "Channel Shorts", "Channel Shorts MP3"]:
+            if "youtube.com/@" not in url and "/channel/" not in url:
+                QMessageBox.critical(self, "Error", "The URL does not appear to be a channel.")
                 return
             if "?" in url:
-                QMessageBox.critical(
-                    self,
-                    "Error",
-                    "Please use a clean channel URL (e.g. https://youtube.com/@username) without query parameters.",
-                )
+                QMessageBox.critical(self, "Error", "Please use a clean channel URL without query parameters.")
                 return
+            return self.process_channel(url, save_path, mode)
 
-        if mode in ["Playlist Video", "Playlist MP3"]:
-            self.process_playlist(url, save_path, mode)
-        elif mode in [
-            "Channel Videos",
-            "Channel Videos MP3",
-            "Channel Shorts",
-            "Channel Shorts MP3",
-        ]:
-            self.process_channel(url, save_path, mode)
-        else:
-            task = {
-                "url": url,
-                "save_path": save_path,
-                "mode": mode,
-                "audio_quality": self.audio_quality_default if "MP3" in mode else None,
-                "video_quality": (
-                    self.video_quality_combo.currentText()
-                    if mode not in ["MP3 Only"]
-                    else "Best Available"
-                ),
-            }
-            self.download_queue.append(task)
-            self.log_message("Task added to queue")
-            self.process_queue()
+        # Single video or MP3 Only
+        task = {
+            "url": url,
+            "save_path": save_path,
+            "mode": mode,
+            "audio_quality": self.audio_quality_default if "MP3" in mode else None,
+            "video_quality": self.video_quality_combo.currentText() if "MP3" not in mode else "Best Available",
+        }
+        self.download_queue.append(task)
+        self.log_message("Task added to queue")
+        self.process_queue()
 
     def process_playlist(self, url, save_path, mode):
         try:
-            opts = {"quiet": True, "extract_flat": True}
-            with yt_dlp.YoutubeDL(opts) as ydl:
-                playlist_info = ydl.extract_info(url, download=False)
-            if "entries" not in playlist_info:
-                QMessageBox.critical(self, "Error", "No playlist entries found.")
-                return
-            entries = playlist_info["entries"]
+            with yt_dlp.YoutubeDL({"quiet": True, "extract_flat": True}) as ydl:
+                info = ydl.extract_info(url, download=False)
+            entries = info.get("entries") or []
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to extract playlist info: {e}")
             return
 
         dialog = QDialog(self)
         dialog.setWindowTitle("Select Videos from Playlist")
-        dialog.resize(600, 400)
-        dlg_layout = QVBoxLayout()
-        dialog.setLayout(dlg_layout)
-
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        dlg_layout.addWidget(scroll_area)
+        dlg_layout = QVBoxLayout(dialog)
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        dlg_layout.addWidget(scroll)
         container = QWidget()
-        scroll_layout = QVBoxLayout()
-        container.setLayout(scroll_layout)
-        scroll_area.setWidget(container)
+        scroll.setWidget(container)
+        scroll_layout = QVBoxLayout(container)
 
-        self.playlist_checkboxes = []
+        checkboxes = []
         for entry in entries:
-            if not entry:
-                continue
             video_url = entry.get("url")
             if video_url and not video_url.startswith("http"):
-                video_url = playlist_info.get("webpage_url", "") + video_url
-            title = entry.get("title", "Unknown Title")
-            checkbox = QCheckBox(title)
+                video_url = info.get("webpage_url", "") + video_url
+            cb = QCheckBox(entry.get("title", "Unknown Title"))
             if self.video_favicon_pixmap:
-                checkbox.setIcon(QIcon(self.video_favicon_pixmap))
-            checkbox.setChecked(True)
-            scroll_layout.addWidget(checkbox)
-            self.playlist_checkboxes.append((video_url, title, checkbox))
+                cb.setIcon(QIcon(self.video_favicon_pixmap))
+            cb.setChecked(True)
+            scroll_layout.addWidget(cb)
+            checkboxes.append((video_url, cb))
 
-        download_btn = QPushButton("Download Selected")
-        dlg_layout.addWidget(download_btn)
-
-        def download_selected():
-            count = 0
-            for video_url, title, checkbox in self.playlist_checkboxes:
-                if checkbox.isChecked():
-                    task = {
+        def dl_sel():
+            for video_url, cb in checkboxes:
+                if cb.isChecked():
+                    self.download_queue.append({
                         "url": video_url,
                         "save_path": save_path,
                         "mode": mode,
-                        "audio_quality": (
-                            self.audio_quality_default if "MP3" in mode else None
-                        ),
-                        "video_quality": (
-                            self.video_quality_combo.currentText()
-                            if mode == "Playlist Video"
-                            else "Best Available"
-                        ),
-                    }
-                    self.download_queue.append(task)
-                    count += 1
-            if count == 0:
-                QMessageBox.information(dialog, "Info", "No videos selected.")
-            else:
-                self.log_message(f"{count} videos added to queue from playlist.")
-                self.process_queue()
+                        "audio_quality": self.audio_quality_default if "MP3" in mode else None,
+                        "video_quality": self.video_quality_combo.currentText() if "Video" in mode else "Best Available",
+                    })
+            self.process_queue()
             dialog.accept()
 
-        download_btn.clicked.connect(download_selected)
+        btn = QPushButton("Download Selected")
+        btn.clicked.connect(dl_sel)
+        dlg_layout.addWidget(btn)
         dialog.exec()
 
     def process_channel(self, url, save_path, mode):
-        if mode in ["Channel Videos", "Channel Videos MP3"]:
-            if not url.lower().rstrip("/").endswith("/videos"):
-                url = url.rstrip("/") + "/videos"
-        elif mode in ["Channel Shorts", "Channel Shorts MP3"]:
-            if not url.lower().rstrip("/").endswith("/shorts"):
-                url = url.rstrip("/") + "/shorts"
+        suffix = "/videos" if "Videos" in mode else "/shorts"
+        if not url.lower().endswith(suffix):
+            url = url.rstrip("/") + suffix
         try:
-            opts = {"quiet": True, "extract_flat": True}
-            with yt_dlp.YoutubeDL(opts) as ydl:
-                channel_info = ydl.extract_info(url, download=False)
-            if "entries" not in channel_info:
-                QMessageBox.critical(self, "Error", "No videos found for channel.")
-                return
-            entries = channel_info["entries"]
-            if mode in ["Channel Videos", "Channel Videos MP3"]:
-                filtered = [
-                    entry
-                    for entry in entries
-                    if entry and ("shorts" not in entry.get("url", "").lower())
-                ]
+            with yt_dlp.YoutubeDL({"quiet": True, "extract_flat": True}) as ydl:
+                info = ydl.extract_info(url, download=False)
+            entries = info.get("entries") or []
+            if "Shorts" in mode:
+                entries = [e for e in entries if "shorts" in e.get("url", "").lower()]
             else:
-                filtered = [
-                    entry
-                    for entry in entries
-                    if entry and ("shorts" in entry.get("url", "").lower())
-                ]
+                entries = [e for e in entries if "shorts" not in e.get("url", "").lower()]
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to extract channel info: {e}")
             return
 
         dialog = QDialog(self)
         dialog.setWindowTitle("Select Videos from Channel")
-        dialog.resize(600, 400)
-        dlg_layout = QVBoxLayout()
-        dialog.setLayout(dlg_layout)
-
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        dlg_layout.addWidget(scroll_area)
+        dlg_layout = QVBoxLayout(dialog)
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        dlg_layout.addWidget(scroll)
         container = QWidget()
-        scroll_layout = QVBoxLayout()
-        container.setLayout(scroll_layout)
-        scroll_area.setWidget(container)
+        scroll.setWidget(container)
+        scroll_layout = QVBoxLayout(container)
 
-        self.channel_checkboxes = []
-        for entry in filtered:
+        checkboxes = []
+        for entry in entries:
             video_url = entry.get("url")
             if video_url and not video_url.startswith("http"):
-                video_url = channel_info.get("webpage_url", "") + video_url
-            title = entry.get("title", "Unknown Title")
-            checkbox = QCheckBox(title)
+                video_url = info.get("webpage_url", "") + video_url
+            cb = QCheckBox(entry.get("title", "Unknown Title"))
             if self.video_favicon_pixmap:
-                checkbox.setIcon(QIcon(self.video_favicon_pixmap))
-            checkbox.setChecked(True)
-            scroll_layout.addWidget(checkbox)
-            self.channel_checkboxes.append((video_url, title, checkbox))
+                cb.setIcon(QIcon(self.video_favicon_pixmap))
+            cb.setChecked(True)
+            scroll_layout.addWidget(cb)
+            checkboxes.append((video_url, cb))
 
-        download_btn = QPushButton("Download Selected")
-        dlg_layout.addWidget(download_btn)
-
-        def download_selected():
-            count = 0
-            for video_url, title, checkbox in self.channel_checkboxes:
-                if checkbox.isChecked():
-                    task = {
+        def dl_sel():
+            for video_url, cb in checkboxes:
+                if cb.isChecked():
+                    self.download_queue.append({
                         "url": video_url,
                         "save_path": save_path,
                         "mode": mode,
-                        "audio_quality": (
-                            self.audio_quality_default if "MP3" in mode else None
-                        ),
-                        "video_quality": (
-                            self.video_quality_combo.currentText()
-                            if mode in ["Channel Videos", "Channel Shorts"]
-                            else "Best Available"
-                        ),
-                    }
-                    self.download_queue.append(task)
-                    count += 1
-            if count == 0:
-                QMessageBox.information(dialog, "Info", "No videos selected.")
-            else:
-                self.log_message(f"{count} videos added to queue from channel.")
-                self.process_queue()
+                        "audio_quality": self.audio_quality_default if "MP3" in mode else None,
+                        "video_quality": self.video_quality_combo.currentText() if "Videos" in mode or "Shorts" in mode else "Best Available",
+                    })
+            self.process_queue()
             dialog.accept()
 
-        download_btn.clicked.connect(download_selected)
+        btn = QPushButton("Download Selected")
+        btn.clicked.connect(dl_sel)
+        dlg_layout.addWidget(btn)
         dialog.exec()
 
     def create_activity_page(self):
         page = QWidget()
-        layout = QVBoxLayout()
-        page.setLayout(layout)
-        self.log_text = QTextEdit()
-        self.log_text.setReadOnly(True)
+        layout = QVBoxLayout(page)
+        self.log_text = QTextEdit(readOnly=True)
         layout.addWidget(self.log_text)
         return page
 
@@ -707,24 +533,17 @@ class SSTubeGUI(QMainWindow):
         if not self.downloading and self.download_queue:
             task = self.download_queue.pop(0)
             self.downloading = True
-            self.download_thread = threading.Thread(
-                target=self.download_video, args=(task,), daemon=True
-            )
-            self.download_thread.start()
+            threading.Thread(target=self.download_video, args=(task,), daemon=True).start()
 
     def download_video(self, task):
         url = task["url"]
         save_path = task["save_path"]
         mode = task["mode"]
-        video_quality = task.get("video_quality", "Best Available")
+        vq = task.get("video_quality", "Best Available")
+
         self.update_status(f"Starting download: {url}")
-        if mode in [
-            "Single Video",
-            "Playlist Video",
-            "Channel Videos",
-            "Channel Shorts",
-        ]:
-            ydl_opts = {
+        if "Video" in mode and "MP3" not in mode:
+            opts = {
                 "outtmpl": os.path.join(save_path, "%(title)s.%(ext)s"),
                 "ffmpeg_location": os.path.join(self.base_dir, "bin", "ffmpeg.exe"),
                 "noplaylist": True,
@@ -732,66 +551,43 @@ class SSTubeGUI(QMainWindow):
                 "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4",
                 "merge_output_format": "mp4",
             }
-            if video_quality != "Best Available":
-                height = video_quality.split("p")[0]
-                ydl_opts["format"] = (
-                    f"bestvideo[ext=mp4][height<={height}]+bestaudio[ext=m4a]/mp4"
-                )
-        elif mode in [
-            "MP3 Only",
-            "Playlist MP3",
-            "Channel Videos MP3",
-            "Channel Shorts MP3",
-        ]:
-            ydl_opts = {
+            if vq != "Best Available":
+                h = vq.split("p")[0]
+                opts["format"] = f"bestvideo[height<={h}]+bestaudio/merge"
+        else:
+            opts = {
                 "outtmpl": os.path.join(save_path, "%(title)s.%(ext)s"),
                 "ffmpeg_location": os.path.join(self.base_dir, "bin", "ffmpeg.exe"),
                 "noplaylist": True,
                 "progress_hooks": [self.update_progress],
                 "format": "bestaudio/best",
-                "postprocessors": [
-                    {
-                        "key": "FFmpegExtractAudio",
-                        "preferredcodec": "mp3",
-                        "preferredquality": self.audio_quality_default,
-                    }
-                ],
+                "postprocessors": [{"key": "FFmpegExtractAudio", "preferredcodec": "mp3", "preferredquality": self.audio_quality_default}],
             }
-        else:
-            QTimer.singleShot(
-                0, lambda: QMessageBox.critical(self, "Error", "Invalid download mode.")
-            )
-            self.downloading = False
-            return
 
-        # Use cookie file only if provided; do not attempt automatic extraction
         if self.use_cookies and self.cookie_file:
-            ydl_opts["cookiefile"] = self.cookie_file
+            opts["cookiefile"] = self.cookie_file
             self.log_message("Using cookie file for downloads.")
-        elif self.use_cookies and not self.cookie_file:
-            self.log_message("Cookie feature enabled but no cookie file provided.")
 
         try:
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            with yt_dlp.YoutubeDL(opts) as ydl:
                 info = ydl.extract_info(url, download=False)
                 title = info.get("title", "Unknown")
                 self.log_message(f"Downloading: {title}")
                 ydl.download([url])
                 self.log_message(f"Download completed: {title}")
         except Exception as e:
-
-            def show_error():
-                QMessageBox.critical(
+            QTimer.singleShot(
+                0,
+                lambda: QMessageBox.critical(
                     self,
                     "Error",
                     f"Download failed: {e}\n\n"
-                    "If you see 'Failed to decrypt with DPAPI', please ensure:\n"
-                    "- You are running SSTube under the same user as Chrome.\n"
+                    "If you see 'Failed to decrypt with DPAPI', ensure:\n"
+                    "- Run under the same user as Chrome.\n"
                     "- Chrome is closed before downloading.\n"
-                    "- Alternatively, export cookies manually using the extension.",
-                )
-
-            QTimer.singleShot(0, show_error)
+                    "- Or export cookies manually.",
+                ),
+            )
             self.log_message("Download failed")
         finally:
             self.downloading = False
@@ -799,15 +595,9 @@ class SSTubeGUI(QMainWindow):
 
     def update_progress(self, d):
         if d["status"] == "downloading":
-            percent_str = d.get("_percent_str", "0%").strip()
-            speed = d.get("_speed_str", "0 KB/s").strip()
-            self.log_message(
-                f"{d['info_dict'].get('title','Unknown')} - {percent_str} at {speed}"
-            )
+            self.log_message(f"{d['info_dict'].get('title','')} - {d.get('_percent_str','')} at {d.get('_speed_str','')}")
         elif d["status"] == "finished":
-            self.log_message(
-                f"{d['info_dict'].get('title','Unknown')} - Download finished."
-            )
+            self.log_message(f"{d['info_dict'].get('title','')} - Download finished.")
 
 
 if __name__ == "__main__":

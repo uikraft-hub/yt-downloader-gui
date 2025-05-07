@@ -1,4 +1,4 @@
-# SSTube v2.1.0
+# SSTube v2.0
 
 [![Status](https://img.shields.io/badge/status-active-47c219.svg)](#) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -6,7 +6,7 @@
   <img src="assets/Favicon.png" width="120" height="120" alt="SSTube Icon" />
 </p>
 
-**SSTube** is a powerful, open-source YouTube downloader application built with **PyQt6** and **yt-dlp**. This release (v2.1.0) introduces enhanced cookie handling through a browser extension, multiple download modes (videos, playlists, channels, shorts, and MP3 extraction), and a refined user interface.
+**SSTube** is a powerful, open-source YouTube downloader application built with **PyQt6** and **yt-dlp**. This release (v2.0) introduces enhanced cookie handling through a browser extension, multiple download modes (videos, playlists, channels, shorts, and MP3 extraction), and a refined user interface.
 
 ---
 
@@ -87,7 +87,7 @@ SSTube/
 
 1. **Clone or Download** this repository:
    ```bash
-   git clone https://github.com/UKR-PROJECTS/SSTube.git
+   git clone https://github.com/yourusername/SSTube.git
    cd SSTube
    ```
 
@@ -139,9 +139,13 @@ SSTube/
 
 ## Screenshots
 
+*(Optional – include images from the `screenshots/` folder if desired.)*
+
+```html
 <p align="center">
-  <img src="screenshots/GUI.png"/>
+  <img src="screenshots/GUI.png" width="600" height="400" alt="SSTube GUI" />
 </p>
+```
 
 ---
 
@@ -188,4 +192,4 @@ This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) f
 **Enjoy using SSTube!** If you encounter any issues or have suggestions, please open an issue or submit a pull request.
 ```
 
-This README.md provides a complete overview of SSTube v2.1.0 with detailed instructions on using the cookie extension feature, installation, usage, building, and contribution guidelines.
+This README.md provides a complete overview of SSTube v2.0 with detailed instructions on using the cookie extension feature, installation, usage, building, and contribution guidelines.
