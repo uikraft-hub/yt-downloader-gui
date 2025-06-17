@@ -4,13 +4,6 @@
 # GUI Framework
 PyQt6>=6.4.0
 
-# YouTube downloading engine
-yt-dlp>=2023.7.6
-
-# Optional: For better Windows registry access (Windows only)
-# Uncomment the line below if running on Windows and want enhanced browser detection
-# pywin32>=306
-
 # Note: FFmpeg is required but must be installed separately as a binary
 # Download FFmpeg from: https://ffmpeg.org/download.html
 # Place ffmpeg.exe in the 'bin' folder relative to the application

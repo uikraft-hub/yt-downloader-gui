@@ -38,10 +38,10 @@ import urllib.request
 import shutil
 import stat
 import subprocess
+import re
 from typing import Dict, List, Optional, Callable, Tuple, Any
 
 # Third-party imports
-import yt_dlp
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtCore import *
@@ -188,7 +188,7 @@ class SSTubeGUI(QMainWindow):
     def _set_window_icon(self) -> None:
         """Set the application window icon if available."""
         try:
-            icon_path = os.path.join(self.base_dir, "Favicon.png")
+            icon_path = os.path.join(self.base_dir, "favicon.ico")
             if os.path.exists(icon_path):
                 self.setWindowIcon(QIcon(icon_path))
         except Exception:
@@ -861,11 +861,20 @@ class SSTubeGUI(QMainWindow):
             mode: Download mode (Playlist Video/MP3)
         """
         try:
-            # Extract playlist information without downloading
-            with yt_dlp.YoutubeDL({"quiet": True, "extract_flat": True}) as ydl:
-                info = ydl.extract_info(url, download=False)
+            # Use yt-dlp.exe to extract playlist information
+            yt_dlp_path = os.path.join(self.base_dir, "bin", "yt-dlp.exe")
+            cmd = [yt_dlp_path, "--quiet", "--flat-playlist", "--dump-json", url]
 
-            entries = info.get("entries") or []
+            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+
+            entries = []
+            for line in result.stdout.strip().split('\n'):
+                if line.strip():
+                    try:
+                        entry = json.loads(line)
+                        entries.append(entry)
+                    except json.JSONDecodeError:
+                        continue
 
             if not entries:
                 QMessageBox.warning(
@@ -901,11 +910,20 @@ class SSTubeGUI(QMainWindow):
             url = url.rstrip("/") + suffix
 
         try:
-            # Extract channel information without downloading
-            with yt_dlp.YoutubeDL({"quiet": True, "extract_flat": True}) as ydl:
-                info = ydl.extract_info(url, download=False)
+            # Use yt-dlp.exe to extract channel information
+            yt_dlp_path = os.path.join(self.base_dir, "bin", "yt-dlp.exe")
+            cmd = [yt_dlp_path, "--quiet", "--flat-playlist", "--dump-json", url]
 
-            entries = info.get("entries") or []
+            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+
+            entries = []
+            for line in result.stdout.strip().split('\n'):
+                if line.strip():
+                    try:
+                        entry = json.loads(line)
+                        entries.append(entry)
+                    except json.JSONDecodeError:
+                        continue
 
             # Filter entries based on content type
             if "Shorts" in mode:
@@ -1084,6 +1102,7 @@ class SSTubeGUI(QMainWindow):
                 font-family: 'Consolas', 'Monaco', monospace;
                 font-size: 9pt;
                 background-color: black;
+                color: white;
                 border: 1px solid #ccc;
             }
         """)
@@ -1133,7 +1152,7 @@ class SSTubeGUI(QMainWindow):
 
     def download_video(self, task: Dict[str, Any]) -> None:
         """
-        Download video/audio based on task configuration.
+        Download video/audio based on task configuration using yt-dlp.exe.
 
         Args:
             task: Dictionary containing download configuration
@@ -1153,31 +1172,57 @@ class SSTubeGUI(QMainWindow):
         self.update_status(f"Starting download: {os.path.basename(url)}")
 
         try:
-            # Configure yt-dlp options based on mode
+            # Get yt-dlp.exe path
+            yt_dlp_path = os.path.join(self.base_dir, "bin", "yt-dlp.exe")
+            ffmpeg_path = os.path.join(self.base_dir, "bin", "ffmpeg.exe")
+
+            # Build command based on mode
             if "Video" in mode and "MP3" not in mode:
-                # Video download configuration
-                opts = self._get_video_download_options(save_path, video_quality)
+                # Video download
+                cmd = self._build_video_download_command(yt_dlp_path, ffmpeg_path, url, save_path, video_quality)
             else:
-                # Audio extraction configuration
-                opts = self._get_audio_download_options(save_path, task.get("audio_quality", "320"))
+                # Audio extraction
+                cmd = self._build_audio_download_command(yt_dlp_path, ffmpeg_path, url, save_path,
+                                                         task.get("audio_quality", "320"))
 
             # Add cookie support if enabled
             if self.use_cookies and self.cookie_file:
-                opts["cookiefile"] = self.cookie_file
+                cmd.extend(["--cookies", self.cookie_file])
                 self.log_message("Using cookie file for authentication")
 
-            # Execute download
-            with yt_dlp.YoutubeDL(opts) as ydl:
-                # Get video info first
-                info = ydl.extract_info(url, download=False)
+            # Get video info first for logging
+            info_cmd = [yt_dlp_path, "--quiet", "--dump-json", "--no-playlist", url]
+            if self.use_cookies and self.cookie_file:
+                info_cmd.extend(["--cookies", self.cookie_file])
+
+            try:
+                info_result = subprocess.run(info_cmd, capture_output=True, text=True, check=True)
+                info = json.loads(info_result.stdout)
                 title = info.get("title", "Unknown Title")
+            except:
+                title = "Unknown Title"
 
-                self.log_message(f"Starting download: {title}")
+            self.log_message(f"Starting download: {title}")
 
-                # Download the video
-                ydl.download([url])
+            # Execute download command
+            process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                       text=True, universal_newlines=True)
 
+            # Read output line by line for progress updates
+            while True:
+                output = process.stdout.readline()
+                if output == '' and process.poll() is not None:
+                    break
+                if output:
+                    line = output.strip()
+                    if line:
+                        self.log_message(line)
+
+            # Check if download was successful
+            if process.returncode == 0:
                 self.log_message(f"Download completed: {title}")
+            else:
+                raise subprocess.CalledProcessError(process.returncode, cmd)
 
         except Exception as e:
             error_msg = f"Download failed for {url}: {str(e)}"
@@ -1191,56 +1236,66 @@ class SSTubeGUI(QMainWindow):
             self.downloading = False
             QTimer.singleShot(100, self.process_queue)  # Small delay to update UI
 
-    def _get_video_download_options(self, save_path: str, video_quality: str) -> Dict[str, Any]:
+    def _build_video_download_command(self, yt_dlp_path: str, ffmpeg_path: str, url: str, save_path: str,
+                                      video_quality: str) -> List[str]:
         """
-        Get yt-dlp options for video download.
+        Build yt-dlp.exe command for video download.
 
         Args:
+            yt_dlp_path: Path to yt-dlp.exe
+            ffmpeg_path: Path to ffmpeg.exe
+            url: Video URL
             save_path: Download destination path
             video_quality: Preferred video quality
 
         Returns:
-            Dictionary of yt-dlp options
+            List of command arguments
         """
-        opts = {
-            "outtmpl": os.path.join(save_path, "%(title)s.%(ext)s"),
-            "ffmpeg_location": os.path.join(self.base_dir, "bin", "ffmpeg.exe"),
-            "noplaylist": True,
-            "progress_hooks": [self.update_progress],
-            "format": "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4",
-            "merge_output_format": "mp4",
-        }
+        cmd = [
+            yt_dlp_path,
+            "--ffmpeg-location", ffmpeg_path,
+            "--no-playlist",
+            "--output", os.path.join(save_path, "%(title)s.%(ext)s"),
+            "--format", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4",
+            "--merge-output-format", "mp4",
+            url
+        ]
 
         # Apply quality filter if not "Best Available"
         if video_quality != "Best Available":
             height = video_quality.split("p")[0]
-            opts["format"] = f"bestvideo[height<={height}]+bestaudio/merge"
+            cmd[cmd.index("--format") + 1] = f"bestvideo[height<={height}]+bestaudio/merge"
 
-        return opts
+        return cmd
 
-    def _get_audio_download_options(self, save_path: str, audio_quality: str) -> Dict[str, Any]:
+    def _build_audio_download_command(self, yt_dlp_path: str, ffmpeg_path: str, url: str, save_path: str,
+                                      audio_quality: str) -> List[str]:
         """
-        Get yt-dlp options for audio extraction.
+        Build yt-dlp.exe command for audio extraction.
 
         Args:
+            yt_dlp_path: Path to yt-dlp.exe
+            ffmpeg_path: Path to ffmpeg.exe
+            url: Video URL
             save_path: Download destination path
             audio_quality: Audio quality in kbps
 
         Returns:
-            Dictionary of yt-dlp options
+            List of command arguments
         """
-        return {
-            "outtmpl": os.path.join(save_path, "%(title)s.%(ext)s"),
-            "ffmpeg_location": os.path.join(self.base_dir, "bin", "ffmpeg.exe"),
-            "noplaylist": True,
-            "progress_hooks": [self.update_progress],
-            "format": "bestaudio/best",
-            "postprocessors": [{
-                "key": "FFmpegExtractAudio",
-                "preferredcodec": "mp3",
-                "preferredquality": audio_quality
-            }],
-        }
+        cmd = [
+            yt_dlp_path,
+            "--ffmpeg-location", ffmpeg_path,
+            "--no-playlist",
+            "--output", os.path.join(save_path, "%(title)s.%(ext)s"),
+            "--format", "bestaudio/best",
+            "--extract-audio",
+            "--audio-format", "mp3",
+            "--audio-quality", audio_quality,
+            url
+        ]
+
+        return cmd
 
     def _show_download_error(self, error: Exception) -> None:
         """
@@ -1277,34 +1332,6 @@ class SSTubeGUI(QMainWindow):
             self, "Download Error",
             f"Download failed:\n\n{error_text}"
         )
-
-    def update_progress(self, d: Dict[str, Any]) -> None:
-        """
-        Handle download progress updates from yt-dlp.
-
-        Args:
-            d: Progress dictionary from yt-dlp
-        """
-        if d["status"] == "downloading":
-            # Extract progress information
-            title = d.get("info_dict", {}).get("title", "Unknown")
-            percent = d.get("_percent_str", "N/A")
-            speed = d.get("_speed_str", "N/A")
-
-            progress_msg = f"{title} - {percent}"
-            if speed != "N/A":
-                progress_msg += f" at {speed}"
-
-            self.log_message(progress_msg)
-
-        elif d["status"] == "finished":
-            # Download completed
-            title = d.get("info_dict", {}).get("title", "Unknown")
-            filename = os.path.basename(d.get("filename", ""))
-
-            self.log_message(f"Download finished: {title}")
-            if filename:
-                self.log_message(f"Saved as: {filename}")
 
 
 def main():
