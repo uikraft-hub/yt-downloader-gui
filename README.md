@@ -3,7 +3,7 @@
 [![Status](https://img.shields.io/badge/status-active-47c219.svg)](#) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 <p align="center">
-  <img src="assets/Favicon.png" width="120" height="120" alt="SSTube Icon" />
+  <img src="src/assets/video-favicon.png" width="120" height="120" alt="SSTube Icon" />
 </p>
 
 **SSTube** is a powerful, open-source YouTube downloader application built with **PyQt6** and **yt-dlp**. Version **2.2.0** brings you an **automatic updater** for yt-dlp, so you’re always running the latest downloader backend, plus all the familiar download modes and cookie-based authentication you love.
