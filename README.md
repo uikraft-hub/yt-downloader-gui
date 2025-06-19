@@ -197,8 +197,3 @@ This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for d
 * **ffmpeg** for multimedia processing.
 * **GitHub API** for seamless updater integration.
 * Thanks to all contributors and testers!
-
----
-
-**Enjoy SSTube v2.2.0!** If you encounter any issues or have suggestions, please open an issue or submit a pull request.
-
