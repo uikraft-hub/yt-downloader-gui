@@ -1,4 +1,4 @@
-# SSTube v2.2.0
+# SSTube v2.3.0
 
 [![Status](https://img.shields.io/badge/status-active-47c219.svg)](#) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
