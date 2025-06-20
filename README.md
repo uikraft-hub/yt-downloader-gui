@@ -3,10 +3,10 @@
 [![Status](https://img.shields.io/badge/status-active-47c219.svg)](#) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 <p align="center">
-  <img src="src/assets/video-favicon.png" width="120" height="120" alt="SSTube Icon" />
+  <img src="src/assets/video-favicon.png" width="120" height="120" alt="Youtube-Media-Downloader Icon" />
 </p>
 
-**SSTube** is a powerful, open-source YouTube downloader application built with **PyQt6** and **yt-dlp**. Version **2.2.0** brings you an **automatic updater** for yt-dlp, so you’re always running the latest downloader backend, plus all the familiar download modes and cookie-based authentication you love.
+**Youtube-Media-Downloader** is a powerful, open-source YouTube downloader application built with **PyQt6** and **yt-dlp**. Version **2.2.0** brings you an **automatic updater** for yt-dlp, so you’re always running the latest downloader backend, plus all the familiar download modes and cookie-based authentication you love.
 
 ---
 
@@ -14,7 +14,7 @@
 
 - **Automatic yt-dlp Updater**  
   - **GitHub Release Check**  
-    On startup, SSTube will ask if you’d like to check for a new yt-dlp release on GitHub.  
+    On startup, Youtube-Media-Downloader will ask if you’d like to check for a new yt-dlp release on GitHub.  
   - **Seamless Download & Replace**  
     Fetches the latest `yt-dlp.exe`, replaces your existing copy, and makes it executable—no manual steps required.
 
@@ -30,9 +30,9 @@
 
 - **Cookie Extension Support**  
   - **Secure Cookie File Import**  
-    SSTube uses a cookie file exported by the **“Get cookies.txt Locally”** extension for authentication.  
+    Youtube-Media-Downloader uses a cookie file exported by the **“Get cookies.txt Locally”** extension for authentication.  
   - **Guided Workflow**  
-    If the extension isn’t installed, SSTube opens its store page in your chosen browser and guides you through export and selection.  
+    If the extension isn’t installed, Youtube-Media-Downloader opens its store page in your chosen browser and guides you through export and selection.  
   - **Validation**  
     Ensures the selected cookie file actually contains YouTube cookies before proceeding.
 
@@ -45,7 +45,7 @@
   - MP3 extraction defaults to **320 kbps** audio quality.
 
 - **Lightweight & Easy to Use**  
-  - Single-file application (`SSTube.py`) plus a small assets folder.  
+  - Single-file application (`Youtube-Media-Downloader.py`) plus a small assets folder.  
   - Minimal external dependencies; runs on Windows, macOS, and Linux (with locally installed `ffmpeg`).
 
 ---
@@ -54,8 +54,8 @@
 
 ```
 
-SSTube/
-├── SSTube.py
+Youtube-Media-Downloader/
+├── Youtube-Media-Downloader.py
 ├── LICENSE
 ├── README.md
 ├── requirements.txt
@@ -73,7 +73,7 @@ SSTube/
 
 ````
 
-- **SSTube.py** — Main application logic (PyQt6 GUI, yt-dlp integration, updater).  
+- **Youtube-Media-Downloader.py** — Main application logic (PyQt6 GUI, yt-dlp integration, updater).  
 - **requirements.txt** — Python dependencies list.  
 - **assets/** — GUI icons and images.  
 - **bin/** — Bundled `ffmpeg.exe` and `yt-dlp.exe`.  
@@ -85,7 +85,7 @@ SSTube/
 
 - **Python 3.8+**  
 - **ffmpeg** (included in `bin/ffmpeg.exe` on Windows; install separately on other OS)  
-- **yt-dlp** (managed automatically by SSTube’s updater)  
+- **yt-dlp** (managed automatically by Youtube-Media-Downloader’s updater)  
 - **PyQt6**  
 
 ```bash
@@ -99,8 +99,8 @@ pip install -r requirements.txt
 1. **Clone or Download** this repository:
 
    ```bash
-   git clone https://github.com/UKR-PROJECTS/SSTube.git
-   cd SSTube
+   git clone https://github.com/UKR-PROJECTS/Youtube-Media-Downloader.git
+   cd Youtube-Media-Downloader
    ```
 
 2. **(Optional) Create & Activate a Virtual Environment**:
@@ -116,16 +116,16 @@ pip install -r requirements.txt
    pip install -r requirements.txt
    ```
 
-4. **Verify `ffmpeg` & `yt-dlp`** exist in `bin/`. SSTube will update `yt-dlp.exe` automatically.
+4. **Verify `ffmpeg` & `yt-dlp`** exist in `bin/`. Youtube-Media-Downloader will update `yt-dlp.exe` automatically.
 
 ---
 
 ## Usage
 
-1. **Run SSTube**:
+1. **Run Youtube-Media-Downloader**:
 
    ```bash
-   python SSTube.py
+   python Youtube-Media-Downloader.py
    ```
 
    * On first launch (and each subsequent startup), you’ll be prompted to **Check for Updates** to yt-dlp. Choosing **Yes** will download and install the latest `yt-dlp.exe`.
@@ -133,8 +133,8 @@ pip install -r requirements.txt
 2. **Login with Cookies**
 
    * From **File > Login**, select your browser and indicate whether you’ve installed the **Get cookies.txt Locally** extension.
-   * If needed, SSTube opens the extension page, then prompts you to select the exported cookie file.
-   * After selecting a valid cookie file, SSTube opens YouTube’s login page in your browser—log in there, then return to SSTube.
+   * If needed, Youtube-Media-Downloader opens the extension page, then prompts you to select the exported cookie file.
+   * After selecting a valid cookie file, Youtube-Media-Downloader opens YouTube’s login page in your browser—log in there, then return to Youtube-Media-Downloader.
 
 3. **Download Workflow**
 
@@ -153,7 +153,7 @@ pip install -r requirements.txt
 ## Screenshots
 
 <p align="center">
-  <img src="screenshots/GUI.png" width="600" height="400" alt="SSTube GUI" />
+  <img src="screenshots/GUI.png" width="600" height="400" alt="Youtube-Media-Downloader GUI" />
 </p>
 
 
@@ -164,10 +164,10 @@ pip install -r requirements.txt
 Use [PyInstaller](https://www.pyinstaller.org/):
 
 ```bash
-pyinstaller --onefile --windowed --icon "assets/Favicon.png" --add-data "assets;assets" --add-data "bin;bin" SSTube.py
+pyinstaller --onefile --windowed --icon "assets/Favicon.png" --add-data "assets;assets" --add-data "bin;bin" Youtube-Media-Downloader.py
 ```
 
-This creates `dist/SSTube.exe` (or the equivalent on your platform).
+This creates `dist/Youtube-Media-Downloader.exe` (or the equivalent on your platform).
 
 ---
 
