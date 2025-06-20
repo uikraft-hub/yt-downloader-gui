@@ -143,7 +143,7 @@ pip install -r requirements.txt
 ```bash
 pyinstaller \
   --onefile --windowed \
-  --icon "favicon.ico" \
+  --icon "src/favicon.ico" \
   --add-data "src/assets;assets" \
   --add-data "src/bin;bin" \
   src/main.py
