@@ -1,5 +1,5 @@
 """
-SSTube - Professional YouTube Video Downloader
+Youtube-Media-Downloader - Professional YouTube Video Downloader
 ==============================================
 
 A PyQt6-based GUI application for downloading YouTube videos, playlists, and channels.
@@ -26,7 +26,7 @@ Dependencies:
 Usage:
     python src/main.py
 
-Repository: https://github.com/UKR-PROJECTS/SSTube
+Repository: https://github.com/UKR-PROJECTS/Youtube-Media-Downloader
 """
 
 import os
@@ -151,7 +151,7 @@ class Updater:
             raise e
 
 
-class SSTubeGUI(QMainWindow):
+class YTDGUI(QMainWindow):
     """Optimized version with performance improvements"""
 
     # Define PyQt signals for thread-safe GUI updates
@@ -166,7 +166,7 @@ class SSTubeGUI(QMainWindow):
         self.setUpdatesEnabled(False)
 
         # Window configuration
-        self.setWindowTitle("SSTube")
+        self.setWindowTitle("Youtube-Media-Downloader")
         self.resize(400, 300)
 
         # Initialize state first (lightweight operations)
@@ -580,7 +580,7 @@ class SSTubeGUI(QMainWindow):
     def show_about(self) -> None:
         """Display application about dialog."""
         about_text = (
-            "SSTube Video Downloader\n"
+            "Youtube-Media-Downloader\n"
             "Version 2.3.0\n\n"
             "Developed by Ujjwal Nova\n\n"
             "A professional YouTube video and audio downloader\n"
@@ -588,7 +588,7 @@ class SSTubeGUI(QMainWindow):
             "Report bugs via our support channel."
         )
 
-        QMessageBox.information(self, "About SSTube", about_text)
+        QMessageBox.information(self, "About Youtube-Media-Downloader", about_text)
 
     def update_status(self, message: str) -> None:
         """
@@ -611,7 +611,7 @@ class SSTubeGUI(QMainWindow):
             msg: Message to log
         """
         self.logMessageSignal.emit(msg)
-        print(f"[SSTube] {msg}")  # Also log to console
+        print(f"[Youtube-Media-Downloader] {msg}")  # Also log to console
 
     def _log_message_optimized(self, msg):
         """Optimized logging with batching to prevent UI lag"""
@@ -641,7 +641,7 @@ class SSTubeGUI(QMainWindow):
         layout.setSpacing(10)  # Reduce spacing
 
         # Simple header without heavy styling
-        header = QLabel("SSTube")
+        header = QLabel("YTD")
         header.setAlignment(Qt.AlignmentFlag.AlignCenter)
         header.setStyleSheet("font-size: 14pt; font-weight: bold;")  # Reduced font size
         layout.addWidget(header)
@@ -1313,7 +1313,7 @@ class SSTubeGUI(QMainWindow):
             error_text += (
                 "\n\nTroubleshooting tips:\n"
                 "• Ensure Chrome is completely closed\n"
-                "• Run SSTube as the same user who uses Chrome\n"
+                "• Run Youtube-Media-Downloader as the same user who uses Chrome\n"
                 "• Try exporting cookies manually\n"
                 "• Check if cookie file is recent and valid"
             )
@@ -1346,12 +1346,12 @@ def main():
     app = QApplication(sys.argv)
 
     # Set application metadata
-    app.setApplicationName("SSTube")
+    app.setApplicationName("Youtube-Media-Downloader")
     app.setApplicationVersion("2.2.0")
     app.setOrganizationName("Ujjwal Nova")
 
     # Create and show main window
-    window = SSTubeGUI()
+    window = YTDGUI()
     window.show()
 
     # Start event loop
