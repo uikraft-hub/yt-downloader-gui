@@ -138,7 +138,7 @@ pip install -r requirements.txt
 
 ## 🖼️ Screenshot
 
-![App Screenshot](screenshots/scree.png)
+![App Screenshot](screenshots/screeshot.png)
 
 ---
 
