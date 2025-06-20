@@ -14,25 +14,25 @@
 
 ### 🚀 Performance & Responsiveness  
 - **Blazing‑fast startup**  
-  - Lazy‑load icons off the main thread to avoid blocking :contentReference[oaicite:0]{index=0}.  
-  - Disabled unnecessary UI updates during initialization :contentReference[oaicite:1]{index=1}.  
+  - Lazy‑load icons off the main thread to avoid blocking
+  - Disabled unnecessary UI updates during initialization
 - **Optimized rendering**  
-  - Fixed sidebar width and trimmed widget margins for smoother layout :contentReference[oaicite:2]{index=2}.  
-  - Batched log panel redraws at 100 ms intervals for snappier activity scrolling :contentReference[oaicite:3]{index=3}.
+  - Fixed sidebar width and trimmed widget margins for smoother layout
+  - Batched log panel redraws at 100 ms intervals for snappier activity scrolling
 
 ### 🎨 Refined User Interface  
-- **Virtual‑scroll pickers** for channel/playlist dialogs—no lag, even on thousands of items :contentReference[oaicite:4]{index=4}.  
-- **Streamlined controls**: only relevant download modes and quality options are shown :contentReference[oaicite:5]{index=5}.  
-- **Async icon loading** prevents UI freezes when scaling large images :contentReference[oaicite:6]{index=6}.
+- **Virtual‑scroll pickers** for channel/playlist dialogs—no lag, even on thousands of items
+- **Streamlined controls**: only relevant download modes and quality options are shown
+- **Async icon loading** prevents UI freezes when scaling large images
 
 ### 🔧 Under‑the‑Hood Enhancements  
-- **Multithreaded downloads** via `QThread`: UI remains responsive under heavy I/O :contentReference[oaicite:7]{index=7}.  
-- **Manual updater** for `yt‑dlp`: checks on demand, with atomic replace and permissions set cleanly :contentReference[oaicite:8]{index=8}.
+- **Multithreaded downloads** via `QThread`: UI remains responsive under heavy I/O
+- **Manual updater** for `yt‑dlp`: checks on demand, with atomic replace and permissions set cleanly
 
 ### 🐞 Bug Fixes & Polish  
-- Resolved freezes when toggling between **Download** and **Activity** pages :contentReference[oaicite:9]{index=9}.  
-- Improved fallback browser detection on Windows :contentReference[oaicite:10]{index=10}.  
-- Enhanced error dialogs with actionable tips for common `yt‑dlp` failures :contentReference[oaicite:11]{index=11}.
+- Resolved freezes when toggling between **Download** and **Activity** pages 
+- Improved fallback browser detection on Windows 
+- Enhanced error dialogs with actionable tips for common `yt‑dlp` failures
 
 ---
 
