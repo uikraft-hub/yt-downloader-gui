@@ -143,10 +143,10 @@ pip install -r requirements.txt
 ```bash
 pyinstaller \
   --onefile --windowed \
-  --icon "src/assets/video-favicon.png" \
+  --icon "favicon.ico" \
   --add-data "src/assets;assets" \
   --add-data "src/bin;bin" \
-  src/Youtube-Media-Downloader.py
+  src/main.py
 ```
 
 Generates `dist/Youtube-Media-Downloader.exe` (or equivalent).
