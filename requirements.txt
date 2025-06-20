@@ -1,4 +1,4 @@
-# SSTube - YouTube Video Downloader Requirements
+# YouTube Video Downloader Requirements
 # =============================================
 
 # GUI Framework
