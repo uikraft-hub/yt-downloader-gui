@@ -1347,7 +1347,7 @@ def main():
 
     # Set application metadata
     app.setApplicationName("Youtube-Media-Downloader")
-    app.setApplicationVersion("2.2.0")
+    app.setApplicationVersion("2.3.0")
     app.setOrganizationName("Ujjwal Nova")
 
     # Create and show main window
