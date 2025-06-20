@@ -1,52 +1,49 @@
-# Youtube-Media-Downloader v2.3.0
+# Youtube‑Media‑Downloader v2.3.0
 
 [![Status](https://img.shields.io/badge/status-active-47c219.svg)](#) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 <p align="center">
-  <img src="src/assets/video-favicon.png" width="120" height="120" alt="Youtube-Media-Downloader Icon" />
+  <img src="src/assets/video-favicon.png" width="120" height="120" alt="Youtube‑Media‑Downloader Icon" />
 </p>
 
-**Youtube-Media-Downloader** is a powerful, open-source YouTube downloader application built with **PyQt6** and **yt-dlp**. Version **2.2.0** brings you an **automatic updater** for yt-dlp, so you’re always running the latest downloader backend, plus all the familiar download modes and cookie-based authentication you love.
+**Youtube‑Media‑Downloader** is an open‑source YouTube downloader built with **PyQt6** and **yt‑dlp**, now tuned for lightning‑fast performance, a sleeker UI, and rock‑solid stability.
+
+---
+
+## What’s New in 2.3.0
+
+### 🚀 Performance & Responsiveness  
+- **Blazing‑fast startup**  
+  - Lazy‑load icons off the main thread to avoid blocking :contentReference[oaicite:0]{index=0}.  
+  - Disabled unnecessary UI updates during initialization :contentReference[oaicite:1]{index=1}.  
+- **Optimized rendering**  
+  - Fixed sidebar width and trimmed widget margins for smoother layout :contentReference[oaicite:2]{index=2}.  
+  - Batched log panel redraws at 100 ms intervals for snappier activity scrolling :contentReference[oaicite:3]{index=3}.
+
+### 🎨 Refined User Interface  
+- **Virtual‑scroll pickers** for channel/playlist dialogs—no lag, even on thousands of items :contentReference[oaicite:4]{index=4}.  
+- **Streamlined controls**: only relevant download modes and quality options are shown :contentReference[oaicite:5]{index=5}.  
+- **Async icon loading** prevents UI freezes when scaling large images :contentReference[oaicite:6]{index=6}.
+
+### 🔧 Under‑the‑Hood Enhancements  
+- **Multithreaded downloads** via `QThread`: UI remains responsive under heavy I/O :contentReference[oaicite:7]{index=7}.  
+- **Manual updater** for `yt‑dlp`: checks on demand, with atomic replace and permissions set cleanly :contentReference[oaicite:8]{index=8}.
+
+### 🐞 Bug Fixes & Polish  
+- Resolved freezes when toggling between **Download** and **Activity** pages :contentReference[oaicite:9]{index=9}.  
+- Improved fallback browser detection on Windows :contentReference[oaicite:10]{index=10}.  
+- Enhanced error dialogs with actionable tips for common `yt‑dlp` failures :contentReference[oaicite:11]{index=11}.
 
 ---
 
 ## Features
 
-- **Automatic yt-dlp Updater**  
-  - **GitHub Release Check**  
-    On startup, Youtube-Media-Downloader will ask if you’d like to check for a new yt-dlp release on GitHub.  
-  - **Seamless Download & Replace**  
-    Fetches the latest `yt-dlp.exe`, replaces your existing copy, and makes it executable—no manual steps required.
-
-- **Multiple Download Modes**  
-  - **Single Video / MP3 Only**  
-    Download a single YouTube video or extract its audio as MP3.  
-  - **Playlist Video / Playlist MP3**  
-    Download an entire playlist with the option to include only selected videos.  
-  - **Channel Videos / Channel Videos MP3**  
-    Download all videos (or just their audio) from a YouTube channel.  
-  - **Channel Shorts / Channel Shorts MP3**  
-    Focus exclusively on downloading YouTube Shorts content.
-
-- **Cookie Extension Support**  
-  - **Secure Cookie File Import**  
-    Youtube-Media-Downloader uses a cookie file exported by the **“Get cookies.txt Locally”** extension for authentication.  
-  - **Guided Workflow**  
-    If the extension isn’t installed, Youtube-Media-Downloader opens its store page in your chosen browser and guides you through export and selection.  
-  - **Validation**  
-    Ensures the selected cookie file actually contains YouTube cookies before proceeding.
-
-- **Modern PyQt6 Interface**  
-  - Intuitive sidebar navigation between **Download** and **Activity** pages.  
-  - Real-time status updates and a scrolling activity log.
-
-- **Flexible Quality Options**  
-  - Choose **Best Available** or specific resolutions (8K, 4K, 1080p, etc.) for video.  
-  - MP3 extraction defaults to **320 kbps** audio quality.
-
-- **Lightweight & Easy to Use**  
-  - Single-file application (`Youtube-Media-Downloader.py`) plus a small assets folder.  
-  - Minimal external dependencies; runs on Windows, macOS, and Linux (with locally installed `ffmpeg`).
+- **Automatic yt‑dlp Updater** (manual‐trigger mode)  
+- **Multiple Download Modes**: single video/MP3, playlists, channels (videos & shorts)  
+- **Cookie‑based Authentication** via `cookies.txt` export  
+- **Modern PyQt6 Interface** with sidebar navigation and real‑time logs  
+- **Flexible Quality Selection** (Best Available, 8K, 4K, 1080p, 320 kbps MP3, etc.)  
+- **Cross‑Platform** (Windows/macOS/Linux; ffmpeg required for non‑Windows)
 
 ---
 
@@ -55,38 +52,29 @@
 ```
 
 Youtube-Media-Downloader/
-├── Youtube-Media-Downloader.py
+├── src/
+│   ├── main.py                       # Main PyQt6 application
+│   ├── assets/                       # GUI icons & images
+│   │   └── video-favicon.png
+│   └── bin/                          # Bundled ffmpeg & yt-dlp
+│       ├── ffmpeg.exe
+│       └── yt-dlp.exe
+├── screenshots/                      # GUI screenshots
+├── requirements.txt                  # Python dependencies
 ├── LICENSE
-├── README.md
-├── requirements.txt
 ├── .gitignore
-├── assets/
-│   ├── Favicon.png
-│   ├── download.png
-│   ├── activity.png
-│   └── video-favicon.png
-├── bin/
-│   ├── ffmpeg.exe
-│   └── yt-dlp.exe       # Automatically updated by the Updater
-└── screenshots/
-
+└── README.md
 
 ````
-
-- **Youtube-Media-Downloader.py** — Main application logic (PyQt6 GUI, yt-dlp integration, updater).  
-- **requirements.txt** — Python dependencies list.  
-- **assets/** — GUI icons and images.  
-- **bin/** — Bundled `ffmpeg.exe` and `yt-dlp.exe`.  
-- **screenshots/** — Add your own screenshots for documentation.
 
 ---
 
 ## Requirements
 
 - **Python 3.8+**  
-- **ffmpeg** (included in `bin/ffmpeg.exe` on Windows; install separately on other OS)  
-- **yt-dlp** (managed automatically by Youtube-Media-Downloader’s updater)  
+- **ffmpeg** (bundled on Windows; install separately on macOS/Linux)  
 - **PyQt6**  
+- **yt‑dlp** (managed automatically)  
 
 ```bash
 pip install -r requirements.txt
@@ -96,104 +84,94 @@ pip install -r requirements.txt
 
 ## Installation
 
-1. **Clone or Download** this repository:
+1. **Clone the repo**
 
    ```bash
    git clone https://github.com/UKR-PROJECTS/Youtube-Media-Downloader.git
    cd Youtube-Media-Downloader
    ```
 
-2. **(Optional) Create & Activate a Virtual Environment**:
+2. **Create & activate a virtual environment** (optional)
 
    ```bash
    python -m venv venv
-   source venv/bin/activate      # On Windows: venv\Scripts\activate
+   source venv/bin/activate    # Windows: venv\Scripts\activate
    ```
 
-3. **Install Dependencies**:
+3. **Install dependencies**
 
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Verify `ffmpeg` & `yt-dlp`** exist in `bin/`. Youtube-Media-Downloader will update `yt-dlp.exe` automatically.
+4. **Verify** `ffmpeg` & `yt-dlp` exist in `src/bin/`.
 
 ---
 
 ## Usage
 
-1. **Run Youtube-Media-Downloader**:
+1. **Launch the app**
 
    ```bash
-   python Youtube-Media-Downloader.py
+   python src/Youtube-Media-Downloader.py
    ```
 
-   * On first launch (and each subsequent startup), you’ll be prompted to **Check for Updates** to yt-dlp. Choosing **Yes** will download and install the latest `yt-dlp.exe`.
+2. **(Optional) Check for yt‑dlp updates**
+   From **Help > Check for yt‑dlp Update**.
 
-2. **Login with Cookies**
+3. **Authenticate with cookies**
+   **File > Login**, select your browser and exported `cookies.txt`, then log in via the opened YouTube page.
 
-   * From **File > Login**, select your browser and indicate whether you’ve installed the **Get cookies.txt Locally** extension.
-   * If needed, Youtube-Media-Downloader opens the extension page, then prompts you to select the exported cookie file.
-   * After selecting a valid cookie file, Youtube-Media-Downloader opens YouTube’s login page in your browser—log in there, then return to Youtube-Media-Downloader.
+4. **Download content**
 
-3. **Download Workflow**
-
-   * Navigate to the **Download** page.
-   * Enter a YouTube URL (video, playlist, channel or shorts).
-   * Choose a **Save Location**.
-   * Select a **Download Mode** and, if applicable, a **Video Quality**.
-   * Click **Download** to queue the task.
-
-4. **Monitor Progress**
-
-   * Switch to the **Activity** page to view real-time logs and download status.
+   * Enter a URL (video/playlist/channel/shorts)
+   * Choose **Save Location**, **Download Mode**, and **Quality**
+   * Click **Download** and monitor progress in **Activity**.
 
 ---
 
 ## Screenshots
 
 <p align="center">
-  <img src="screenshots/GUI.png" width="600" height="400" alt="Youtube-Media-Downloader GUI" />
+  <img src="screenshots/GUI.png" width="600" alt="Youtube‑Media‑Downloader GUI" />
 </p>
-
 
 ---
 
 ## Building a Standalone Executable
 
-Use [PyInstaller](https://www.pyinstaller.org/):
-
 ```bash
-pyinstaller --onefile --windowed --icon "assets/Favicon.png" --add-data "assets;assets" --add-data "bin;bin" Youtube-Media-Downloader.py
+pyinstaller \
+  --onefile --windowed \
+  --icon "src/assets/video-favicon.png" \
+  --add-data "src/assets;assets" \
+  --add-data "src/bin;bin" \
+  src/Youtube-Media-Downloader.py
 ```
 
-This creates `dist/Youtube-Media-Downloader.exe` (or the equivalent on your platform).
+Generates `dist/Youtube-Media-Downloader.exe` (or equivalent).
 
 ---
 
 ## Contributing
 
-We welcome all contributions!
+1. Fork the repo
+2. Create a branch (`git checkout -b feature/xyz`)
+3. Commit your changes with clear messages
+4. Push & open a Pull Request
 
-1. **Fork** the repository.
-2. **Create a feature branch** (`git checkout -b feature/awesome-feature`).
-3. **Commit** with clear, descriptive messages.
-4. **Push** to your fork and **open a Pull Request**.
-
-For major changes, please open an issue first to discuss.
+Please open an issue first for major enhancements.
 
 ---
 
 ## License
 
-This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for details.
+MIT © UKR‑PROJECTS. See [LICENSE](LICENSE) for details.
 
 ---
 
 ## Acknowledgments
 
-* **yt-dlp** for the powerful download backend.
-* **PyQt6** for the modern GUI framework.
-* **ffmpeg** for multimedia processing.
-* **GitHub API** for seamless updater integration.
-* Thanks to all contributors and testers!
+* **yt‑dlp** for the download engine
+* **PyQt6** for the GUI framework
+* **ffmpeg** for media processing
