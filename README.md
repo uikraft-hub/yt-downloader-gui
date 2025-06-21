@@ -69,7 +69,7 @@ Youtube‑Media‑Downloader/
 │   ├── ffmpeg.exe
 │   └── yt-dlp.exe                   # Auto‑updated by the updater
 └── screenshots/
-└── Youtube-Media-Downloader-GUI.png
+     └── screenshot.png
 
 ````
 
