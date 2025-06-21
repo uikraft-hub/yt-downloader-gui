@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE) [![Language: Python](https://img.shields.io/badge/Language-Python-blue.svg)](#) [![Status: Active](https://img.shields.io/badge/Status-Active-brightgreen.svg)](#)
 
 <p align="center">
-  <img src="src/favicon.ico" alt="favicon" width="64" height="64" />
+  <img src="src/favicon.ico" alt="App Icon" width="64" height="64" />
 </p>
 
 **Youtube‑Media‑Downloader** is a powerful, open‑source desktop application built with PyQt6 and yt-dlp that lets you download single videos, playlists, channels (videos & shorts), or just MP3 audio—seamlessly and reliably.
