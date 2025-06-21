@@ -8,6 +8,7 @@ Supports both video and audio-only downloads with customizable quality settings.
 Author: Ujjwal Nova
 Version: 2.3.1
 License: MIT
+Repository: https://github.com/UKR-PROJECTS/Youtube-Media-Downloader
 
 Features:
 - Single video and playlist downloads
@@ -25,8 +26,6 @@ Dependencies:
 
 Usage:
     python src/main.py
-
-Repository: https://github.com/UKR-PROJECTS/Youtube-Media-Downloader
 """
 
 import os
@@ -1348,7 +1347,7 @@ def main():
     # Set application metadata
     app.setApplicationName("Youtube-Media-Downloader")
     app.setApplicationVersion("2.3.0")
-    app.setOrganizationName("Ujjwal Nova")
+    app.setOrganizationName("UKR-PROJECTS")
 
     # Create and show main window
     window = YTDGUI()
