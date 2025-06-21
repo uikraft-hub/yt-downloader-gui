@@ -53,23 +53,23 @@
 ## 📁 Folder Structure
 
 ```
-
-Youtube‑Media‑Downloader/
-├── main.py                           # Main PyQt6 + yt-dlp logic
+Youtube-Media-Downloader/
+├── src/
+│    ├── main.py
+│    ├── favicon.ico
+│    ├── assets/
+│    │    ├── download.png
+│    │    ├── activity.png
+│    │    └── video-favicon.png
+│    └── bin/
+│         ├── ffmpeg.exe
+│         └── yt-dlp.exe
 ├── LICENSE
 ├── README.md
-├── requirements.txt                  # Python dependencies
+├── requirements.txt
 ├── .gitignore
-├── assets/
-│    ├── download.png
-│    ├── activity.png
-│    └── video-favicon.png
-├── bin/
-│    ├── ffmpeg.exe
-│    └── yt-dlp.exe                   # Auto‑updated by the updater
 └── screenshots/
-     └── screenshot.png
-
+      └── screenshot.png
 ````
 
 ---
