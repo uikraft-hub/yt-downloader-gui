@@ -55,19 +55,18 @@
 ```
 
 Youtube‑Media‑Downloader/
-├── Youtube‑Media‑Downloader.py       # Main PyQt6 + yt-dlp logic
+├── main.py                           # Main PyQt6 + yt-dlp logic
 ├── LICENSE
 ├── README.md
 ├── requirements.txt                  # Python dependencies
 ├── .gitignore
 ├── assets/
-│   ├── Favicon.png
-│   ├── download.png
-│   ├── activity.png
-│   └── video-favicon.png
+│    ├── download.png
+│    ├── activity.png
+│    └── video-favicon.png
 ├── bin/
-│   ├── ffmpeg.exe
-│   └── yt-dlp.exe                   # Auto‑updated by the updater
+│    ├── ffmpeg.exe
+│    └── yt-dlp.exe                   # Auto‑updated by the updater
 └── screenshots/
      └── screenshot.png
 
