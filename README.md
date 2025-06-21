@@ -1,4 +1,4 @@
-# Youtube‑Media‑Downloader v2.3.0
+# Youtube‑Media‑Downloader v2.3.1
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE) [![Language: Python](https://img.shields.io/badge/Language-Python-blue.svg)](#) [![Status: Active](https://img.shields.io/badge/Status-Active-brightgreen.svg)](#)
 
@@ -10,7 +10,7 @@
 
 ---
 
-## 🆕 What’s New in v2.3.0
+## 🆕 What’s New in v2.3.1
 
 - **Performance & Responsiveness**
   - Blazing‑fast startup: disabled unnecessary UI updates and lazy‑load icons.
