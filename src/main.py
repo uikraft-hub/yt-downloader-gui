@@ -6,7 +6,7 @@ A PyQt6-based GUI application for downloading YouTube videos, playlists, and cha
 Supports both video and audio-only downloads with customizable quality settings.
 
 Author: Ujjwal Nova
-Version: 2.3.0
+Version: 2.3.1
 License: MIT
 
 Features:
