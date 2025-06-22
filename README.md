@@ -1,16 +1,16 @@
-# Youtube‑Media‑Downloader v2.3.0
+# Youtube‑Media‑Downloader v2.3.1
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE) [![Language: Python](https://img.shields.io/badge/Language-Python-blue.svg)](#) [![Status: Active](https://img.shields.io/badge/Status-Active-brightgreen.svg)](#)
 
 <p align="center">
-  <img src="src/favicon.ico" alt="favicon" width="64" height="64" />
+  <img src="src/favicon.ico" alt="App Icon" width="64" height="64" />
 </p>
 
 **Youtube‑Media‑Downloader** is a powerful, open‑source desktop application built with PyQt6 and yt-dlp that lets you download single videos, playlists, channels (videos & shorts), or just MP3 audio—seamlessly and reliably.
 
 ---
 
-## 🆕 What’s New in v2.3.0
+## 🆕 What’s New in v2.3.1
 
 - **Performance & Responsiveness**
   - Blazing‑fast startup: disabled unnecessary UI updates and lazy‑load icons.
@@ -53,24 +53,23 @@
 ## 📁 Folder Structure
 
 ```
-
-Youtube‑Media‑Downloader/
-├── Youtube‑Media‑Downloader.py       # Main PyQt6 + yt-dlp logic
+Youtube-Media-Downloader/
+├── src/
+│    ├── main.py
+│    ├── favicon.ico
+│    ├── assets/
+│    │    ├── download.png
+│    │    ├── activity.png
+│    │    └── video-favicon.png
+│    └── bin/
+│         ├── ffmpeg.exe
+│         └── yt-dlp.exe
 ├── LICENSE
 ├── README.md
-├── requirements.txt                  # Python dependencies
+├── requirements.txt
 ├── .gitignore
-├── assets/
-│   ├── Favicon.png
-│   ├── download.png
-│   ├── activity.png
-│   └── video-favicon.png
-├── bin/
-│   ├── ffmpeg.exe
-│   └── yt-dlp.exe                   # Auto‑updated by the updater
 └── screenshots/
-└── Youtube-Media-Downloader-GUI.png
-
+      └── screenshot.png
 ````
 
 ---
@@ -138,7 +137,7 @@ pip install -r requirements.txt
 
 ## 🖼️ Screenshot
 
-![App Screenshot](screenshots/screenshot.png)
+![Interface](screenshots/screenshot.png)
 
 ---
 
