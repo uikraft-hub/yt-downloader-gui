@@ -161,3 +161,23 @@ For major changes, please open an issue first to discuss.
 * **ffmpeg** for audio/video processing
 * **GitHub API** for seamless updater integration
 
+## 🌟 Star History
+
+If you find this project useful, please consider giving it a star on GitHub! Your support helps us continue improving and maintaining this tool.
+
+## 📞 Support
+
+- **GitHub Issues**: [Report bugs or request features](https://github.com/UKR-PROJECTS/Youtube-Media-Downloader/issues)
+- **Discussions**: [Community discussions and Q&A](https://github.com/UKR-PROJECTS/Youtube-Media-Downloader/discussions)
+- **Email**: ukrpurojekuto@gmail.com
+
+---
+
+<div align="center">
+
+**Made with ❤️ by the Ujjwal Nova**
+
+[⭐ Star this repo](https://github.com/UKR-PROJECTS/Youtube-Media-Downloader) | [🐛 Report Bug](https://github.com/UKR-PROJECTS/Youtube-Media-Downloader/issues) | [💡 Request Feature](https://github.com/UKR-PROJECTS/Youtube-Media-Downloader/issues)
+
+</div>
+
