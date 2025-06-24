@@ -41,7 +41,7 @@ Before contributing, ensure you have:
 1. **Fork the Repository**
    ```bash
    # Fork the repo on GitHub, then clone your fork
-   git clone https://github.com/YOUR_USERNAME/Youtube-Media-Downloader.git
+   git clone https://github.com/UKR-PROJECTS/Youtube-Media-Downloader.git
    cd Youtube-Media-Downloader
    ```
 
