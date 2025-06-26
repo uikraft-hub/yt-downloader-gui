@@ -25,7 +25,8 @@ Dependencies:
 - FFmpeg: Audio/video processing (external binary)
 
 Usage:
-    python src/main.py
+    cd src
+    python main.py
 """
 
 import os
