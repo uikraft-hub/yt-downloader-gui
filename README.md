@@ -92,8 +92,8 @@ pip install -r requirements.txt
 1. **Clone the repo:**
 
    ```bash
-   git clone https://github.com/UKR-PROJECTS/Youtube-Media-Downloader.git
-   cd Youtube-Media-Downloader
+   git clone https://github.com/UKR-PROJECTS/yt-dlp-gui.git
+   cd yt-dlp-gui
    ```
 2. **(Optional) Create & activate a virtual environment:**
 
