@@ -92,7 +92,7 @@ pip install -r requirements.txt
 1. **Clone the repo:**
 
    ```bash
-   git clone https://github.com/UKR-PROJECTS/yt-dlp-gui.git
+   git clone https://github.com/ukr-projects/yt-dlp-gui.git
    cd yt-dlp-gui
    ```
 2. **(Optional) Create & activate a virtual environment:**
