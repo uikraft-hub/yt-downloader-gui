@@ -47,24 +47,6 @@ from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 
 
-class DownloadThread(QThread):
-    """Separate thread for downloads to prevent UI blocking"""
-    progress = pyqtSignal(str)
-
-    def __init__(self, task, parent):
-        super().__init__(parent)
-        self.task = task
-        self.parent_gui = parent
-
-    def run(self):
-        """Run download in separate thread"""
-        try:
-            # Call the original download_video method but in separate thread
-            self.parent_gui.download_video(self.task)
-        except Exception as e:
-            self.progress.emit(f"Download thread error: {str(e)}")
-
-
 class Updater:
     """
     Handles automatic updates for yt-dlp binary.
@@ -152,53 +134,56 @@ class Updater:
 
 
 class YTDGUI(QMainWindow):
-    """Optimized version with performance improvements"""
+    """
+    Main GUI application class for YTD YouTube downloader.
 
-    # Define PyQt signals for thread-safe GUI updates
+    This class implements the complete user interface and handles all user interactions,
+    download management, and application state.
+    """
+
+    # Custom signals for thread-safe GUI updates
     updateStatusSignal = pyqtSignal(str)
     logMessageSignal = pyqtSignal(str)
 
     def __init__(self):
-        """Initialize with performance optimizations"""
+        """Initialize the main application window and all components."""
         super().__init__()
 
-        # Disable automatic updates for better performance
-        self.setUpdatesEnabled(False)
-
         # Window configuration
-        self.setWindowTitle("Youtube-Media-Downloader")
+        self.setWindowTitle("YTD")
         self.resize(400, 300)
 
-        # Initialize state first (lightweight operations)
-        self._initialize_state()
-
-        # Set application base directory
+        # Determine application base directory (handles both script and frozen executable)
         if getattr(sys, "frozen", False):
+            # Running as compiled executable
             self.base_dir = os.path.dirname(sys.executable)
         else:
+            # Running as Python script
             self.base_dir = os.path.dirname(os.path.abspath(__file__))
 
         # Initialize updater component
         self.updater = Updater(self.base_dir, parent=self)
 
-        # Load icons asynchronously
-        QTimer.singleShot(0, self._load_icons_async)
+        # Set application icon
+        self._set_window_icon()
 
-        # Build UI with optimizations
-        self._create_ui_optimized()
+        # Initialize application state
+        self._initialize_state()
 
-        # Connect signals
+        # Load UI icons
+        self._load_icons()
+
+        # Build user interface
+        self._create_ui()
+
+        # Connect signals for thread-safe updates
         self._connect_signals()
 
-        # Re-enable updates after initialization
-        self.setUpdatesEnabled(True)
-
-        # Set initial status
+        # Initial status
         self.update_status("Ready")
 
-        # Delayed icon setting and update check
-        QTimer.singleShot(50, self._set_window_icon)
-        QTimer.singleShot(200, self.check_for_updates)
+        # Check for updates on startup (delayed to allow UI to render)
+        QTimer.singleShot(100, self.check_for_updates)
 
     def _set_window_icon(self) -> None:
         """Set the application window icon if available."""
@@ -224,55 +209,47 @@ class YTDGUI(QMainWindow):
         self.cookie_browser = "chrome"
         self.cookie_file: Optional[str] = None
 
-    def _load_icons_async(self):
-        """Load icons asynchronously to prevent blocking"""
-        self.icons = {}
-        icon_paths = [
-            ("download", os.path.join(self.base_dir, "assets", "download.png")),
-            ("activity", os.path.join(self.base_dir, "assets", "activity.png")),
-        ]
+    def _load_icons(self) -> None:
+        """Load application icons from assets directory."""
+        self.icons = {
+            "download": self.load_icon(os.path.join(self.base_dir, "assets", "download.png")),
+            "activity": self.load_icon(os.path.join(self.base_dir, "assets", "activity.png")),
+        }
 
-        for name, path in icon_paths:
-            self.icons[name] = self.load_icon(path)
-
-        # Load video favicon
+        # Load video favicon for playlist/channel selection dialogs
         try:
             vf_path = os.path.join(self.base_dir, "assets", "video-favicon.png")
             if os.path.exists(vf_path):
-                pixmap = QPixmap(vf_path)
-                self.video_favicon_pixmap = pixmap.scaled(
-                    16, 16,
-                    Qt.AspectRatioMode.KeepAspectRatio,
-                    Qt.TransformationMode.FastTransformation  # Use fast transformation
+                self.video_favicon_pixmap = (
+                    QPixmap(vf_path)
+                    .scaled(16, 16, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
                 )
             else:
                 self.video_favicon_pixmap = None
-        except:
+        except Exception:
             self.video_favicon_pixmap = None
 
-    def _create_ui_optimized(self):
-        """Optimized UI creation with reduced redraws"""
+    def _create_ui(self) -> None:
+        """Create and layout the main user interface."""
         # Create menu bar
         self.create_menubar()
 
-        # Central widget
+        # Central widget with horizontal layout
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         layout = QHBoxLayout(central_widget)
-        layout.setContentsMargins(5, 5, 5, 5)  # Reduce margins
 
-        # Sidebar with fixed width for better performance
-        self.sidebar = self.create_sidebar_optimized()
-        self.sidebar.setFixedWidth(150)  # Fixed width prevents resizing calculations
+        # Sidebar navigation
+        self.sidebar = self.create_sidebar()
         layout.addWidget(self.sidebar)
 
-        # Main content area
+        # Main content area with stacked pages
         self.stack = QStackedWidget()
-        self.download_page = self.create_download_page_optimized()
-        self.activity_page = self.create_activity_page_optimized()
+        self.download_page = self.create_download_page()
+        self.activity_page = self.create_activity_page()
         self.stack.addWidget(self.download_page)
         self.stack.addWidget(self.activity_page)
-        layout.addWidget(self.stack, 1)
+        layout.addWidget(self.stack, 1)  # Expand to fill available space
 
         # Status bar
         self.status_bar = QStatusBar()
@@ -281,7 +258,7 @@ class YTDGUI(QMainWindow):
     def _connect_signals(self) -> None:
         """Connect Qt signals for thread-safe GUI updates."""
         self.updateStatusSignal.connect(self._update_status)
-        self.logMessageSignal.connect(self.log_message)
+        self.logMessageSignal.connect(self._log_message)
 
     def load_icon(self, path: str) -> QIcon:
         """
@@ -580,15 +557,15 @@ class YTDGUI(QMainWindow):
     def show_about(self) -> None:
         """Display application about dialog."""
         about_text = (
-            "Youtube-Media-Downloader\n"
-            "Version 2.3.0\n\n"
+            "YTD Video Downloader\n"
+            "Version 2.2.0\n\n"
             "Developed by Ujjwal Nova\n\n"
             "A professional YouTube video and audio downloader\n"
             "with support for playlists and channels.\n\n"
             "Report bugs via our support channel."
         )
 
-        QMessageBox.information(self, "About Youtube-Media-Downloader", about_text)
+        QMessageBox.information(self, "About YTD", about_text)
 
     def update_status(self, message: str) -> None:
         """
@@ -611,55 +588,56 @@ class YTDGUI(QMainWindow):
             msg: Message to log
         """
         self.logMessageSignal.emit(msg)
-        print(f"[Youtube-Media-Downloader] {msg}")  # Also log to console
+        print(f"[YTD] {msg}")  # Also log to console
 
-    def _log_message_optimized(self, msg):
-        """Optimized logging with batching to prevent UI lag"""
-        if not hasattr(self, 'log_buffer'):
-            self.log_buffer = []
+    def _log_message(self, msg: str) -> None:
+        """Internal method to add message to log widget in main thread."""
+        if hasattr(self, "log_text"):
+            # Add timestamp for better logging
+            from datetime import datetime
+            timestamp = datetime.now().strftime("%H:%M:%S")
+            formatted_msg = f"[{timestamp}] {msg}"
+            self.log_text.append(formatted_msg)
 
-        # Add to buffer instead of immediately updating UI
-        from datetime import datetime
-        timestamp = datetime.now().strftime("%H:%M:%S")
-        formatted_msg = f"[{timestamp}] {msg}"
-        self.log_buffer.append(formatted_msg)
+    def create_sidebar(self) -> QWidget:
+        """
+        Create navigation sidebar with application pages.
 
-        # Batch updates to reduce UI overhead
-        if not self.log_update_timer.isActive():
-            self.log_update_timer.start(100)  # Update every 100ms
-
-    def _set_button_icon(self, button, icon_key):
-        """Set button icon after async loading"""
-        if hasattr(self, 'icons') and icon_key in self.icons:
-            button.setIcon(self.icons[icon_key])
-            button.setIconSize(QSize(24, 24))  # Smaller icons for better performance
-
-    def create_sidebar_optimized(self):
-        """Optimized sidebar with reduced styling overhead"""
+        Returns:
+            Widget containing sidebar navigation buttons
+        """
         widget = QWidget()
         layout = QVBoxLayout(widget)
-        layout.setSpacing(10)  # Reduce spacing
 
-        # Simple header without heavy styling
+        # Application title header
         header = QLabel("YTD")
+        header.setStyleSheet("font-size: 16pt; font-weight: bold;")
         header.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        header.setStyleSheet("font-size: 14pt; font-weight: bold;")  # Reduced font size
         layout.addWidget(header)
+        layout.addSpacing(20)
 
-        # Navigation buttons with minimal styling
-        nav_buttons = [("Download", "download"), ("Activity", "activity")]
+        # Navigation buttons
+        nav_buttons = [
+            ("Download", "download"),
+            ("Activity", "activity")
+        ]
 
         for name, icon_key in nav_buttons:
             btn = QPushButton(name)
-            btn.setFixedHeight(35)  # Fixed height for consistency
 
-            # Set icon after async loading
-            QTimer.singleShot(100, lambda b=btn, k=icon_key: self._set_button_icon(b, k))
+            # Set icon if available
+            icon = self.icons.get(icon_key)
+            if icon:
+                btn.setIcon(icon)
+                btn.setIconSize(QSize(32, 32))
 
+            # Connect to page switching
             btn.clicked.connect(lambda checked, n=name: self.switch_page(n))
             layout.addWidget(btn)
 
+        # Push buttons to top
         layout.addStretch()
+
         return widget
 
     def switch_page(self, name: str) -> None:
@@ -676,76 +654,95 @@ class YTDGUI(QMainWindow):
 
         self.update_status(f"{name} section active")
 
-    def create_download_page_optimized(self):
-        """Optimized download page with reduced widget overhead"""
+    def create_download_page(self) -> QWidget:
+        """
+        Create the main download configuration page.
+
+        Returns:
+            Widget containing download configuration controls
+        """
         page = QWidget()
         layout = QVBoxLayout(page)
-        layout.setSpacing(8)  # Reduced spacing
 
-        # URL input with simplified styling
-        url_label = QLabel("Enter YouTube URL:")
-        url_label.setStyleSheet("font-weight: bold;")
-        layout.addWidget(url_label)
+        # URL input section
+        layout.addWidget(QLabel(
+            "Enter YouTube URL (or Playlist/Channel URL):",
+            styleSheet="font-size: 12pt; font-weight: bold;"
+        ))
 
         self.url_entry = QLineEdit()
         self.url_entry.setPlaceholderText("https://www.youtube.com/watch?v=...")
         layout.addWidget(self.url_entry)
 
-        # Save location
-        path_label = QLabel("Save Location:")
-        path_label.setStyleSheet("font-weight: bold;")
-        layout.addWidget(path_label)
+        # Save location section
+        layout.addWidget(QLabel(
+            "Save Location:",
+            styleSheet="font-size: 12pt; font-weight: bold;"
+        ))
 
         path_layout = QHBoxLayout()
-        path_layout.setSpacing(5)
-        self.path_entry = QLineEdit()
-        self.path_entry.setReadOnly(True)
+        self.path_entry = QLineEdit(readOnly=True)
         self.path_entry.setPlaceholderText("Select folder to save downloads")
         path_layout.addWidget(self.path_entry)
 
-        browse_btn = QPushButton("Browse")
-        browse_btn.setFixedWidth(80)  # Fixed width
+        browse_btn = QPushButton("Browse Folder")
         browse_btn.clicked.connect(self.select_save_path)
         path_layout.addWidget(browse_btn)
         layout.addLayout(path_layout)
 
-        # Download mode
-        mode_label = QLabel("Download Mode:")
-        mode_label.setStyleSheet("font-weight: bold;")
-        layout.addWidget(mode_label)
+        # Download mode section
+        layout.addWidget(QLabel(
+            "Download Mode:",
+            styleSheet="font-size: 12pt; font-weight: bold;"
+        ))
 
         self.mode_combo = QComboBox()
-        # Simplified mode list for better performance
-        modes = [
-            "Single Video", "MP3 Only", "Playlist Video", "Playlist MP3",
-            "Channel Videos", "Channel Videos MP3", "Channel Shorts", "Channel Shorts MP3"
+        download_modes = [
+            "Single Video",  # Download single video
+            "MP3 Only",  # Extract audio only
+            "Playlist Video",  # Download playlist videos
+            "Playlist MP3",  # Extract audio from playlist
+            "Channel Videos",  # Download channel videos
+            "Channel Videos MP3",  # Extract audio from channel videos
+            "Channel Shorts",  # Download channel shorts
+            "Channel Shorts MP3",  # Extract audio from channel shorts
         ]
-        self.mode_combo.addItems(modes)
+        self.mode_combo.addItems(download_modes)
         self.mode_combo.currentTextChanged.connect(self.mode_changed)
         layout.addWidget(self.mode_combo)
 
-        # Video quality section
-        self.video_quality_label = QLabel("Video Quality:")
-        self.video_quality_label.setStyleSheet("font-weight: bold;")
+        # Video quality section (hidden for audio-only modes)
+        self.video_quality_label = QLabel(
+            "Video Quality:",
+            styleSheet="font-size: 12pt; font-weight: bold;"
+        )
         self.video_quality_combo = QComboBox()
-        qualities = [
-            "Best Available", "4320p 8K", "2160p 4K", "1440p 2K",
-            "1080p Full HD", "720p HD", "480p Standard", "360p Medium"
+        quality_options = [
+            "Best Available",  # Highest quality available
+            "4320p 8K",  # 8K resolution
+            "2160p 4K",  # 4K resolution
+            "1440p 2K",  # 2K resolution
+            "1080p Full HD",  # Full HD
+            "720p HD",  # HD
+            "480p Standard",  # Standard definition
+            "360p Medium"  # Low quality
         ]
-        self.video_quality_combo.addItems(qualities)
+        self.video_quality_combo.addItems(quality_options)
 
         layout.addWidget(self.video_quality_label)
         layout.addWidget(self.video_quality_combo)
 
+        # Initialize visibility based on default mode
+        self.mode_changed(self.mode_combo.currentText())
+
         # Download button
         download_btn = QPushButton("Download")
-        download_btn.setFixedHeight(40)
-        download_btn.setStyleSheet("font-weight: bold; padding: 8px;")
+        download_btn.setStyleSheet("font-size: 12pt; font-weight: bold; padding: 8px;")
         download_btn.clicked.connect(self.add_to_queue)
         layout.addWidget(download_btn)
 
+        # Push content to top
         layout.addStretch()
-        self.mode_changed(self.mode_combo.currentText())
 
         return page
 
@@ -955,84 +952,112 @@ class YTDGUI(QMainWindow):
         dialog_title = "Select Videos from Channel" if "Videos" in mode else "Select Shorts from Channel"
         self._show_video_selection_dialog(entries, save_path, mode, dialog_title)
 
-    def _show_video_selection_dialog_optimized(self, entries, save_path, mode, title):
-        """Optimized video selection dialog with virtual scrolling concept"""
+    def _show_video_selection_dialog(self, entries: List[Dict], save_path: str, mode: str, title: str) -> None:
+        """
+        Show dialog for selecting videos from playlist or channel.
+
+        Args:
+            entries: List of video entries
+            save_path: Download destination path
+            mode: Download mode
+            title: Dialog window title
+        """
         dialog = QDialog(self)
         dialog.setWindowTitle(title)
         dialog.resize(600, 400)
 
+        # Main layout
         dlg_layout = QVBoxLayout(dialog)
 
         # Info label
         info_label = QLabel(f"Found {len(entries)} videos. Select videos to download:")
-        info_label.setStyleSheet("font-weight: bold;")
+        info_label.setStyleSheet("font-weight: bold; margin-bottom: 10px;")
         dlg_layout.addWidget(info_label)
 
-        # Use QListWidget instead of scroll area for better performance
-        self.video_list = QListWidget()
-        self.video_list.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
+        # Scrollable area for video list
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        dlg_layout.addWidget(scroll)
 
-        # Add items with minimal overhead
-        for i, entry in enumerate(entries):
+        container = QWidget()
+        scroll.setWidget(container)
+        scroll_layout = QVBoxLayout(container)
+
+        # Create checkboxes for each video
+        checkboxes = []
+        for entry in entries:
             video_url = entry.get("url")
+
+            # Ensure URL is absolute
             if video_url and not video_url.startswith("http"):
                 base_url = entry.get("webpage_url", "https://www.youtube.com")
                 video_url = base_url.rstrip("/") + "/" + video_url.lstrip("/")
 
-            title_text = entry.get("title", "Unknown Title")
+            # Create checkbox with video title
+            title = entry.get("title", "Unknown Title")
+            cb = QCheckBox(title)
 
-            # Create list item
-            item = QListWidgetItem(title_text)
-            item.setData(Qt.ItemDataRole.UserRole, video_url)  # Store URL in item data
-            item.setSelected(True)  # Default selected
-
-            # Add icon if available (but don't create new pixmaps each time)
+            # Add video favicon if available
             if self.video_favicon_pixmap:
-                item.setIcon(QIcon(self.video_favicon_pixmap))
+                cb.setIcon(QIcon(self.video_favicon_pixmap))
 
-            self.video_list.addItem(item)
+            # Default to checked
+            cb.setChecked(True)
 
-        dlg_layout.addWidget(self.video_list)
+            scroll_layout.addWidget(cb)
+            checkboxes.append((video_url, cb))
 
-        # Optimized button layout
+        # Button layout
         button_layout = QHBoxLayout()
 
+        # Select All / Deselect All buttons
         select_all_btn = QPushButton("Select All")
-        select_all_btn.clicked.connect(lambda: self.video_list.selectAll())
+        select_all_btn.clicked.connect(
+            lambda: [cb.setChecked(True) for _, cb in checkboxes]
+        )
         button_layout.addWidget(select_all_btn)
 
         deselect_all_btn = QPushButton("Deselect All")
-        deselect_all_btn.clicked.connect(lambda: self.video_list.clearSelection())
+        deselect_all_btn.clicked.connect(
+            lambda: [cb.setChecked(False) for _, cb in checkboxes]
+        )
         button_layout.addWidget(deselect_all_btn)
 
         button_layout.addStretch()
 
+        # Cancel button
         cancel_btn = QPushButton("Cancel")
         cancel_btn.clicked.connect(dialog.reject)
         button_layout.addWidget(cancel_btn)
 
+        # Download Selected button
         download_btn = QPushButton("Download Selected")
         download_btn.setStyleSheet("font-weight: bold;")
         download_btn.clicked.connect(
-            lambda: self._process_selected_videos_optimized(save_path, mode, dialog)
+            lambda: self._process_selected_videos(checkboxes, save_path, mode, dialog)
         )
         button_layout.addWidget(download_btn)
 
         dlg_layout.addLayout(button_layout)
+
+        # Show dialog
         dialog.exec()
 
-    def _process_selected_videos_optimized(self, save_path, mode, dialog):
-        """Optimized processing of selected videos"""
-        selected_items = self.video_list.selectedItems()
+    def _process_selected_videos(self, checkboxes: List[Tuple], save_path: str, mode: str, dialog: QDialog) -> None:
+        """
+        Process selected videos and add them to download queue.
 
-        if not selected_items:
-            QMessageBox.warning(dialog, "Warning", "No videos selected for download.")
-            return
+        Args:
+            checkboxes: List of (video_url, checkbox) tuples
+            save_path: Download destination path
+            mode: Download mode
+            dialog: Parent dialog to close
+        """
+        selected_count = 0
 
-        # Process selected items efficiently
-        for item in selected_items:
-            video_url = item.data(Qt.ItemDataRole.UserRole)
-            if video_url:
+        # Add selected videos to download queue
+        for video_url, cb in checkboxes:
+            if cb.isChecked() and video_url:
                 task = {
                     "url": video_url,
                     "save_path": save_path,
@@ -1041,83 +1066,59 @@ class YTDGUI(QMainWindow):
                     "video_quality": self.video_quality_combo.currentText() if "MP3" not in mode else "Best Available",
                 }
                 self.download_queue.append(task)
+                selected_count += 1
 
-        self.log_message(f"Added {len(selected_items)} videos to download queue")
+        if selected_count == 0:
+            QMessageBox.warning(dialog, "Warning", "No videos selected for download.")
+            return
+
+        # Log and start processing
+        self.log_message(f"Added {selected_count} videos to download queue")
         dialog.accept()
 
         # Switch to activity page and start downloads
         self.switch_page("Activity")
         self.process_queue()
 
-    def _flush_log_buffer(self):
-        """Flush buffered log messages to UI"""
-        if hasattr(self, 'log_text') and self.log_buffer:
-            # Join all buffered messages and append at once
-            messages = '\n'.join(self.log_buffer)
-            self.log_text.append(messages)
-            self.log_buffer.clear()
+    def create_activity_page(self) -> QWidget:
+        """
+        Create the activity/logging page for monitoring downloads.
 
-            # Auto-scroll to bottom
-            scrollbar = self.log_text.verticalScrollBar()
-            scrollbar.setValue(scrollbar.maximum())
-
-    def _clear_log_optimized(self):
-        """Optimized log clearing"""
-        self.log_text.clear()
-        self.log_buffer.clear()
-        if hasattr(self, 'log_update_timer'):
-            self.log_update_timer.stop()
-
-    def create_activity_page_optimized(self):
-        """Highly optimized activity page to prevent lag"""
+        Returns:
+            Widget containing activity log and progress information
+        """
         page = QWidget()
         layout = QVBoxLayout(page)
-        layout.setSpacing(5)
 
-        # Simple title
+        # Page title
         title_label = QLabel("Download Activity")
-        title_label.setStyleSheet("font-size: 12pt; font-weight: bold;")
+        title_label.setStyleSheet("font-size: 14pt; font-weight: bold; margin-bottom: 10px;")
         layout.addWidget(title_label)
 
-        # Optimized log text area
-        self.log_text = QTextEdit()
-        self.log_text.setReadOnly(True)
-
-        # Optimized styling - reduced overhead
+        # Log text area
+        self.log_text = QTextEdit(readOnly=True)
         self.log_text.setStyleSheet("""
             QTextEdit {
-                font-family: monospace;
+                font-family: 'Consolas', 'Monaco', monospace;
                 font-size: 9pt;
-                background-color: #1e1e1e;
-                color: #ffffff;
-                border: 1px solid #555;
+                background-color: black;
+                color: white;
+                border: 1px solid #ccc;
             }
         """)
-
-        # Performance optimizations for text widget
-        self.log_text.document().setMaximumBlockCount(1000)  # Limit to 1000 lines to prevent memory issues
-        self.log_text.setLineWrapMode(QTextEdit.LineWrapMode.NoWrap)  # Disable line wrapping for performance
-
-        # Use a timer to batch log updates
-        self.log_update_timer = QTimer()
-        self.log_update_timer.setSingleShot(True)
-        self.log_update_timer.timeout.connect(self._flush_log_buffer)
-        self.log_buffer = []
-
         layout.addWidget(self.log_text)
 
         # Control buttons
         button_layout = QHBoxLayout()
-        button_layout.setSpacing(5)
 
+        # Clear log button
         clear_btn = QPushButton("Clear Log")
-        clear_btn.setFixedHeight(30)
-        clear_btn.clicked.connect(self._clear_log_optimized)
+        clear_btn.clicked.connect(lambda: self.log_text.clear())
         button_layout.addWidget(clear_btn)
 
         button_layout.addStretch()
 
-        # Queue status
+        # Queue status label
         self.queue_status_label = QLabel("Queue: 0 pending")
         self.queue_status_label.setStyleSheet("font-weight: bold;")
         button_layout.addWidget(self.queue_status_label)
@@ -1126,31 +1127,28 @@ class YTDGUI(QMainWindow):
 
         return page
 
-    def _on_download_finished(self):
-        """Handle download completion"""
-        self.downloading = False
-        self.download_thread = None
+    def process_queue(self) -> None:
+        """
+        Process the download queue by starting the next download.
 
-        # Process next item with small delay
-        QTimer.singleShot(50, self.process_queue_optimized)
-
-    def process_queue_optimized(self):
-        """Optimized queue processing with better status updates"""
-        # Update queue status efficiently
-        queue_count = len(self.download_queue)
+        This method ensures only one download runs at a time and automatically
+        processes the next item in the queue when the current download completes.
+        """
+        # Update queue status
         if hasattr(self, 'queue_status_label'):
-            self.queue_status_label.setText(f"Queue: {queue_count} pending")
+            self.queue_status_label.setText(f"Queue: {len(self.download_queue)} pending")
 
-        # Start next download if conditions are met
-        if not self.downloading and queue_count > 0:
+        # Start next download if not already downloading and queue has items
+        if not self.downloading and self.download_queue:
             task = self.download_queue.pop(0)
             self.downloading = True
 
-            # Use QThread for better performance instead of threading.Thread
-            self.download_thread = DownloadThread(task, self)
-            self.download_thread.finished.connect(self._on_download_finished)
-            self.download_thread.progress.connect(self.log_message)
-            self.download_thread.start()
+            # Start download in background thread
+            threading.Thread(
+                target=self.download_video,
+                args=(task,),
+                daemon=True
+            ).start()
 
     def download_video(self, task: Dict[str, Any]) -> None:
         """
@@ -1313,7 +1311,7 @@ class YTDGUI(QMainWindow):
             error_text += (
                 "\n\nTroubleshooting tips:\n"
                 "• Ensure Chrome is completely closed\n"
-                "• Run Youtube-Media-Downloader as the same user who uses Chrome\n"
+                "• Run YTD as the same user who uses Chrome\n"
                 "• Try exporting cookies manually\n"
                 "• Check if cookie file is recent and valid"
             )
@@ -1346,8 +1344,8 @@ def main():
     app = QApplication(sys.argv)
 
     # Set application metadata
-    app.setApplicationName("Youtube-Media-Downloader")
-    app.setApplicationVersion("2.3.0")
+    app.setApplicationName("YTD")
+    app.setApplicationVersion("2.3.1")
     app.setOrganizationName("UKR-PROJECTS")
 
     # Create and show main window
