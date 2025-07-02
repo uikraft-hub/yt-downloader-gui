@@ -1,4 +1,4 @@
-# Youtube‑Media‑Downloader v2.3.1
+# yt-dlp-gui v2.3.1
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE) [![Language: Python](https://img.shields.io/badge/Language-Python-blue.svg)](#) [![Status: Active](https://img.shields.io/badge/Status-Active-brightgreen.svg)](#)
 
@@ -6,7 +6,7 @@
   <img src="src/favicon.ico" alt="App Icon" width="64" height="64" />
 </p>
 
-**Youtube‑Media‑Downloader** is a powerful, open‑source desktop application built with PyQt6 and yt-dlp that lets you download single videos, playlists, channels (videos & shorts), or just MP3 audio—seamlessly and reliably.
+**yt-dlp-gui** is a powerful, open‑source desktop application built with PyQt6 and yt-dlp that lets you download single videos, playlists, channels (videos & shorts), or just MP3 audio—seamlessly and reliably.
 
 ---
 
@@ -53,24 +53,33 @@
 ## 📁 Folder Structure
 
 ```
-Youtube-Media-Downloader/
-├── src/
-│    ├── main.py
-│    ├── favicon.ico
-│    ├── assets/
-│    │    ├── download.png
-│    │    ├── activity.png
-│    │    └── video-favicon.png
-│    └── bin/
-│         ├── ffmpeg.exe
-│         └── yt-dlp.exe
+yt-dlp-gui/
+├── .gitignore
+├── CONTRIBUTING.md
 ├── LICENSE
 ├── README.md
 ├── requirements.txt
-├── .gitignore
-└── screenshots/
-      └── screenshot.png
-````
+├── screenshots/
+│   └── screenshot.png
+└── src/
+    ├── build.bat
+    ├── favicon.ico
+    ├── main.py
+    ├── assets/
+    │   ├── activity.png
+    │   ├── download.png
+    │   └── video-favicon.png
+    ├── bin/
+    │   ├── ffmpeg.exe
+    │   └── yt-dlp.exe
+    └── ytd_gui/
+        ├── __init__.py
+        ├── download_manager.py
+        ├── login_manager.py
+        ├── main_window.py
+        ├── ui_manager.py
+        └── updater.py
+```
 
 ---
 
@@ -92,8 +101,8 @@ pip install -r requirements.txt
 1. **Clone the repo:**
 
    ```bash
-   git clone https://github.com/UKR-PROJECTS/Youtube-Media-Downloader.git
-   cd Youtube-Media-Downloader
+   git clone https://github.com/ukr-projects/yt-dlp-gui.git
+   cd yt-dlp-gui
    ```
 2. **(Optional) Create & activate a virtual environment:**
 
@@ -167,8 +176,8 @@ If you find this project useful, please consider giving it a star on GitHub! You
 
 ## 📞 Support
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/UKR-PROJECTS/Youtube-Media-Downloader/issues)
-- **Discussions**: [Community discussions and Q&A](https://github.com/UKR-PROJECTS/Youtube-Media-Downloader/discussions)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/ukr-projects/yt-dlp-gui/issues)
+- **Discussions**: [Community discussions and Q&A](https://github.com/ukr-projects/yt-dlp-gui/discussions)
 - **Email**: ukrpurojekuto@gmail.com
 
 ---
@@ -177,7 +186,6 @@ If you find this project useful, please consider giving it a star on GitHub! You
 
 **Made with ❤️ by the Ujjwal Nova**
 
-[⭐ Star this repo](https://github.com/UKR-PROJECTS/Youtube-Media-Downloader) | [🐛 Report Bug](https://github.com/UKR-PROJECTS/Youtube-Media-Downloader/issues) | [💡 Request Feature](https://github.com/UKR-PROJECTS/Youtube-Media-Downloader/issues)
+[⭐ Star this repo](https://github.com/ukr-projects/yt-dlp-gui) | [🐛 Report Bug](https://github.com/ukr-projects/yt-dlp-gui/issues) | [💡 Request Feature](https://github.com/ukr-projects/yt-dlp-gui/issues)
 
 </div>
-
