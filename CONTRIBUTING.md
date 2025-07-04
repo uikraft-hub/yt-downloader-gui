@@ -1,6 +1,6 @@
-# Contributing to Youtube-Media-Downloader
+# Contributing to yt-downloader
 
-Thank you for your interest in contributing to Youtube-Media-Downloader! This document provides guidelines and information for contributors to help make the development process smooth and effective.
+Thank you for your interest in contributing to yt-downloader! This document provides guidelines and information for contributors to help make the development process smooth and effective.
 
 ## Table of Contents
 
@@ -41,8 +41,8 @@ Before contributing, ensure you have:
 1. **Fork the Repository**
    ```bash
    # Fork the repo on GitHub, then clone your fork
-   git clone https://github.com/UKR-PROJECTS/Youtube-Media-Downloader.git
-   cd Youtube-Media-Downloader
+   git clone https://github.com/ukr-projects/yt-downloader.git
+   cd yt-downloader
    ```
 
 2. **Set Up Development Environment**
@@ -68,7 +68,7 @@ Before contributing, ensure you have:
 
 4. **Set Up Upstream Remote**
    ```bash
-   git remote add upstream https://github.com/UKR-PROJECTS/Youtube-Media-Downloader.git
+   git remote add upstream https://github.com/ukr-projects/yt-downloader.git
    ```
 
 ## Contributing Guidelines
@@ -86,7 +86,7 @@ We welcome various types of contributions:
 
 ### Before You Start
 
-1. **Check Existing Issues**: Browse [existing issues](https://github.com/UKR-PROJECTS/Youtube-Media-Downloader/issues) to see if your idea or bug report already exists
+1. **Check Existing Issues**: Browse [existing issues](https://github.com/ukr-projects/yt-downloader/issues) to see if your idea or bug report already exists
 2. **Create an Issue**: For major changes, create an issue first to discuss your proposed changes
 3. **Get Feedback**: Wait for maintainer feedback on significant features before implementing
 
@@ -306,4 +306,4 @@ Contributors will be acknowledged in:
 
 ---
 
-Thank you for contributing to Youtube-Media-Downloader! Your efforts help make this tool better for everyone. If you have questions about these guidelines, feel free to open an issue for discussion.
+Thank you for contributing to yt-downloader! Your efforts help make this tool better for everyone. If you have questions about these guidelines, feel free to open an issue for discussion.

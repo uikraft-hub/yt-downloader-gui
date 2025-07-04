@@ -1,7 +1,7 @@
 @echo off
-echo Building Youtube Media Downloader...
-pyinstaller --name "YMD" ^
+echo Building yt-downloader...
+pyinstaller --name "yt-downloader" ^
   --windowed ^
   --icon=favicon.ico ^
-  main.py
+  yt-downloader.py
 pause

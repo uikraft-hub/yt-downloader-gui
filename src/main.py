@@ -8,7 +8,7 @@ Supports both video and audio-only downloads with customizable quality settings.
 Author: Ujjwal Nova
 Version: 2.3.1
 License: MIT
-Repository: https://github.com/ukr-projects/yt-dlp-gui
+Repository: https://github.com/ukr-projects/yt-downloader
 
 Features:
 - Single video and playlist downloads
@@ -45,9 +45,8 @@ def main():
     app = QApplication(sys.argv)
 
     # Set application metadata
-    app.setApplicationName("YTD")
+    app.setApplicationName("yt-downloader")
     app.setApplicationVersion("2.3.1")
-    app.setOrganizationName("UKR-PROJECTS")
 
     # Determine application base directory
     if getattr(sys, "frozen", False):
