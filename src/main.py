@@ -32,7 +32,7 @@ Usage:
 import sys
 import os
 from PyQt6.QtWidgets import QApplication
-from ytd_gui.main_window import YTDGUI
+from app.main_window import YTDGUI
 
 
 def main():
