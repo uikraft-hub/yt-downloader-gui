@@ -8,7 +8,7 @@ Supports both video and audio-only downloads with customizable quality settings.
 Author: Ujjwal Nova
 Version: 2.3.1
 License: MIT
-Repository: https://github.com/UKR-PROJECTS/Youtube-Media-Downloader
+Repository: https://github.com/ukr-projects/yt-dlp-gui
 
 Features:
 - Single video and playlist downloads
