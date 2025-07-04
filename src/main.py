@@ -45,7 +45,7 @@ def main():
     app = QApplication(sys.argv)
 
     # Set application metadata
-    app.setApplicationName("yt-downloader")
+    app.setApplicationName("yt-downloader-gui")
     app.setApplicationVersion("2.3.1")
 
     # Determine application base directory
