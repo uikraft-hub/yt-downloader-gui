@@ -8,7 +8,7 @@ Supports both video and audio-only downloads with customizable quality settings.
 Author: Ujjwal Nova
 Version: 2.3.1
 License: MIT
-Repository: https://github.com/ukr-projects/yt-downloader
+Repository: https://github.com/ukr-projects/yt-downloader-gui
 
 Features:
 - Single video and playlist downloads
