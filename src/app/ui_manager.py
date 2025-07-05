@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 class UIManager:
     """Handles creation and management of the UI."""
 
-    def __init__(self, main_app: 'YTDGUI'):
+    def __init__(self, main_app: 'yt-downloader-guiGUI'):
         self.main_app = main_app
         self.main_app.icons = {}
         self.main_app.video_favicon_pixmap = None
@@ -103,15 +103,15 @@ class UIManager:
     def show_about(self) -> None:
         """Display application about dialog."""
         about_text = (
-            "YTD Video Downloader\n"
-            "Version 2.2.0\n\n"
+            "yt-downloader-gui\n"
+            "Version 2.3.2\n\n"
             "Developed by Ujjwal Nova\n\n"
             "A professional YouTube video and audio downloader\n"
             "with support for playlists and channels.\n\n"
             "Report bugs via our support channel."
         )
 
-        QMessageBox.information(self.main_app, "About YTD", about_text)
+        QMessageBox.information(self.main_app, "About yt-downloader-gui", about_text)
 
     def create_sidebar(self) -> QWidget:
         """
@@ -124,7 +124,7 @@ class UIManager:
         layout = QVBoxLayout(widget)
 
         # Application title header
-        header = QLabel("YTD")
+        header = QLabel("yt-downloader-gui")
         header.setStyleSheet("font-size: 16pt; font-weight: bold;")
         header.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(header)

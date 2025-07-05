@@ -6,7 +6,7 @@ A PyQt6-based GUI application for downloading YouTube videos, playlists, and cha
 Supports both video and audio-only downloads with customizable quality settings.
 
 Author: Ujjwal Nova
-Version: 2.3.1
+Version: 2.3.2
 License: MIT
 Repository: https://github.com/ukr-projects/yt-downloader-gui
 

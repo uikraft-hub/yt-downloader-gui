@@ -1,5 +1,5 @@
 """
-Main GUI application class for YTD YouTube downloader.
+Main GUI application class for yt-downloader-gui YouTube downloader.
 """
 
 import os
@@ -18,7 +18,7 @@ from .download_manager import DownloadManager
 
 class YTDGUI(QMainWindow):
     """
-    Main GUI application class for YTD YouTube downloader.
+    Main GUI application class for yt-downloader-gui YouTube downloader.
 
     This class implements the complete user interface and handles all user interactions,
     download management, and application state.
@@ -38,7 +38,7 @@ class YTDGUI(QMainWindow):
         super().__init__()
 
         # Window configuration
-        self.setWindowTitle("YTD")
+        self.setWindowTitle("yt-downloader-gui")
         self.resize(400, 300)
         self.base_dir = base_dir
 
@@ -87,6 +87,19 @@ class YTDGUI(QMainWindow):
         """Connect Qt signals for thread-safe GUI updates."""
         self.updateStatusSignal.connect(self._update_status)
         self.logMessageSignal.connect(self._log_message)
+        self.download_manager.signals.result.connect(self.on_playlist_result)
+        self.download_manager.signals.error.connect(self.on_playlist_error)
+
+    def on_playlist_result(self, result):
+        entries, save_path, mode, title = result
+        self.download_manager._show_video_selection_dialog(entries, save_path, mode, title)
+
+    def on_playlist_error(self, error_info):
+        exctype, value = error_info
+        QMessageBox.critical(
+            self, "Error",
+            f"Failed to extract playlist information: {value}"
+        )
 
     def check_for_updates(self) -> None:
         """
@@ -164,7 +177,7 @@ class YTDGUI(QMainWindow):
             msg: Message to log
         """
         self.logMessageSignal.emit(msg)
-        print(f"[YTD] {msg}")  # Also log to console
+        print(f"[yt-downloader-gui] {msg}")  # Also log to console
 
     def _log_message(self, msg: str) -> None:
         """Internal method to add message to log widget in main thread."""

@@ -1,4 +1,4 @@
-# yt-downloader v2.3.1
+# yt-downloader v2.3.2
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE) [![Language: Python](https://img.shields.io/badge/Language-Python-blue.svg)](#) [![Status: Active](https://img.shields.io/badge/Status-Active-brightgreen.svg)](#)
 
@@ -10,7 +10,7 @@
 
 ---
 
-## 🆕 What’s New in v2.3.1
+## 🆕 What’s New in v2.3.2
 
 - **Performance & Responsiveness**
   - Blazing‑fast startup: disabled unnecessary UI updates and lazy‑load icons.
