@@ -72,7 +72,7 @@ yt-downloader/
     ├── bin/
     │   ├── ffmpeg.exe
     │   └── yt-dlp.exe
-    └── ytd_gui/
+    └── app/
         ├── __init__.py
         ├── download_manager.py
         ├── login_manager.py
