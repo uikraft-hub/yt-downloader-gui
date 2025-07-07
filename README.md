@@ -1,4 +1,4 @@
-# yt-downloader v2.4.0
+# yt-downloader-gui v2.4.0
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE) [![Language: Python](https://img.shields.io/badge/Language-Python-blue.svg)](#) [![Status: Active](https://img.shields.io/badge/Status-Active-brightgreen.svg)](#)
 
@@ -6,7 +6,7 @@
   <img src="src/favicon.ico" alt="App Icon" width="64" height="64" />
 </p>
 
-**yt-downloader** is a powerful, open‑source desktop application built with PyQt6 and yt-dlp that lets you download single videos, playlists, channels (videos & shorts), or just MP3 audio—seamlessly and reliably.
+**yt-downloader-gui** is a powerful, open‑source desktop application built with PyQt6 and yt-dlp that lets you download single videos, playlists, channels (videos & shorts), or just MP3 audio—seamlessly and reliably.
 
 ---
 
@@ -49,7 +49,7 @@
 ## 📁 Folder Structure
 
 ```
-yt-downloader/
+yt-downloader-gui/
 ├── .gitignore
 ├── CONTRIBUTING.md
 ├── LICENSE
@@ -97,8 +97,8 @@ pip install -r requirements.txt
 1. **Clone the repo:**
 
    ```bash
-   git clone https://github.com/ukr-projects/yt-downloader.git
-   cd yt-downloader
+   git clone https://github.com/ukr-projects/yt-downloader-gui.git
+   cd yt-downloader-gui
    ```
 2. **(Optional) Create & activate a virtual environment:**
 
@@ -172,8 +172,8 @@ If you find this project useful, please consider giving it a star on GitHub! You
 
 ## 📞 Support
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/ukr-projects/yt-downloader/issues)
-- **Discussions**: [Community discussions and Q&A](https://github.com/ukr-projects/yt-downloader/discussions)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/ukr-projects/yt-downloader-gui/issues)
+- **Discussions**: [Community discussions and Q&A](https://github.com/ukr-projects/yt-downloader-gui/discussions)
 - **Email**: ukrpurojekuto@gmail.com
 
 ---
@@ -182,6 +182,6 @@ If you find this project useful, please consider giving it a star on GitHub! You
 
 **Made with ❤️ by the Ujjwal Nova**
 
-[⭐ Star this repo](https://github.com/ukr-projects/yt-downloader) | [🐛 Report Bug](https://github.com/ukr-projects/yt-downloader/issues) | [💡 Request Feature](https://github.com/ukr-projects/yt-downloader/issues)
+[⭐ Star this repo](https://github.com/ukr-projects/yt-downloader-gui) | [🐛 Report Bug](https://github.com/ukr-projects/yt-downloader-gui/issues) | [💡 Request Feature](https://github.com/ukr-projects/yt-downloader-gui/issues)
 
 </div>
