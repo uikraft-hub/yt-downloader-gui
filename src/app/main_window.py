@@ -27,6 +27,7 @@ class YTDGUI(QMainWindow):
     # Custom signals for thread-safe GUI updates
     updateStatusSignal = pyqtSignal(str)
     logMessageSignal = pyqtSignal(str)
+    updateProgressSignal = pyqtSignal(int)
 
     def __init__(self, base_dir: str):
         """
@@ -39,7 +40,7 @@ class YTDGUI(QMainWindow):
 
         # Window configuration
         self.setWindowTitle("yt-downloader-gui")
-        self.resize(400, 300)
+        self.resize(800, 600)
         self.base_dir = base_dir
 
         # Initialize manager components
@@ -87,6 +88,7 @@ class YTDGUI(QMainWindow):
         """Connect Qt signals for thread-safe GUI updates."""
         self.updateStatusSignal.connect(self._update_status)
         self.logMessageSignal.connect(self._log_message)
+        self.updateProgressSignal.connect(self._update_progress)
         self.download_manager.signals.result.connect(self.on_playlist_result)
         self.download_manager.signals.error.connect(self.on_playlist_error)
 
@@ -168,6 +170,11 @@ class YTDGUI(QMainWindow):
     def _update_status(self, message: str) -> None:
         """Internal method to update status bar in main thread."""
         self.status_bar.showMessage(message)
+
+    def _update_progress(self, value: int) -> None:
+        """Internal method to update progress bar in main thread."""
+        if hasattr(self, "progress_bar"):
+            self.progress_bar.setValue(value)
 
     def log_message(self, msg: str) -> None:
         """

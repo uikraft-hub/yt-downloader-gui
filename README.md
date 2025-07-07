@@ -1,4 +1,4 @@
-# yt-downloader v2.3.2
+# yt-downloader v2.4.0
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE) [![Language: Python](https://img.shields.io/badge/Language-Python-blue.svg)](#) [![Status: Active](https://img.shields.io/badge/Status-Active-brightgreen.svg)](#)
 
@@ -10,23 +10,19 @@
 
 ---
 
-## 🆕 What’s New in v2.3.2
+## 🆕 What’s New in v2.4.0
 
-- **Performance & Responsiveness**
-  - Blazing‑fast startup: disabled unnecessary UI updates and lazy‑load icons.
-  - Optimized rendering: reduced layout margins, fixed sidebar width.
-  - Smooth logging: batched log updates, capped activity log at 1,000 lines.
-- **Refined User Interface**
-  - Virtual‑scroll dialogs for large playlists/channels.
-  - “Select All” / “Deselect All” controls with no flicker.
-  - Streamlined controls and intelligent icon scaling.
-- **Under‑the‑Hood Enhancements**
-  - Multithreaded downloads via `QThread`, keeping UI responsive.
-  - Cleaner updater flow: manual yt-dlp checks, atomic replacement.
-- **Bug Fixes & Polish**
-  - Fixed occasional freezes when switching pages.
-  - Corrected Windows browser detection for cookies.
-  - Improved error dialogs for common yt-dlp failures.
+- **Professional UI Redesign**
+  - Complete visual overhaul with a new professional dark theme.
+  - Consistent styling across all widgets using a dedicated QSS stylesheet.
+  - Improved layout with a larger default window size for a better user experience.
+- **Enhanced Download Progress**
+  - Added a visual progress bar to the "Activity" page for real-time download feedback.
+  - The progress bar is updated dynamically by parsing `yt-dlp`'s output.
+- **Code Refinements**
+  - Removed all inline styling in favor of the new stylesheet.
+  - Added object names to widgets for more specific styling.
+  - Updated version number to 2.4.0 in the "About" dialog.
 
 ---
 
@@ -72,7 +68,7 @@ yt-downloader/
     ├── bin/
     │   ├── ffmpeg.exe
     │   └── yt-dlp.exe
-    └── ytd_gui/
+    └── app/
         ├── __init__.py
         ├── download_manager.py
         ├── login_manager.py

@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 from PyQt6.QtWidgets import (
     QApplication, QCheckBox, QComboBox, QDialog, QFileDialog,
     QHBoxLayout, QInputDialog, QLabel, QLineEdit, QMainWindow,
-    QMessageBox, QPushButton, QScrollArea, QStackedWidget,
+    QMessageBox, QProgressBar, QPushButton, QScrollArea, QStackedWidget,
     QStatusBar, QTextEdit, QVBoxLayout, QWidget
 )
 from PyQt6.QtGui import QAction, QIcon, QPixmap
@@ -21,10 +21,20 @@ if TYPE_CHECKING:
 class UIManager:
     """Handles creation and management of the UI."""
 
-    def __init__(self, main_app: 'yt-downloader-guiGUI'):
+    def __init__(self, main_app: 'YTDGUI'):
         self.main_app = main_app
         self.main_app.icons = {}
         self.main_app.video_favicon_pixmap = None
+
+    def _load_stylesheet(self) -> None:
+        """Load and apply the application stylesheet."""
+        try:
+            style_path = os.path.join(self.main_app.base_dir, "assets", "style.qss")
+            if os.path.exists(style_path):
+                with open(style_path, "r") as f:
+                    self.main_app.setStyleSheet(f.read())
+        except Exception as e:
+            print(f"Error loading stylesheet: {e}")
 
     def _set_window_icon(self) -> None:
         """Set the application window icon if available."""
@@ -104,7 +114,7 @@ class UIManager:
         """Display application about dialog."""
         about_text = (
             "yt-downloader-gui\n"
-            "Version 2.3.2\n\n"
+            "Version 2.4.0\n\n"
             "Developed by Ujjwal Nova\n\n"
             "A professional YouTube video and audio downloader\n"
             "with support for playlists and channels.\n\n"
@@ -125,7 +135,7 @@ class UIManager:
 
         # Application title header
         header = QLabel("yt-downloader-gui")
-        header.setStyleSheet("font-size: 16pt; font-weight: bold;")
+        header.setObjectName("header")
         header.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(header)
         layout.addSpacing(20)
@@ -179,20 +189,18 @@ class UIManager:
         layout = QVBoxLayout(page)
 
         # URL input section
-        layout.addWidget(QLabel(
-            "Enter YouTube URL (or Playlist/Channel URL):",
-            styleSheet="font-size: 12pt; font-weight: bold;"
-        ))
+        url_label = QLabel("Enter YouTube URL (or Playlist/Channel URL):")
+        url_label.setObjectName("header_label")
+        layout.addWidget(url_label)
 
         self.main_app.url_entry = QLineEdit()
         self.main_app.url_entry.setPlaceholderText("https://www.youtube.com/watch?v=...")
         layout.addWidget(self.main_app.url_entry)
 
         # Save location section
-        layout.addWidget(QLabel(
-            "Save Location:",
-            styleSheet="font-size: 12pt; font-weight: bold;"
-        ))
+        save_path_label = QLabel("Save Location:")
+        save_path_label.setObjectName("header_label")
+        layout.addWidget(save_path_label)
 
         path_layout = QHBoxLayout()
         self.main_app.path_entry = QLineEdit(readOnly=True)
@@ -205,10 +213,9 @@ class UIManager:
         layout.addLayout(path_layout)
 
         # Download mode section
-        layout.addWidget(QLabel(
-            "Download Mode:",
-            styleSheet="font-size: 12pt; font-weight: bold;"
-        ))
+        mode_label = QLabel("Download Mode:")
+        mode_label.setObjectName("header_label")
+        layout.addWidget(mode_label)
 
         self.main_app.mode_combo = QComboBox()
         download_modes = [
@@ -226,10 +233,8 @@ class UIManager:
         layout.addWidget(self.main_app.mode_combo)
 
         # Video quality section (hidden for audio-only modes)
-        self.main_app.video_quality_label = QLabel(
-            "Video Quality:",
-            styleSheet="font-size: 12pt; font-weight: bold;"
-        )
+        self.main_app.video_quality_label = QLabel("Video Quality:")
+        self.main_app.video_quality_label.setObjectName("header_label")
         self.main_app.video_quality_combo = QComboBox()
         quality_options = [
             "Best Available",  # Highest quality available
@@ -251,7 +256,7 @@ class UIManager:
 
         # Download button
         download_btn = QPushButton("Download")
-        download_btn.setStyleSheet("font-size: 12pt; font-weight: bold; padding: 8px;")
+        download_btn.setObjectName("download_button")
         download_btn.clicked.connect(self.main_app.download_manager.add_to_queue)
         layout.addWidget(download_btn)
 
@@ -289,20 +294,18 @@ class UIManager:
 
         # Page title
         title_label = QLabel("Download Activity")
-        title_label.setStyleSheet("font-size: 14pt; font-weight: bold; margin-bottom: 10px;")
+        title_label.setObjectName("header_label")
         layout.addWidget(title_label)
+
+        # Progress bar
+        self.main_app.progress_bar = QProgressBar()
+        self.main_app.progress_bar.setObjectName("progress_bar")
+        self.main_app.progress_bar.setTextVisible(True)
+        self.main_app.progress_bar.setValue(0)
+        layout.addWidget(self.main_app.progress_bar)
 
         # Log text area
         self.main_app.log_text = QTextEdit(readOnly=True)
-        self.main_app.log_text.setStyleSheet("""
-            QTextEdit {
-                font-family: 'Consolas', 'Monaco', monospace;
-                font-size: 9pt;
-                background-color: black;
-                color: white;
-                border: 1px solid #ccc;
-            }
-        """)
         layout.addWidget(self.main_app.log_text)
 
         # Control buttons
@@ -317,7 +320,7 @@ class UIManager:
 
         # Queue status label
         self.main_app.queue_status_label = QLabel("Queue: 0 pending")
-        self.main_app.queue_status_label.setStyleSheet("font-weight: bold;")
+        self.main_app.queue_status_label.setObjectName("status_label")
         button_layout.addWidget(self.main_app.queue_status_label)
 
         layout.addLayout(button_layout)
@@ -326,6 +329,9 @@ class UIManager:
 
     def _create_ui(self) -> None:
         """Create and layout the main user interface."""
+        # Load stylesheet
+        self._load_stylesheet()
+
         # Create menu bar
         self.create_menubar()
 

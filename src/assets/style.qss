@@ -1,0 +1,142 @@
+/*
+ * Professional Dark Theme for yt-downloader-gui
+ */
+
+QMainWindow {
+    background-color: #2d2d2d;
+}
+
+QWidget {
+    background-color: #2d2d2d;
+    color: #f0f0f0;
+    font-family: "Segoe UI", "Arial", sans-serif;
+    font-size: 10pt;
+}
+
+QMenuBar {
+    background-color: #3c3c3c;
+    color: #f0f0f0;
+    border-bottom: 1px solid #555;
+}
+
+QMenuBar::item {
+    background-color: transparent;
+    padding: 4px 10px;
+}
+
+QMenuBar::item:selected {
+    background-color: #555;
+}
+
+QMenu {
+    background-color: #3c3c3c;
+    color: #f0f0f0;
+    border: 1px solid #555;
+}
+
+QMenu::item:selected {
+    background-color: #555;
+}
+
+QLabel {
+    color: #f0f0f0;
+}
+
+QLabel#header {
+    font-size: 16pt;
+    font-weight: bold;
+    color: #1e90ff; /* Dodger Blue */
+    padding-bottom: 10px;
+}
+
+QLabel[objectName="header_label"] {
+    font-size: 12pt;
+    font-weight: bold;
+    padding-top: 10px;
+}
+
+QLabel[objectName="status_label"] {
+    font-weight: bold;
+}
+
+QLineEdit {
+    background-color: #3c3c3c;
+    color: #f0f0f0;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+QLineEdit:focus {
+    border: 1px solid #1e90ff;
+}
+
+QPushButton {
+    background-color: #555;
+    color: #f0f0f0;
+    border: 1px solid #666;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-weight: bold;
+}
+
+QPushButton:hover {
+    background-color: #666;
+}
+
+QPushButton:pressed {
+    background-color: #1e90ff;
+}
+
+QPushButton#download_button {
+    font-size: 12pt;
+    font-weight: bold;
+    padding: 8px;
+}
+
+QComboBox {
+    background-color: #3c3c3c;
+    color: #f0f0f0;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+QComboBox::drop-down {
+    border: none;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #3c3c3c;
+    color: #f0f0f0;
+    selection-background-color: #555;
+}
+
+QTextEdit {
+    background-color: #252525;
+    color: #f0f0f0;
+    border: 1px solid #555;
+    border-radius: 4px;
+}
+
+QStatusBar {
+    background-color: #3c3c3c;
+    color: #f0f0f0;
+}
+
+QMessageBox {
+    background-color: #2d2d2d;
+}
+
+QProgressBar {
+    border: 1px solid #555;
+    border-radius: 4px;
+    text-align: center;
+    color: #f0f0f0;
+}
+
+QProgressBar::chunk {
+    background-color: #1e90ff;
+    width: 10px;
+    margin: 0.5px;
+}

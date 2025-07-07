@@ -3,6 +3,7 @@ Handles the download queue and execution.
 """
 
 import os
+import re
 import threading
 import subprocess
 import json
@@ -448,14 +449,15 @@ class DownloadManager:
 
             # Read output line by line for progress updates
             if process.stdout:
-                while True:
-                    output = process.stdout.readline()
-                    if output == '' and process.poll() is not None:
-                        break
-                    if output:
-                        line = output.strip()
-                        if line:
-                            self.main_app.log_message(line)
+                for line in iter(process.stdout.readline, ''):
+                    line = line.strip()
+                    if line:
+                        self.main_app.log_message(line)
+                        progress = self._parse_progress(line)
+                        if progress is not None:
+                            self.main_app.updateProgressSignal.emit(progress)
+
+            process.wait()
 
             # Check if download was successful
             if process.returncode == 0:
@@ -473,7 +475,27 @@ class DownloadManager:
         finally:
             # Mark download as complete and process next in queue
             self.main_app.downloading = False
+            self.main_app.updateProgressSignal.emit(0)  # Reset progress bar
             QTimer.singleShot(100, self.process_queue)  # Small delay to update UI
+
+    def _parse_progress(self, line: str) -> int | None:
+        """
+        Parse download progress from yt-dlp output line.
+
+        Args:
+            line: A single line of output from yt-dlp.
+
+        Returns:
+            The progress percentage as an integer, or None if not found.
+        """
+        # Look for percentage values (e.g., "  1.5% of ...")
+        match = re.search(r"\[download\]\s+([0-9.]+)%", line)
+        if match:
+            try:
+                return int(float(match.group(1)))
+            except (ValueError, IndexError):
+                pass
+        return None
 
     def _build_video_download_command(self, yt_dlp_path: str, ffmpeg_path: str, url: str, save_path: str,
                                       video_quality: str) -> List[str]:
