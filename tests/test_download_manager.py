@@ -4,9 +4,12 @@ import unittest
 from unittest.mock import MagicMock
 
 # Add the 'src' directory to the Python path to allow for absolute imports
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+)
 
 from app.download_manager import DownloadManager
+
 
 class TestDownloadManager(unittest.TestCase):
     """Tests for the DownloadManager class."""
@@ -15,8 +18,10 @@ class TestDownloadManager(unittest.TestCase):
         """Set up the test environment."""
         # Mock the main application window and its components
         self.mock_main_app = MagicMock()
-        self.mock_main_app.base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src'))
-        
+        self.mock_main_app.base_dir = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", "src")
+        )
+
         # Instantiate the DownloadManager with the mocked main app
         self.download_manager = DownloadManager(self.mock_main_app)
 
@@ -30,11 +35,15 @@ class TestDownloadManager(unittest.TestCase):
 
         expected_cmd = [
             yt_dlp_path,
-            "--ffmpeg-location", ffmpeg_path,
+            "--ffmpeg-location",
+            ffmpeg_path,
             "--no-playlist",
-            "--output", os.path.join(save_path, "%(title)s.%(ext)s"),
-            "--format", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4",
-            "--merge-output-format", "mp4",
+            "--output",
+            os.path.join(save_path, "%(title)s.%(ext)s"),
+            "--format",
+            "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4",
+            "--merge-output-format",
+            "mp4",
             url,
         ]
 
@@ -53,11 +62,15 @@ class TestDownloadManager(unittest.TestCase):
 
         expected_cmd = [
             yt_dlp_path,
-            "--ffmpeg-location", ffmpeg_path,
+            "--ffmpeg-location",
+            ffmpeg_path,
             "--no-playlist",
-            "--output", os.path.join(save_path, "%(title)s.%(ext)s"),
-            "--format", "bestvideo[height<=1080]+bestaudio/merge",
-            "--merge-output-format", "mp4",
+            "--output",
+            os.path.join(save_path, "%(title)s.%(ext)s"),
+            "--format",
+            "bestvideo[height<=1080]+bestaudio/merge",
+            "--merge-output-format",
+            "mp4",
             url,
         ]
 
@@ -76,13 +89,18 @@ class TestDownloadManager(unittest.TestCase):
 
         expected_cmd = [
             yt_dlp_path,
-            "--ffmpeg-location", ffmpeg_path,
+            "--ffmpeg-location",
+            ffmpeg_path,
             "--no-playlist",
-            "--output", os.path.join(save_path, "%(title)s.%(ext)s"),
-            "--format", "bestaudio/best",
+            "--output",
+            os.path.join(save_path, "%(title)s.%(ext)s"),
+            "--format",
+            "bestaudio/best",
             "--extract-audio",
-            "--audio-format", "mp3",
-            "--audio-quality", audio_quality,
+            "--audio-format",
+            "mp3",
+            "--audio-quality",
+            audio_quality,
             url,
         ]
 
@@ -91,5 +109,6 @@ class TestDownloadManager(unittest.TestCase):
         )
         self.assertEqual(cmd, expected_cmd)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
