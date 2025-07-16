@@ -8,7 +8,7 @@ import threading
 import subprocess
 import json
 import sys
-from typing import Dict, List, Any, Tuple, TYPE_CHECKING
+from typing import Dict, List, Any, Tuple, TYPE_CHECKING, Optional
 
 from PyQt6.QtWidgets import (
     QMessageBox,
@@ -549,7 +549,7 @@ class DownloadManager:
             self.main_app.updateProgressSignal.emit(0)  # Reset progress bar
             QTimer.singleShot(100, self.process_queue)  # Small delay to update UI
 
-    def _parse_progress(self, line: str) -> int | None:
+    def _parse_progress(self, line: str) -> Optional[int]:
         """
         Parse download progress from yt-dlp output line.
 
