@@ -148,7 +148,7 @@ class YTDGUI(QMainWindow):
             # Show error dialog in main thread
             QTimer.singleShot(
                 0,
-                lambda: QMessageBox.critical(
+                lambda e=e: QMessageBox.critical(
                     self, "Updater", f"Error during yt-dlp update: {e}"
                 ),
             )

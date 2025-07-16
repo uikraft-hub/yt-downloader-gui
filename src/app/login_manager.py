@@ -4,9 +4,12 @@ Handles user login and cookie-based authentication.
 
 import os
 import webbrowser
-from typing import List, Optional
+from typing import List, Optional, TYPE_CHECKING
 
 from PyQt6.QtWidgets import QMessageBox, QInputDialog, QFileDialog
+
+if TYPE_CHECKING:
+    from .main_window import YTDGUI
 
 
 class LoginManager:
