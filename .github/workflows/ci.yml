@@ -58,13 +58,13 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y xvfb qt6-base-dev libqt6gui6
 
-    - name: Run tests with pytest
-      run: |
-        if [ "$RUNNER_OS" == "Linux" ]; then
-          xvfb-run pytest
-        else
-          pytest
-        fi
+    - name: Run tests on Linux
+      if: runner.os == 'Linux'
+      run: xvfb-run pytest
+
+    - name: Run tests on Windows and macOS
+      if: runner.os != 'Linux'
+      run: pytest
 
   build:
     name: Build Package
