@@ -541,7 +541,7 @@ class DownloadManager:
             self.main_app.log_message(error_msg)
 
             # Show detailed error dialog in main thread
-            QTimer.singleShot(0, lambda: self._show_download_error(e))
+            QTimer.singleShot(0, lambda e=e: self._show_download_error(e))
 
         finally:
             # Mark download as complete and process next in queue
