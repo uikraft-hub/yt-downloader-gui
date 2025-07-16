@@ -6,10 +6,25 @@ import os
 from typing import TYPE_CHECKING
 
 from PyQt6.QtWidgets import (
-    QApplication, QCheckBox, QComboBox, QDialog, QFileDialog,
-    QHBoxLayout, QInputDialog, QLabel, QLineEdit, QMainWindow,
-    QMessageBox, QProgressBar, QPushButton, QScrollArea, QStackedWidget,
-    QStatusBar, QTextEdit, QVBoxLayout, QWidget
+    QApplication,
+    QCheckBox,
+    QComboBox,
+    QDialog,
+    QFileDialog,
+    QHBoxLayout,
+    QInputDialog,
+    QLabel,
+    QLineEdit,
+    QMainWindow,
+    QMessageBox,
+    QProgressBar,
+    QPushButton,
+    QScrollArea,
+    QStackedWidget,
+    QStatusBar,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
 )
 from PyQt6.QtGui import QAction, QIcon, QPixmap
 from PyQt6.QtCore import QSize, Qt
@@ -21,7 +36,7 @@ if TYPE_CHECKING:
 class UIManager:
     """Handles creation and management of the UI."""
 
-    def __init__(self, main_app: 'YTDGUI'):
+    def __init__(self, main_app: "YTDGUI"):
         self.main_app = main_app
         self.main_app.icons = {}
         self.main_app.video_favicon_pixmap = None
@@ -49,17 +64,25 @@ class UIManager:
     def _load_icons(self) -> None:
         """Load application icons from assets directory."""
         self.main_app.icons = {
-            "download": self.load_icon(os.path.join(self.main_app.base_dir, "assets", "download.png")),
-            "activity": self.load_icon(os.path.join(self.main_app.base_dir, "assets", "activity.png")),
+            "download": self.load_icon(
+                os.path.join(self.main_app.base_dir, "assets", "download.png")
+            ),
+            "activity": self.load_icon(
+                os.path.join(self.main_app.base_dir, "assets", "activity.png")
+            ),
         }
 
         # Load video favicon for playlist/channel selection dialogs
         try:
-            vf_path = os.path.join(self.main_app.base_dir, "assets", "video-favicon.png")
+            vf_path = os.path.join(
+                self.main_app.base_dir, "assets", "video-favicon.png"
+            )
             if os.path.exists(vf_path):
-                self.main_app.video_favicon_pixmap = (
-                    QPixmap(vf_path)
-                    .scaled(16, 16, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+                self.main_app.video_favicon_pixmap = QPixmap(vf_path).scaled(
+                    16,
+                    16,
+                    Qt.AspectRatioMode.KeepAspectRatio,
+                    Qt.TransformationMode.SmoothTransformation,
                 )
             else:
                 self.main_app.video_favicon_pixmap = None
@@ -141,10 +164,7 @@ class UIManager:
         layout.addSpacing(20)
 
         # Navigation buttons
-        nav_buttons = [
-            ("Download", "download"),
-            ("Activity", "activity")
-        ]
+        nav_buttons = [("Download", "download"), ("Activity", "activity")]
 
         for name, icon_key in nav_buttons:
             btn = QPushButton(name)
@@ -194,7 +214,9 @@ class UIManager:
         layout.addWidget(url_label)
 
         self.main_app.url_entry = QLineEdit()
-        self.main_app.url_entry.setPlaceholderText("https://www.youtube.com/watch?v=...")
+        self.main_app.url_entry.setPlaceholderText(
+            "https://www.youtube.com/watch?v=..."
+        )
         layout.addWidget(self.main_app.url_entry)
 
         # Save location section
@@ -244,7 +266,7 @@ class UIManager:
             "1080p Full HD",  # Full HD
             "720p HD",  # HD
             "480p Standard",  # Standard definition
-            "360p Medium"  # Low quality
+            "360p Medium",  # Low quality
         ]
         self.main_app.video_quality_combo.addItems(quality_options)
 

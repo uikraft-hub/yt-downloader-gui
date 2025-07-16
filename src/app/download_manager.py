@@ -10,7 +10,17 @@ import json
 import sys
 from typing import Dict, List, Any, Tuple, TYPE_CHECKING
 
-from PyQt6.QtWidgets import QMessageBox, QDialog, QScrollArea, QWidget, QVBoxLayout, QLabel, QCheckBox, QHBoxLayout, QPushButton
+from PyQt6.QtWidgets import (
+    QMessageBox,
+    QDialog,
+    QScrollArea,
+    QWidget,
+    QVBoxLayout,
+    QLabel,
+    QCheckBox,
+    QHBoxLayout,
+    QPushButton,
+)
 from PyQt6.QtCore import QTimer, pyqtSignal, QObject
 from PyQt6.QtGui import QIcon
 
@@ -20,6 +30,7 @@ if TYPE_CHECKING:
 
 class WorkerSignals(QObject):
     """Defines signals available from a running worker thread."""
+
     finished = pyqtSignal()
     error = pyqtSignal(tuple)
     result = pyqtSignal(object)
@@ -28,7 +39,7 @@ class WorkerSignals(QObject):
 class DownloadManager:
     """Handles the download queue and execution."""
 
-    def __init__(self, main_app: 'YTDGUI'):
+    def __init__(self, main_app: "YTDGUI"):
         self.main_app = main_app
         self.signals = WorkerSignals()
         self.signals.error.connect(self._on_playlist_error)
@@ -38,8 +49,7 @@ class DownloadManager:
         """Handles errors from the playlist processing thread."""
         exctype, value = error_info
         QMessageBox.critical(
-            self.main_app, "Error",
-            f"Failed to extract playlist information: {value}"
+            self.main_app, "Error", f"Failed to extract playlist information: {value}"
         )
 
     def _on_playlist_result(self, result: Any) -> None:
@@ -47,8 +57,7 @@ class DownloadManager:
         entries, save_path, mode, title = result
         if not entries:
             QMessageBox.warning(
-                self.main_app, "Warning",
-                "No videos found in the playlist."
+                self.main_app, "Warning", "No videos found in the playlist."
             )
             return
         self._show_video_selection_dialog(entries, save_path, mode, title)
@@ -67,15 +76,19 @@ class DownloadManager:
 
         if not url or not save_path:
             QMessageBox.critical(
-                self.main_app, "Error",
-                "Please enter a URL and select a save path."
+                self.main_app, "Error", "Please enter a URL and select a save path."
             )
             return
 
         # Handle different download modes
         if mode in ["Playlist Video", "Playlist MP3"]:
             self._handle_playlist_download(url, save_path, mode)
-        elif mode in ["Channel Videos", "Channel Videos MP3", "Channel Shorts", "Channel Shorts MP3"]:
+        elif mode in [
+            "Channel Videos",
+            "Channel Videos MP3",
+            "Channel Shorts",
+            "Channel Shorts MP3",
+        ]:
             self._handle_channel_download(url, save_path, mode)
         else:
             # Single video or MP3 only
@@ -85,30 +98,37 @@ class DownloadManager:
         """Handle playlist download mode."""
         if "list=" not in url:
             QMessageBox.critical(
-                self.main_app, "Error",
+                self.main_app,
+                "Error",
                 "The URL does not appear to be a playlist URL.\n"
-                "Playlist URLs should contain 'list=' parameter."
+                "Playlist URLs should contain 'list=' parameter.",
             )
             return
-        threading.Thread(target=self.process_playlist, args=(url, save_path, mode), daemon=True).start()
+        threading.Thread(
+            target=self.process_playlist, args=(url, save_path, mode), daemon=True
+        ).start()
 
     def _handle_channel_download(self, url: str, save_path: str, mode: str) -> None:
         """Handle channel download mode."""
         if "youtube.com/@" not in url and "/channel/" not in url:
             QMessageBox.critical(
-                self.main_app, "Error",
+                self.main_app,
+                "Error",
                 "The URL does not appear to be a channel URL.\n"
-                "Channel URLs should contain '@' or '/channel/'."
+                "Channel URLs should contain '@' or '/channel/'.",
             )
             return
         if "?" in url:
             QMessageBox.critical(
-                self.main_app, "Error",
+                self.main_app,
+                "Error",
                 "Please use a clean channel URL without query parameters.\n"
-                "Example: https://www.youtube.com/@channelname"
+                "Example: https://www.youtube.com/@channelname",
             )
             return
-        threading.Thread(target=self.process_channel, args=(url, save_path, mode), daemon=True).start()
+        threading.Thread(
+            target=self.process_channel, args=(url, save_path, mode), daemon=True
+        ).start()
 
     def _handle_single_download(self, url: str, save_path: str, mode: str) -> None:
         """Handle single video or MP3-only download."""
@@ -117,8 +137,14 @@ class DownloadManager:
             "url": url,
             "save_path": save_path,
             "mode": mode,
-            "audio_quality": self.main_app.audio_quality_default if "MP3" in mode else None,
-            "video_quality": self.main_app.video_quality_combo.currentText() if "MP3" not in mode else "Best Available",
+            "audio_quality": (
+                self.main_app.audio_quality_default if "MP3" in mode else None
+            ),
+            "video_quality": (
+                self.main_app.video_quality_combo.currentText()
+                if "MP3" not in mode
+                else "Best Available"
+            ),
         }
 
         self.main_app.download_queue.append(task)
@@ -140,13 +166,19 @@ class DownloadManager:
             cmd = [yt_dlp_path, "--quiet", "--flat-playlist", "--dump-json", url]
 
             creationflags = 0
-            if sys.platform == 'win32':
+            if sys.platform == "win32":
                 creationflags = subprocess.CREATE_NO_WINDOW
 
-            result = subprocess.run(cmd, capture_output=True, text=True, check=True, creationflags=creationflags)
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                check=True,
+                creationflags=creationflags,
+            )
 
             entries = []
-            for line in result.stdout.strip().split('\n'):
+            for line in result.stdout.strip().split("\n"):
                 if line.strip():
                     try:
                         entry = json.loads(line)
@@ -156,20 +188,20 @@ class DownloadManager:
 
             if not entries:
                 QMessageBox.warning(
-                    self.main_app, "Warning",
-                    "No videos found in the playlist."
+                    self.main_app, "Warning", "No videos found in the playlist."
                 )
                 return
 
         except Exception as e:
             QMessageBox.critical(
-                self.main_app, "Error",
-                f"Failed to extract playlist information: {e}"
+                self.main_app, "Error", f"Failed to extract playlist information: {e}"
             )
             return
 
         # Show video selection dialog
-        self.signals.result.emit((entries, save_path, mode, "Select Videos from Playlist"))
+        self.signals.result.emit(
+            (entries, save_path, mode, "Select Videos from Playlist")
+        )
 
     def process_channel(self, url: str, save_path: str, mode: str) -> None:
         """
@@ -191,13 +223,19 @@ class DownloadManager:
             cmd = [yt_dlp_path, "--quiet", "--flat-playlist", "--dump-json", url]
 
             creationflags = 0
-            if sys.platform == 'win32':
+            if sys.platform == "win32":
                 creationflags = subprocess.CREATE_NO_WINDOW
 
-            result = subprocess.run(cmd, capture_output=True, text=True, check=True, creationflags=creationflags)
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                check=True,
+                creationflags=creationflags,
+            )
 
             entries = []
-            for line in result.stdout.strip().split('\n'):
+            for line in result.stdout.strip().split("\n"):
                 if line.strip():
                     try:
                         entry = json.loads(line)
@@ -211,28 +249,34 @@ class DownloadManager:
                 entries = [e for e in entries if "shorts" in e.get("url", "").lower()]
             else:
                 # Filter out shorts for regular videos
-                entries = [e for e in entries if "shorts" not in e.get("url", "").lower()]
+                entries = [
+                    e for e in entries if "shorts" not in e.get("url", "").lower()
+                ]
 
             if not entries:
                 content_type = "shorts" if "Shorts" in mode else "videos"
                 QMessageBox.warning(
-                    self.main_app, "Warning",
-                    f"No {content_type} found in the channel."
+                    self.main_app, "Warning", f"No {content_type} found in the channel."
                 )
                 return
 
         except Exception as e:
             QMessageBox.critical(
-                self.main_app, "Error",
-                f"Failed to extract channel information: {e}"
+                self.main_app, "Error", f"Failed to extract channel information: {e}"
             )
             return
 
         # Show video selection dialog
-        dialog_title = "Select Videos from Channel" if "Videos" in mode else "Select Shorts from Channel"
+        dialog_title = (
+            "Select Videos from Channel"
+            if "Videos" in mode
+            else "Select Shorts from Channel"
+        )
         self.signals.result.emit((entries, save_path, mode, dialog_title))
 
-    def _show_video_selection_dialog(self, entries: List[Dict], save_path: str, mode: str, title: str) -> None:
+    def _show_video_selection_dialog(
+        self, entries: List[Dict], save_path: str, mode: str, title: str
+    ) -> None:
         """
         Show dialog for selecting videos from playlist or channel.
 
@@ -323,7 +367,9 @@ class DownloadManager:
         # Show dialog
         dialog.exec()
 
-    def _process_selected_videos(self, checkboxes: List[Tuple], save_path: str, mode: str, dialog: QDialog) -> None:
+    def _process_selected_videos(
+        self, checkboxes: List[Tuple], save_path: str, mode: str, dialog: QDialog
+    ) -> None:
         """
         Process selected videos and add them to download queue.
 
@@ -342,8 +388,14 @@ class DownloadManager:
                     "url": video_url,
                     "save_path": save_path,
                     "mode": mode,
-                    "audio_quality": self.main_app.audio_quality_default if "MP3" in mode else None,
-                    "video_quality": self.main_app.video_quality_combo.currentText() if "MP3" not in mode else "Best Available",
+                    "audio_quality": (
+                        self.main_app.audio_quality_default if "MP3" in mode else None
+                    ),
+                    "video_quality": (
+                        self.main_app.video_quality_combo.currentText()
+                        if "MP3" not in mode
+                        else "Best Available"
+                    ),
                 }
                 self.main_app.download_queue.append(task)
                 selected_count += 1
@@ -368,8 +420,10 @@ class DownloadManager:
         processes the next item in the queue when the current download completes.
         """
         # Update queue status
-        if hasattr(self.main_app, 'queue_status_label'):
-            self.main_app.queue_status_label.setText(f"Queue: {len(self.main_app.download_queue)} pending")
+        if hasattr(self.main_app, "queue_status_label"):
+            self.main_app.queue_status_label.setText(
+                f"Queue: {len(self.main_app.download_queue)} pending"
+            )
 
         # Start next download if not already downloading and queue has items
         if not self.main_app.downloading and self.main_app.download_queue:
@@ -378,9 +432,7 @@ class DownloadManager:
 
             # Start download in background thread
             threading.Thread(
-                target=self.download_video,
-                args=(task,),
-                daemon=True
+                target=self.download_video, args=(task,), daemon=True
             ).start()
 
     def download_video(self, task: Dict[str, Any]) -> None:
@@ -412,11 +464,18 @@ class DownloadManager:
             # Build command based on mode
             if "Video" in mode and "MP3" not in mode:
                 # Video download
-                cmd = self._build_video_download_command(yt_dlp_path, ffmpeg_path, url, save_path, video_quality)
+                cmd = self._build_video_download_command(
+                    yt_dlp_path, ffmpeg_path, url, save_path, video_quality
+                )
             else:
                 # Audio extraction
-                cmd = self._build_audio_download_command(yt_dlp_path, ffmpeg_path, url, save_path,
-                                                         task.get("audio_quality", "320"))
+                cmd = self._build_audio_download_command(
+                    yt_dlp_path,
+                    ffmpeg_path,
+                    url,
+                    save_path,
+                    task.get("audio_quality", "320"),
+                )
 
             # Add cookie support if enabled
             if self.main_app.use_cookies and self.main_app.cookie_file:
@@ -430,9 +489,15 @@ class DownloadManager:
 
             try:
                 creationflags = 0
-                if sys.platform == 'win32':
+                if sys.platform == "win32":
                     creationflags = subprocess.CREATE_NO_WINDOW
-                info_result = subprocess.run(info_cmd, capture_output=True, text=True, check=True, creationflags=creationflags)
+                info_result = subprocess.run(
+                    info_cmd,
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                    creationflags=creationflags,
+                )
                 info = json.loads(info_result.stdout)
                 title = info.get("title", "Unknown Title")
             except:
@@ -442,14 +507,20 @@ class DownloadManager:
 
             # Execute download command
             creationflags = 0
-            if sys.platform == 'win32':
+            if sys.platform == "win32":
                 creationflags = subprocess.CREATE_NO_WINDOW
-            process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                       text=True, universal_newlines=True, creationflags=creationflags)
+            process = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                universal_newlines=True,
+                creationflags=creationflags,
+            )
 
             # Read output line by line for progress updates
             if process.stdout:
-                for line in iter(process.stdout.readline, ''):
+                for line in iter(process.stdout.readline, ""):
                     line = line.strip()
                     if line:
                         self.main_app.log_message(line)
@@ -497,8 +568,14 @@ class DownloadManager:
                 pass
         return None
 
-    def _build_video_download_command(self, yt_dlp_path: str, ffmpeg_path: str, url: str, save_path: str,
-                                      video_quality: str) -> List[str]:
+    def _build_video_download_command(
+        self,
+        yt_dlp_path: str,
+        ffmpeg_path: str,
+        url: str,
+        save_path: str,
+        video_quality: str,
+    ) -> List[str]:
         """
         Build yt-dlp.exe command for video download.
 
@@ -514,23 +591,35 @@ class DownloadManager:
         """
         cmd = [
             yt_dlp_path,
-            "--ffmpeg-location", ffmpeg_path,
+            "--ffmpeg-location",
+            ffmpeg_path,
             "--no-playlist",
-            "--output", os.path.join(save_path, "%(title)s.%(ext)s"),
-            "--format", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4",
-            "--merge-output-format", "mp4",
-            url
+            "--output",
+            os.path.join(save_path, "%(title)s.%(ext)s"),
+            "--format",
+            "bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4",
+            "--merge-output-format",
+            "mp4",
+            url,
         ]
 
         # Apply quality filter if not "Best Available"
         if video_quality != "Best Available":
             height = video_quality.split("p")[0]
-            cmd[cmd.index("--format") + 1] = f"bestvideo[height<={height}]+bestaudio/merge"
+            cmd[cmd.index("--format") + 1] = (
+                f"bestvideo[height<={height}]+bestaudio/merge"
+            )
 
         return cmd
 
-    def _build_audio_download_command(self, yt_dlp_path: str, ffmpeg_path: str, url: str, save_path: str,
-                                      audio_quality: str) -> List[str]:
+    def _build_audio_download_command(
+        self,
+        yt_dlp_path: str,
+        ffmpeg_path: str,
+        url: str,
+        save_path: str,
+        audio_quality: str,
+    ) -> List[str]:
         """
         Build yt-dlp.exe command for audio extraction.
 
@@ -546,14 +635,19 @@ class DownloadManager:
         """
         cmd = [
             yt_dlp_path,
-            "--ffmpeg-location", ffmpeg_path,
+            "--ffmpeg-location",
+            ffmpeg_path,
             "--no-playlist",
-            "--output", os.path.join(save_path, "%(title)s.%(ext)s"),
-            "--format", "bestaudio/best",
+            "--output",
+            os.path.join(save_path, "%(title)s.%(ext)s"),
+            "--format",
+            "bestaudio/best",
             "--extract-audio",
-            "--audio-format", "mp3",
-            "--audio-quality", audio_quality,
-            url
+            "--audio-format",
+            "mp3",
+            "--audio-quality",
+            audio_quality,
+            url,
         ]
 
         return cmd
@@ -590,6 +684,5 @@ class DownloadManager:
             )
 
         QMessageBox.critical(
-            self.main_app, "Download Error",
-            f"Download failed:\n\n{error_text}"
+            self.main_app, "Download Error", f"Download failed:\n\n{error_text}"
         )

@@ -94,13 +94,14 @@ class YTDGUI(QMainWindow):
 
     def on_playlist_result(self, result):
         entries, save_path, mode, title = result
-        self.download_manager._show_video_selection_dialog(entries, save_path, mode, title)
+        self.download_manager._show_video_selection_dialog(
+            entries, save_path, mode, title
+        )
 
     def on_playlist_error(self, error_info):
         exctype, value = error_info
         QMessageBox.critical(
-            self, "Error",
-            f"Failed to extract playlist information: {value}"
+            self, "Error", f"Failed to extract playlist information: {value}"
         )
 
     def check_for_updates(self) -> None:
@@ -111,9 +112,10 @@ class YTDGUI(QMainWindow):
         the option to update yt-dlp to the latest version.
         """
         reply = QMessageBox.question(
-            self, "Check for Updates",
+            self,
+            "Check for Updates",
             "Do you want to check for a new version of yt-dlp?",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
 
         if reply == QMessageBox.StandardButton.Yes:
@@ -144,15 +146,16 @@ class YTDGUI(QMainWindow):
             self.log_message(error_msg)
 
             # Show error dialog in main thread
-            QTimer.singleShot(0, lambda: QMessageBox.critical(
-                self, "Updater", f"Error during yt-dlp update: {e}"
-            ))
+            QTimer.singleShot(
+                0,
+                lambda: QMessageBox.critical(
+                    self, "Updater", f"Error during yt-dlp update: {e}"
+                ),
+            )
 
     def select_save_path(self) -> None:
         """Open folder selection dialog for download location."""
-        directory = QFileDialog.getExistingDirectory(
-            self, "Select Download Folder"
-        )
+        directory = QFileDialog.getExistingDirectory(self, "Select Download Folder")
 
         if directory:
             self.path_entry.setText(directory)
@@ -191,6 +194,7 @@ class YTDGUI(QMainWindow):
         if hasattr(self, "log_text"):
             # Add timestamp for better logging
             from datetime import datetime
+
             timestamp = datetime.now().strftime("%H:%M:%S")
             formatted_msg = f"[{timestamp}] {msg}"
             self.log_text.append(formatted_msg)

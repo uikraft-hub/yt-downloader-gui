@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import QMessageBox, QInputDialog, QFileDialog
 class LoginManager:
     """Handles user login and cookie-based authentication."""
 
-    def __init__(self, main_app: 'YTDGUI'):
+    def __init__(self, main_app: "YTDGUI"):
         self.main_app = main_app
 
     def get_installed_browsers(self) -> List[str]:
@@ -30,8 +30,7 @@ class LoginManager:
 
             # Access Windows registry for installed browsers
             key = winreg.OpenKey(
-                winreg.HKEY_LOCAL_MACHINE,
-                r"SOFTWARE\Clients\StartMenuInternet"
+                winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Clients\StartMenuInternet"
             )
 
             browsers = []
@@ -78,7 +77,7 @@ class LoginManager:
             "firefox": "firefox",
             "edge": "edge",
             "opera": "opera",
-            "brave": "brave"
+            "brave": "brave",
         }
 
         # Find matching browser
@@ -104,8 +103,12 @@ class LoginManager:
         # Get user's browser preference
         installed_browsers = self.get_installed_browsers()
         browser_choice, ok = QInputDialog.getItem(
-            self.main_app, "Select Browser", "Select your browser:",
-            installed_browsers, 0, False
+            self.main_app,
+            "Select Browser",
+            "Select your browser:",
+            installed_browsers,
+            0,
+            False,
         )
 
         if not ok:
@@ -168,8 +171,9 @@ class LoginManager:
 
         # Prompt user to install and then select cookie file
         QMessageBox.information(
-            self.main_app, "Cookie Extension",
-            "Please install the extension, then select the cookie file."
+            self.main_app,
+            "Cookie Extension",
+            "Please install the extension, then select the cookie file.",
         )
 
         # Let user select cookie file after installation
@@ -194,8 +198,9 @@ class LoginManager:
                 self.main_app.log_message(f"Cookie file set: {cookie_file}")
             else:
                 QMessageBox.warning(
-                    self.main_app, "Invalid Cookie File",
-                    "The selected file doesn't appear to contain YouTube cookies."
+                    self.main_app,
+                    "Invalid Cookie File",
+                    "The selected file doesn't appear to contain YouTube cookies.",
                 )
         except Exception as e:
             QMessageBox.warning(self.main_app, "Error", f"Cannot read cookie file: {e}")
@@ -216,6 +221,7 @@ class LoginManager:
             webbrowser.open(login_url)
 
         QMessageBox.information(
-            self.main_app, "Login",
-            "Please log in to YouTube in the browser, then click OK."
+            self.main_app,
+            "Login",
+            "Please log in to YouTube in the browser, then click OK.",
         )

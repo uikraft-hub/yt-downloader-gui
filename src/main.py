@@ -1,5 +1,5 @@
 """
-Youtube-Media-Downloader - Professional YouTube Video Downloader
+yt-downloader-gui - Professional YouTube Video Downloader
 ==============================================
 
 A PyQt6-based GUI application for downloading YouTube videos, playlists, and channels.

@@ -1,1 +1,1 @@
-# This file makes the ytd_gui directory a Python package.
+# This file makes the app directory a Python package.

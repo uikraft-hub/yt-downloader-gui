@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "yt-downloader-gui"
+version = "2.4.0"
+authors = [
+  { name="UKR", email="ukr.projects@gmail.com" }
+]
+description = "A GUI for downloading YouTube videos."
+readme = "README.md"
+requires-python = ">=3.7"
+license = { text = "MIT License" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "PyQt6>=6.4.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/ukr-projects/yt-downloader-gui"
+"Bug Tracker" = "https://github.com/ukr-projects/yt-downloader-gui/issues"
+
+[project.scripts]
+yt-downloader-gui = "src.main:main"
