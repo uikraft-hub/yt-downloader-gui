@@ -50,31 +50,44 @@
 
 ```
 yt-downloader-gui/
+├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   │   ├── bug_report.md
+│   │   └── feature_request.md
+│   └── workflows/
+│       └── python-publish.yml
 ├── .gitignore
+├── CODE_OF_CONDUCT.md
 ├── CONTRIBUTING.md
 ├── LICENSE
 ├── README.md
+├── pyproject.toml
 ├── requirements.txt
 ├── screenshots/
 │   └── screenshot.png
-└── src/
-    ├── build.bat
-    ├── favicon.ico
-    ├── main.py
-    ├── assets/
-    │   ├── activity.png
-    │   ├── download.png
-    │   └── video-favicon.png
-    ├── bin/
-    │   ├── ffmpeg.exe
-    │   └── yt-dlp.exe
-    └── app/
-        ├── __init__.py
-        ├── download_manager.py
-        ├── login_manager.py
-        ├── main_window.py
-        ├── ui_manager.py
-        └── updater.py
+├── src/
+│   ├── build.bat
+│   ├── favicon.ico
+│   ├── main.py
+│   ├── assets/
+│   │   ├── activity.png
+│   │   ├── download.png
+│   │   ├── style.qss
+│   │   └── video-favicon.png
+│   ├── bin/
+│   │   ├── ffmpeg.exe
+│   │   └── yt-dlp.exe
+│   └── app/
+│       ├── __init__.py
+│       ├── download_manager.py
+│       ├── login_manager.py
+│       ├── main_window.py
+│       ├── ui_manager.py
+│       └── updater.py
+└── tests/
+    ├── __init__.py
+    ├── test_download_manager.py
+    └── test_updater.py
 ```
 
 ---
