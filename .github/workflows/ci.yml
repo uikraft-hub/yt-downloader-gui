@@ -52,11 +52,11 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    - name: Install xvfb on Linux
+    - name: Install GUI dependencies on Linux
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y xvfb
+        sudo apt-get install -y xvfb libegl1 libgl1-mesa-glx
 
     - name: Run tests with pytest
       run: |
