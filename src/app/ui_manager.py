@@ -137,7 +137,7 @@ class UIManager:
         """Display application about dialog."""
         about_text = (
             "yt-downloader-gui\n"
-            "Version 2.4.0\n\n"
+            "Version 3.0.0\n\n"
             "Developed by Ujjwal Nova\n\n"
             "A professional YouTube video and audio downloader\n"
             "with support for playlists and channels.\n\n"
