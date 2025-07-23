@@ -12,7 +12,7 @@ There are many ways to contribute, from writing code and documentation to report
 
 ### Reporting Bugs and Requesting Features
 
-The best way to report a bug or request a new feature is to [open an issue](https://github.com/ukr-projects/yt-downloader-gui/issues). Please use the provided templates to ensure you include all the necessary information.
+The best way to report a bug or request a new feature is to [open an issue](https://github.com/uikraft-hub/yt-downloader-gui/issues). Please use the provided templates to ensure you include all the necessary information.
 
 ### Contributing Code
 
@@ -22,7 +22,7 @@ If you'd like to contribute code, please follow these steps:
 
 ```bash
 # Fork the repository on GitHub, then clone your fork
-git clone https://github.com/YOUR_USERNAME/yt-downloader-gui.git
+git clone https://github.com/uikraft-hub/yt-downloader-gui.git
 cd yt-downloader-gui
 
 # Create and activate a virtual environment
@@ -44,7 +44,7 @@ pip install black flake8
 **3. Submit a Pull Request**
 
 *   Push your branch to your fork on GitHub.
-*   [Open a pull request](https://github.com/ukr-projects/yt-downloader-gui/pulls) to the `main` branch.
+*   [Open a pull request](https://github.com/uikraft-hub/yt-downloader-gui/pulls) to the `main` branch.
 *   Fill out the pull request template to explain your changes.
 
 The project maintainers will review your pull request, provide feedback, and merge it if it meets the contribution guidelines. Thank you for your contribution!
