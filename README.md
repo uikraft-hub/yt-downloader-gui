@@ -179,10 +179,6 @@ For major changes, please open an issue first to discuss.
 * **ffmpeg** for audio/video processing
 * **GitHub API** for seamless updater integration
 
-## 🌟 Star History
-
-If you find this project useful, please consider giving it a star on GitHub! Your support helps us continue improving and maintaining this tool.
-
 ## 📞 Support
 
 - **GitHub Issues**: [Report bugs or request features](https://github.com/uikraft-hub/yt-downloader-gui/issues)
