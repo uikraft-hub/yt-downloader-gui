@@ -189,7 +189,7 @@ For major changes, please open an issue first to discuss.
 
 <div align="center">
 
-**Made with ❤️ by the Ujjwal Nova**
+**Made with ❤️ by the ukr**
 
 [⭐ Star this repo](https://github.com/uikraft-hub/yt-downloader-gui) | [🐛 Report Bug](https://github.com/uikraft-hub/yt-downloader-gui/issues) | [💡 Request Feature](https://github.com/uikraft-hub/yt-downloader-gui/issues)
 
