@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "yt-downloader-gui"
 version = "2.4.0"
 authors = [
-  { name="UKR", email="ukr.projects@gmail.com" }
+  { name="ukr", email="ujjwalkrai@gmail.com" }
 ]
 description = "A GUI for downloading YouTube videos."
 readme = "README.md"
@@ -22,8 +22,8 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/ukr-projects/yt-downloader-gui"
-"Bug Tracker" = "https://github.com/ukr-projects/yt-downloader-gui/issues"
+"Homepage" = "https://github.com/uikraft-hub/yt-downloader-gui"
+"Bug Tracker" = "https://github.com/uikraft-hub/yt-downloader-gui/issues"
 
 [project.scripts]
 yt-downloader-gui = "src.main:main"
