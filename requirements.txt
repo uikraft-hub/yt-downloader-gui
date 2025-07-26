@@ -1,8 +1,3 @@
-# GUI Framework
 PyQt6>=6.4.0
-
-# Note: FFmpeg is required but must be installed separately as a binary
-# Download FFmpeg from: https://ffmpeg.org/download.html
-# Place ffmpeg.exe in the 'bin' folder relative to the application
-
 pytest>=8.0.0
+pyinstaller 
