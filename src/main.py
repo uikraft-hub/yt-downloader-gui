@@ -1,32 +1,9 @@
 """
-yt-downloader-gui - Professional YouTube Video Downloader
-==============================================
-
-A PyQt6-based GUI application for downloading YouTube videos, playlists, and channels.
-Supports both video and audio-only downloads with customizable quality settings.
-
+Project: yt-downloader-gui
 Author: ukr
-Version: 2.4.0
+Version: 1.0.0
 License: MIT
 Repository: https://github.com/uikraft-hub/yt-downloader-gui
-
-Features:
-- Single video and playlist downloads
-- Channel video and shorts downloads
-- MP3 audio extraction
-- Cookie-based authentication for private content
-- Automatic yt-dlp updates
-- Multi-threaded downloading
-- Progress tracking and logging
-
-Dependencies:
-- PyQt6: GUI framework
-- yt-dlp: YouTube downloading engine
-- FFmpeg: Audio/video processing (external binary)
-
-Usage:
-    cd src
-    python main.py
 """
 
 import sys
@@ -46,7 +23,7 @@ def main():
 
     # Set application metadata
     app.setApplicationName("yt-downloader-gui")
-    app.setApplicationVersion("2.4.0")
+    app.setApplicationVersion("1.0.0")
 
     # Determine application base directory
     if getattr(sys, "frozen", False):

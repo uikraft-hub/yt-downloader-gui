@@ -1,3 +1,5 @@
 PyQt6>=6.4.0
-pytest>=8.0.0
-pyinstaller 
+black
+flake8 
+pytest
+requests-mock

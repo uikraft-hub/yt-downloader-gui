@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "yt-downloader-gui"
-version = "2.4.0"
+version = 1.0.0"
 authors = [
   { name="ukr", email="ujjwalkrai@gmail.com" }
 ]
@@ -19,6 +19,14 @@ classifiers = [
 ]
 dependencies = [
     "PyQt6>=6.4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "flake8", 
+    "pytest",
+    "requests-mock",
 ]
 
 [project.urls]
