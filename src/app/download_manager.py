@@ -21,7 +21,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QPushButton,
 )
-from PyQt6.QtCore import QTimer, pyqtSignal, QObject
+from PyQt6.QtCore import QTimer, pyqtSignal, QObject, QMetaObject, Qt
 from PyQt6.QtGui import QIcon
 
 if TYPE_CHECKING:
@@ -34,6 +34,7 @@ class WorkerSignals(QObject):
     finished = pyqtSignal()
     error = pyqtSignal(tuple)
     result = pyqtSignal(object)
+    download_complete = pyqtSignal()  # New signal for download completion
 
 
 class DownloadManager:
@@ -44,6 +45,7 @@ class DownloadManager:
         self.signals = WorkerSignals()
         self.signals.error.connect(self._on_playlist_error)
         self.signals.result.connect(self._on_playlist_result)
+        self.signals.download_complete.connect(self._on_download_complete)
 
     def _on_playlist_error(self, error_info: tuple) -> None:
         """Handles errors from the playlist processing thread."""
@@ -61,6 +63,12 @@ class DownloadManager:
             )
             return
         self._show_video_selection_dialog(entries, save_path, mode, title)
+
+    def _on_download_complete(self) -> None:
+        """Handle download completion in the main thread."""
+        self.main_app.downloading = False
+        self.main_app.updateProgressSignal.emit(0)  # Reset progress bar
+        self.process_queue()  # Process next item in queue
 
     def add_to_queue(self) -> None:
         """
@@ -541,13 +549,17 @@ class DownloadManager:
             self.main_app.log_message(error_msg)
 
             # Show detailed error dialog in main thread
-            QTimer.singleShot(0, lambda e=e: self._show_download_error(e))
+            # Use invokeMethod to safely call across threads
+            QMetaObject.invokeMethod(
+                self.main_app,
+                "_show_download_error_slot",
+                Qt.ConnectionType.QueuedConnection,
+                QMetaObject.Q_ARG("PyQt_PyObject", e),
+            )
 
         finally:
-            # Mark download as complete and process next in queue
-            self.main_app.downloading = False
-            self.main_app.updateProgressSignal.emit(0)  # Reset progress bar
-            QTimer.singleShot(100, self.process_queue)  # Small delay to update UI
+            # Mark download as complete and process next in queue using signal
+            self.signals.download_complete.emit()
 
     def _parse_progress(self, line: str) -> Optional[int]:
         """

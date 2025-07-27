@@ -198,3 +198,14 @@ class YTDGUI(QMainWindow):
             timestamp = datetime.now().strftime("%H:%M:%S")
             formatted_msg = f"[{timestamp}] {msg}"
             self.log_text.append(formatted_msg)
+
+    # Add this method to the YTDGUI class in main_window.py
+
+    def _show_download_error_slot(self, error: Exception) -> None:
+        """
+        Slot method to show download error dialog safely in main thread.
+
+        Args:
+            error: Exception that occurred during download
+        """
+        self.download_manager._show_download_error(error)
