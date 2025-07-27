@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "yt-downloader-gui"
-version = 1.0.0"
+version = "1.0.0"
 authors = [
   { name="ukr", email="ujjwalkrai@gmail.com" }
 ]
@@ -27,6 +27,7 @@ dev = [
     "flake8", 
     "pytest",
     "requests-mock",
+    "pyinstaller"
 ]
 
 [project.urls]
@@ -34,4 +35,4 @@ dev = [
 "Bug Tracker" = "https://github.com/uikraft-hub/yt-downloader-gui/issues"
 
 [project.scripts]
-yt-downloader-gui = "src.main:main"
+yt-downloader-gui = "src"

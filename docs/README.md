@@ -63,6 +63,54 @@
 ## 📁 Folder Structure
 
 ```
+yt-downloader-gui/
+├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   │   ├── bug_report.md
+│   │   └── feature_request.md
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   ├── RELEASE_TEMPLATE.md
+│   └── workflows/
+│       └── ci.yml
+├── .gitignore
+├── assets/
+│   ├── screenshots/
+│   │   └── screenshot.png
+│   └── yt-downloader-gui-logo.ico
+├── docs/
+│   ├── CHANGELOG.md
+│   ├── CODE_OF_CONDUCT.md
+│   ├── CONTRIBUTING.md
+│   ├── README.md
+│   ├── SECURITY.md
+│   ├── STATUS.md
+│   └── USAGE.md
+├── LICENSE
+├── pyproject.toml
+├── requirements.txt
+├── src/
+│   ├── app/
+│   │   ├── __init__.py
+│   │   ├── download_manager.py
+│   │   ├── login_manager.py
+│   │   ├── main_window.py
+│   │   ├── ui_manager.py
+│   │   └── updater.py
+│   ├── assets/
+│   │   ├── activity.png
+│   │   ├── download.png
+│   │   ├── style.qss
+│   │   └── video-favicon.png
+│   ├── bin/
+│   │   ├── ffmpeg.exe
+│   │   └── yt-dlp.exe
+│   ├── build.bat
+│   ├── favicon.ico
+│   └── main.py
+└── tests/
+    ├── __init__.py
+    ├── test_download_manager.py
+    └── test_updater.py
 
 ```
 
