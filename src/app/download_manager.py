@@ -21,7 +21,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QPushButton,
 )
-from PyQt6.QtCore import QTimer, pyqtSignal, QObject, QMetaObject, Qt
+from PyQt6.QtCore import QTimer, pyqtSignal, QObject, QMetaObject, Qt, Q_ARG
 from PyQt6.QtGui import QIcon
 
 if TYPE_CHECKING:
@@ -34,7 +34,7 @@ class WorkerSignals(QObject):
     finished = pyqtSignal()
     error = pyqtSignal(tuple)
     result = pyqtSignal(object)
-    download_complete = pyqtSignal()  # New signal for download completion
+    download_complete = pyqtSignal()
 
 
 class DownloadManager:
@@ -62,13 +62,12 @@ class DownloadManager:
                 self.main_app, "Warning", "No videos found in the playlist."
             )
             return
-        self._show_video_selection_dialog(entries, save_path, mode, title)
 
     def _on_download_complete(self) -> None:
         """Handle download completion in the main thread."""
         self.main_app.downloading = False
-        self.main_app.updateProgressSignal.emit(0)  # Reset progress bar
-        self.process_queue()  # Process next item in queue
+        self.main_app.updateProgressSignal.emit(0)
+        self.process_queue()
 
     def add_to_queue(self) -> None:
         """
@@ -554,7 +553,7 @@ class DownloadManager:
                 self.main_app,
                 "_show_download_error_slot",
                 Qt.ConnectionType.QueuedConnection,
-                QMetaObject.Q_ARG("PyQt_PyObject", e),
+                Q_ARG(object, e),  # Use Q_ARG directly with object type hint
             )
 
         finally:

@@ -7,8 +7,21 @@ import sys
 import threading
 from typing import Dict, List, Any, Optional
 
-from PyQt6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
+from PyQt6.QtWidgets import (
+    QMainWindow,
+    QFileDialog,
+    QMessageBox,
+    QLineEdit,
+    QComboBox,
+    QLabel,
+    QProgressBar,
+    QTextEdit,
+    QWidget,
+    QStackedWidget,
+    QStatusBar,
+)
 from PyQt6.QtCore import pyqtSignal, QTimer
+from PyQt6.QtGui import QPixmap, QIcon
 
 from .updater import Updater
 from .login_manager import LoginManager
@@ -28,6 +41,24 @@ class YTDGUI(QMainWindow):
     updateStatusSignal = pyqtSignal(str)
     logMessageSignal = pyqtSignal(str)
     updateProgressSignal = pyqtSignal(int)
+
+    # UI elements (dynamically added by UIManager)
+    url_entry: QLineEdit
+    path_entry: QLineEdit
+    mode_combo: QComboBox
+    video_quality_label: QLabel
+    video_quality_combo: QComboBox
+    progress_bar: QProgressBar
+    log_text: QTextEdit
+    queue_status_label: QLabel
+    video_favicon_pixmap: Optional[QPixmap]
+    icons: Dict[str, QIcon]
+    sidebar: QWidget
+    stack: QStackedWidget
+    download_page: QWidget
+    activity_page: QWidget
+    status_bar: QStatusBar
+    mode_var: str  # Stores the current download mode
 
     def __init__(self, base_dir: str):
         """
