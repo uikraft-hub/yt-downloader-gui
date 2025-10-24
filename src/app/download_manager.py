@@ -548,13 +548,8 @@ class DownloadManager:
             self.main_app.log_message(error_msg)
 
             # Show detailed error dialog in main thread
-            # Use invokeMethod to safely call across threads
-            QMetaObject.invokeMethod(
-                self.main_app,
-                "_show_download_error_slot",
-                Qt.ConnectionType.QueuedConnection,
-                Q_ARG(object, e),  # Use Q_ARG directly with object type hint
-            )
+            # Use a signal to safely call across threads
+            self.main_app.downloadErrorSignal.emit(e)
 
         finally:
             # Mark download as complete and process next in queue using signal

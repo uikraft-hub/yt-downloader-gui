@@ -41,6 +41,7 @@ class YTDGUI(QMainWindow):
     updateStatusSignal = pyqtSignal(str)
     logMessageSignal = pyqtSignal(str)
     updateProgressSignal = pyqtSignal(int)
+    downloadErrorSignal = pyqtSignal(object)
 
     # UI elements (dynamically added by UIManager)
     url_entry: QLineEdit
@@ -120,6 +121,7 @@ class YTDGUI(QMainWindow):
         self.updateStatusSignal.connect(self._update_status)
         self.logMessageSignal.connect(self._log_message)
         self.updateProgressSignal.connect(self._update_progress)
+        self.downloadErrorSignal.connect(self._show_download_error_slot)
         self.download_manager.signals.result.connect(self.on_playlist_result)
         self.download_manager.signals.error.connect(self.on_playlist_error)
 
